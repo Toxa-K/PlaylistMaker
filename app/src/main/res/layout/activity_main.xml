@@ -1,18 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<androidx.constraintlayout.widget.ConstraintLayout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#3772E7"
+    android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:paddingLeft="4dp"
+        android:paddingVertical="4dp"
+        android:paddingRight="52dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingLeft="12dp"
+            android:paddingBottom="12dp"
+            android:paddingRight="96dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/app_name"
+                android:textColor="@color/white"
+                android:textSize="22sp"/>
+        </FrameLayout>
+    </FrameLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:backgroundTint="@color/white"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        app:icon="@drawable/search"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        android:text="Поиск"
+        app:cornerRadius="16dp"
+        android:textColor="@color/black"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        app:icon="@drawable/songs_list"
+        app:iconGravity="textStart"
+        app:cornerRadius="16dp"
+        app:iconTint="@color/black"
+        android:text="Медиатека"
+        android:textColor="@color/black"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="28dp"
+        app:icon="@drawable/settings"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        app:cornerRadius="16dp"
+        android:text="@string/settings"
+        android:textColor="@color/black"/>
+</LinearLayout>
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
