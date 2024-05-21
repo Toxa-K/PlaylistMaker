@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_btn_main">22sp</dimen>
+    <dimen name="text_btn_settings">16sp</dimen>
+    <dimen name="mar_vert_btn_main">8dp</dimen>
+    <dimen name="mar_hor_btn_main">16dp</dimen>
+    <dimen name="radius_btn_main">16dp</dimen>
+    <dimen name="size_img_settings">24dp</dimen>
+</resources>
