@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextButtonSettings">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingVertical">21dp</item>
+        <item name="android:textSize">@dimen/text_btn_settings</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="imageButtonSettings">
+        <item name="android:layout_width">@dimen/size_img_settings</item>
+        <item name="android:layout_height">@dimen/size_img_settings</item>
+        <item name="android:scaleType">center</item>
+    </style>
+    <style name="head">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">@color/black</item>
+    </style>
+    <style name="BackgraundSettings">
+    </style>
+    <style name="head_back">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">@color/black</item>
+    </style>
+    <style name="head_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="swith_onoff">
+        <item name="android:thumbTint">@color/blue</item>
+    </style>
+</resources>

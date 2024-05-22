@@ -5,140 +5,150 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
-    <LinearLayout
+    style="@style/BackgraundSettings">
+    <FrameLayout
+        style="@style/BackgraundSettings"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="4dp"
-        android:paddingVertical="4dp"
-        android:paddingRight="52dp"
-        android:background="@color/white">
+        android:layout_height="48dp"
+        android:orientation="horizontal">
 
-        <Button
+        <ImageView
+            style="@style/head_back"
             android:id="@+id/btn_settings_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:backgroundTint="@color/white"
-            app:iconTint="@color/black"
-            app:icon="@drawable/back"
-            app:cornerRadius="0dp"/>
+            android:src="@drawable/back"/>
 
         <TextView
+            style="@style/head_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="12dp"
             android:text="@string/settings"
-            android:textColor="@color/black"
             android:textSize="22sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"/>
+    </FrameLayout>
+
 
     <!-- Темная тема -->
     <LinearLayout
+        style="@style/BackgraundSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="horizontal"
         android:layout_marginTop="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Switch
+            style="@style/swith_onoff"
+            android:text="Темная тема"
             android:paddingLeft="16dp"
             android:paddingVertical="21dp"
-            android:text="Темная тема"
             android:textSize="@dimen/text_btn_settings"
-            android:textColor="@color/black"/>
-
-        <Switch
             android:id="@+id/themeSwither"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-
     <!-- Поделиться приложением -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingRight="12dp">
+        android:paddingRight="12dp"
+        style="@style/BackgraundSettings">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingVertical="21dp"
-            android:text="@string/share"
-            android:textSize="@dimen/text_btn_settings"
-            android:textColor="@color/black"/>
+            style="@style/TextButtonSettings"
+            android:text="@string/share"/>
         <ImageView
-            android:layout_width="@dimen/size_img_settings"
-            android:layout_height="@dimen/size_img_settings"
-            android:src="@drawable/share"
-            android:scaleType="center"/>
+            style="@style/imageButtonSettings"
+            android:src="@drawable/share"/>
 
     </LinearLayout>
-
 
     <!-- Написать в поддержку -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/white"
         android:gravity="center_vertical"
-        android:paddingRight="12dp">
+        android:paddingRight="12dp"
+        style="@style/BackgraundSettings">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingVertical="21dp"
-            android:text="@string/support"
-            android:textSize="@dimen/text_btn_settings"
-            android:textColor="@color/black"/>
+            style="@style/TextButtonSettings"
+            android:text="@string/support"/>
 
         <ImageView
-            android:layout_width="@dimen/size_img_settings"
-            android:layout_height="@dimen/size_img_settings"
-            android:src="@drawable/support"
-            android:scaleType="center"/>
+            style="@style/imageButtonSettings"
+            android:src="@drawable/support"/>
     </LinearLayout>
-
 
     <!-- Пользовательское соглашение -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/white"
         android:gravity="center_vertical"
-        android:paddingRight="12dp">
+        android:paddingRight="12dp"
+        style="@style/BackgraundSettings">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
-            android:paddingVertical="21dp"
-            android:text="@string/agree"
-            android:textSize="@dimen/text_btn_settings"
-            android:textColor="@color/black"/>
+            style="@style/TextButtonSettings"
+            android:text="@string/agree" />
 
         <ImageView
-            android:layout_width="@dimen/size_img_settings"
-            android:layout_height="@dimen/size_img_settings"
-            android:src="@drawable/strelka"
-
-            android:scaleType="center"/>
+            style="@style/imageButtonSettings"
+            android:src="@drawable/strelka"/>
     </LinearLayout>
 
+<!--
 
+
+    &lt;!&ndash;тЕСТ&ndash;&gt;
+    &lt;!&ndash; Поделиться приложением &ndash;&gt;
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        style="@style/BackgraundSettings">
+
+        <TextView
+            style="@style/TextButtonSettings"
+            android:text="@string/share"
+            android:drawableEnd="@drawable/share"
+            android:paddingRight="16dp"/>
+    </LinearLayout>
+
+    &lt;!&ndash; Написать в поддержку &ndash;&gt;
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        style="@style/BackgraundSettings">
+
+        <TextView
+            style="@style/TextButtonSettings"
+            android:text="@string/support"
+            android:drawableEnd="@drawable/support"
+            android:paddingRight="14dp"/>
+    </LinearLayout>
+
+    &lt;!&ndash; Пользовательское соглашение &ndash;&gt;
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        style="@style/BackgraundSettings">
+        <TextView
+            style="@style/TextButtonSettings"
+            android:text="@string/agree"
+            android:drawableEnd="@drawable/strelka"
+            android:paddingRight="20dp"/>
+    </LinearLayout>
+
+-->
 
 </LinearLayout>

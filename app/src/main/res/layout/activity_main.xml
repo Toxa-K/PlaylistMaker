@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    style="@style/light_style"
     android:paddingBottom="20dp">
 
 
@@ -26,57 +25,25 @@
             android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="@dimen/text_btn_main"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/ys_display_medium"
+            android:textFontWeight="500"/>
 
     </FrameLayout>
 
 
     <Button
+        style="@style/ButtonMain"
         android:id="@+id/search_button_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:backgroundTint="@color/white"
-        android:layout_marginVertical="@dimen/mar_vert_btn_main"
-        android:layout_marginHorizontal="@dimen/mar_hor_btn_main"
         app:icon="@drawable/search"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-        android:textSize="@dimen/text_btn_main"
-        android:text="@string/search"
-        app:cornerRadius="@dimen/radius_btn_main"
-        android:textColor="@color/black"
-        android:textStyle="bold"/>
+        android:text="@string/search"/>
     <Button
+        style="@style/ButtonMain"
         android:id="@+id/mediateka_button_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:backgroundTint="@color/white"
-        android:layout_marginVertical="@dimen/mar_vert_btn_main"
-        android:layout_marginHorizontal="@dimen/mar_hor_btn_main"
         app:icon="@drawable/songs_list"
-        app:iconGravity="textStart"
-        app:cornerRadius="@dimen/radius_btn_main"
-        app:iconTint="@color/black"
-        android:text="@string/mediateka"
-        android:textSize="@dimen/text_btn_main"
-        android:textColor="@color/black"
-        android:textStyle="bold"/>
+        android:text="@string/mediateka"/>
     <Button
+        style="@style/ButtonMain"
         android:id="@+id/settings_button_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:backgroundTint="@color/white"
-        android:layout_marginVertical="@dimen/mar_vert_btn_main"
-        android:layout_marginHorizontal="@dimen/mar_hor_btn_main"
         app:icon="@drawable/settings"
-        app:iconGravity="textStart"
-        app:iconTint="@color/black"
-        app:cornerRadius="@dimen/radius_btn_main"
-        android:text="@string/settings"
-        android:textSize="@dimen/text_btn_main"
-        android:textColor="@color/black"
-        android:textStyle="bold"/>
+        android:text="@string/settings"/>
 </LinearLayout>
