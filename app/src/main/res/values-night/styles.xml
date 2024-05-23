@@ -16,7 +16,6 @@
         <item name="android:background">@color/black</item>
     </style>
     <style name="BackgraundSettings">
-
     </style>
     <style name="head_back">
         <item name="android:layout_width">48dp</item>

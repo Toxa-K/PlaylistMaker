@@ -12,24 +12,39 @@ import android.widget.ImageView
 class SearchActivity : AppCompatActivity() {
 
 
+    private var searchText: String = ""
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_TEXT_KEY, searchText)
+    }
+    companion object {
+        const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
+    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
+        findViewById<EditText>(R.id.search_input).setText(searchText)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val backButton = findViewById<ImageView>(R.id.btn_settings_back)
-        backButton.setOnClickListener{
-            finish()
-        }
-
         val searchInput = findViewById<EditText>(R.id.search_input)
         val clearButton = findViewById<ImageView>(R.id.clear_button)
+        val backButton = findViewById<ImageView>(R.id.btn_settings_back)
 
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
+            searchInput.setText(searchText)
+        }
         clearButton.setOnClickListener {
             searchInput.setText("")
         }
-
+        backButton.setOnClickListener{
+            finish()
+        }
         // логика по работе с введённым значением
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -37,6 +52,7 @@ class SearchActivity : AppCompatActivity() {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                searchText = s.toString()
             }
             override fun afterTextChanged(s: Editable?) {
                 // empty
@@ -44,8 +60,6 @@ class SearchActivity : AppCompatActivity() {
         }
         searchInput.addTextChangedListener(simpleTextWatcher)
     }
-
-
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE

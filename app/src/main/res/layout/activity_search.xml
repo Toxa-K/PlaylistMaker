@@ -20,13 +20,11 @@
             android:id="@+id/btn_settings_back"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/head_text"
             android:layout_marginLeft = "64dp"
             android:layout_gravity="center_vertical"
             android:text="@string/search"
             android:textSize="22sp"
-            android:textColor="@color/black"
             android:fontFamily="@font/ys_display_medium"
             android:textFontWeight="500"/>
     </FrameLayout>
