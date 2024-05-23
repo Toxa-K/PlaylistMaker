@@ -18,6 +18,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val backButton = findViewById<ImageView>(R.id.btn_settings_back)
+        backButton.setOnClickListener{
+            finish()
+        }
 
         val searchInput = findViewById<EditText>(R.id.search_input)
         val clearButton = findViewById<ImageView>(R.id.clear_button)

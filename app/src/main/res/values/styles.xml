@@ -49,4 +49,7 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
     </style>
+    <style name="svap_color_b_w">
+        <item name="android:src">@drawable/back</item>
+    </style>
 </resources>

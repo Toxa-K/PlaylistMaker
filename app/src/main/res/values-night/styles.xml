@@ -37,4 +37,7 @@
     <style name="serch_line">
         <item name="android:drawableTint">@color/black</item>
     </style>
+    <style name="svap_color_b_w">
+        <item name="android:src">@drawable/night_back</item>
+    </style>
 </resources>
