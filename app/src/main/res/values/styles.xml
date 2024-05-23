@@ -4,7 +4,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">3</item>
-        <item name="android:backgroundTint">@color/white</item>
         <item name="android:layout_marginVertical">@dimen/mar_vert_btn_main</item>
         <item name="android:layout_marginHorizontal">@dimen/mar_hor_btn_main</item>
         <item name="iconTint">@color/black</item>
@@ -13,14 +12,13 @@
         <item name="android:textSize">@dimen/text_btn_main</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/white</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
     </style>
     <style name="TextButtonSettings">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:background">@color/white</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingVertical">21dp</item>
         <item name="android:textColor">@color/black</item>
@@ -28,31 +26,27 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
     </style>
-    <style name="imageButtonSettings">
-        <item name="android:layout_width">@dimen/size_img_settings</item>
-        <item name="android:layout_height">@dimen/size_img_settings</item>
-        <item name="android:scaleType">center</item>
-        <item name="android:background">@color/white</item>
-    </style>
     <style name="head_back">
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:scaleType">center</item>
-        <item name="android:background">@color/white</item>
     </style>
     <style name="BackgraundSettings">
-        <item name="android:background">@color/white</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/blue</item>
     </style>
     <style name="head_text">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">64dp</item>
-        <item name="android:background">@color/white</item>
         <item name="android:textColor">@color/black</item>
     </style>
     <style name="swith_onoff">
         <item name="android:thumbTint">@color/trumb</item>
         <item name="android:trackTint">@color/track</item>
+    </style>
+    <style name="serch_line">
+        <item name="android:drawableTint">@color/trumb</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
     </style>
 </resources>
