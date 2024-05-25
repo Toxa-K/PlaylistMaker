@@ -12,6 +12,7 @@
 
 
 
+
     <TextView
         style="@style/BackgraundSettings"
         android:layout_width="wrap_content"
