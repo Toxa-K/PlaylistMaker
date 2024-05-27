@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val searchButton = findViewById<Button>(R.id.search_button_main)
-        val MusListButton = findViewById<Button>(R.id.mediateka_button_main)
+        val musListButton = findViewById<Button>(R.id.mediateka_button_main)
         val settingButton = findViewById<Button>(R.id.settings_button_main)
 
         /*Первый способ*/
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         searchButton.setOnClickListener(buttonClickListener)
 
         /*Второй способ*/
-        MusListButton.setOnClickListener {
+        musListButton.setOnClickListener {
             val displayIntent = Intent(this@MainActivity, MediatecaActivity::class.java)
             startActivity(displayIntent)
         }
