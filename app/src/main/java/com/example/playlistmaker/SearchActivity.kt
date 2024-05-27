@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -41,6 +42,8 @@ class SearchActivity : AppCompatActivity() {
         }
         clearButton.setOnClickListener {
             searchInput.setText("")
+            hideKeyboard(searchInput)
+
         }
         backButton.setOnClickListener{
             finish()
@@ -58,7 +61,12 @@ class SearchActivity : AppCompatActivity() {
                 // empty
             }
         }
+
         searchInput.addTextChangedListener(simpleTextWatcher)
+    }
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -66,6 +74,7 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+
     }
 }
 
