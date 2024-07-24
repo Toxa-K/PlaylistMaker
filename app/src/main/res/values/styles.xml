@@ -52,4 +52,7 @@
     <style name="svap_color_b_w">
         <item name="android:src">@drawable/back</item>
     </style>
+    <style name="TextTrackName">
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

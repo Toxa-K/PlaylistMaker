@@ -39,4 +39,10 @@
     <style name="svap_color_b_w">
         <item name="android:src">@drawable/night_back</item>
     </style>
+    <style name="TextTrackSearch">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TextTrackName">
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
