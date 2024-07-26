@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="text_btn_main">22sp</dimen>
-    <dimen name="text_btn_settings">16sp</dimen>
-    <dimen name="mar_vert_btn_main">8dp</dimen>
-    <dimen name="mar_hor_btn_main">16dp</dimen>
-    <dimen name="radius_btn_main">16dp</dimen>
-    <dimen name="size_img_settings">24dp</dimen>
+    <dimen name="text_22">22sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_11">11sp</dimen>
+    <dimen name="marg_8">8dp</dimen>
+    <dimen name="marg_16">16dp</dimen>
+    <dimen name="radius_16">16dp</dimen>
+    <dimen name="size_24">24dp</dimen>
 </resources>

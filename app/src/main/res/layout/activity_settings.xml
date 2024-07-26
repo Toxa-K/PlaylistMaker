@@ -33,7 +33,7 @@
         android:paddingLeft="16dp"
         android:paddingVertical="21dp"
         android:layout_marginTop="24dp"
-        android:textSize="@dimen/text_btn_settings"
+        android:textSize="@dimen/text_16"
         android:id="@+id/themeSwither"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

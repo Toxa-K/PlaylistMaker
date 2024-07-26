@@ -21,10 +21,10 @@
         <!--  Изначально экран скопипастен с экрана настроек,в нем кнопка возврата на темной теме прячется => android:layout_marginLeft = "64dp"  костыль чтоб она не пряталась-->
         <TextView
             style="@style/head_text"
-            android:layout_marginLeft = "64dp"
+            android:layout_marginStart="64dp"
             android:layout_gravity="center_vertical"
             android:text="@string/search"
-            android:textSize="22sp"
+            android:textSize="@dimen/text_22"
             android:fontFamily="@font/ys_display_medium"
             android:textFontWeight="500"/>
     </FrameLayout>
@@ -36,34 +36,41 @@
             android:id="@+id/search_input"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="@dimen/marg_16"
+            android:layout_marginVertical="@dimen/marg_8"
+            android:paddingHorizontal="12dp"
+
             android:hint="@string/search"
             android:background="@drawable/test"
-            android:drawableStart="@drawable/search"
-            android:paddingHorizontal="12dp"
-            android:drawablePadding="8dp"
             android:textColorHint="@color/search_text"
+
+            android:drawableStart="@drawable/search"
+            android:drawableTint="@color/gray_black"
+            android:drawablePadding="@dimen/marg_8"
+
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:maxLines="4"/>
+            android:textSize="@dimen/text_16"
+            android:maxLines="4"
+
+            android:textCursorDrawable="@drawable/cursor_color"/>
         <ImageView
             android:id="@+id/clear_button"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="28dp"
             android:layout_gravity="center"
             android:backgroundTint="@color/search_background"
             android:src="@drawable/close"
-            android:layout_marginEnd="28dp"
+            app:tint="@color/gray_black"
             android:visibility="gone"/>
     </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/marg_16"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
