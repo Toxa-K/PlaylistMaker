@@ -63,4 +63,11 @@
         <item name="layout_constraintTop_toTopOf">parent</item>
         <item name="layout_constraintBottom_toBottomOf">parent</item>
     </style>
+    <style name="text_error_search">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">@dimen/text_11</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 </resources>

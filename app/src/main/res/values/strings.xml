@@ -3,7 +3,7 @@
     <string name="title_hello">Привет, Практикум</string>
     <string name="settings">Настройки</string>
     <string name="mediateka" translatable="false">Медиатека</string>
-    <string name="search" translatable="false">Поиск</string>
+    <string name="search">Поиск</string>
     <string name="share" translatable="false">Поделиться приложением</string>
     <string name="support" translatable="false">Написать в поддержку</string>
     <string name="agree" translatable="false">Пользовательское соглашение</string>
@@ -14,5 +14,8 @@
     <string name="support_body" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="offer" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="test" translatable="false">ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="something_went_wrong">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="update" translatable="true">Обновить</string>
 
 </resources>
