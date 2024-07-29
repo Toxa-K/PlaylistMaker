@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -55,23 +56,23 @@ class SearchActivity : AppCompatActivity() {
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // Выполнение поискового запроса
-                iTunesService.search(searchInput.text.toString()).enqueue(object :
-                    Callback<TrackResponse> {
+                Log.d("SearchActivity", "Starting search for: ${searchInput.text}")
+                iTunesService.search(searchInput.text.toString()).enqueue(object : Callback<TrackResponse> {
                         override fun onResponse(
                             call: Call<TrackResponse>,
                             response: Response<TrackResponse>
                         ) {
-                            if (response.code() == 200) {
+                            Log.d("SearchActivity", "Response code: ${response.code()}")
+                            if (response.isSuccessful) {
+                                val results = response.body()?.results ?: emptyList()
                                 tracks.clear()
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    tracks.addAll(response.body()?.results!!)
-                                    adapter.notifyDataSetChanged()
-                                }
-                                if (tracks.isEmpty()) {
-                                    showMessage(getString(R.string.nothing_found), "")
-                                } else {
+                                if (results.isNotEmpty()) {
+                                    tracks.addAll(results)
                                     showMessage("", "")
+                                } else {
+                                    showMessage(getString(R.string.nothing_found), "")
                                 }
+                                adapter.notifyDataSetChanged()
                             } else {
                                 showMessage(getString(R.string.something_went_wrong),response.code().toString())
                             }
@@ -83,7 +84,6 @@ class SearchActivity : AppCompatActivity() {
                 )
                 true
             }
-            showMessage(getString(R.string.nothing_found), "")
             false
         }
 

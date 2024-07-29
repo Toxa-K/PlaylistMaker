@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SearchActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white_black">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -32,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp">
         <EditText
-            style="serch_line"
+            style="@style/serch_line"
             android:id="@+id/search_input"
             android:layout_width="match_parent"
             android:layout_height="36dp"
@@ -53,6 +54,7 @@
             android:maxLines="4"
 
             android:textCursorDrawable="@drawable/cursor_color"
+
 
             android:imeOptions="actionDone"
             android:singleLine="true"/>

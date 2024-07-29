@@ -2,6 +2,6 @@
 
 
     <style name="Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
-        <item name="android:background">@color/white</item>
+        <item name="colorAccent">@color/blue</item>
     </style>
 </resources>
