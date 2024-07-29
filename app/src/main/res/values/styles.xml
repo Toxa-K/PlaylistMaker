@@ -48,6 +48,7 @@
         <item name="android:drawableTint">@color/trumb</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
+        <item name="android:colorAccent">@color/blue</item>
     </style>
     <style name="svap_color_b_w">
         <item name="android:src">@drawable/back</item>
@@ -62,5 +63,12 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
         <item name="layout_constraintBottom_toBottomOf">parent</item>
+    </style>
+    <style name="text_error_search">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">@dimen/text_11</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textAlignment">center</item>
     </style>
 </resources>
