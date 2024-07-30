@@ -41,6 +41,8 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+
+
         // Инициализация UI элементов
         val searchInput = findViewById<EditText>(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
@@ -50,6 +52,9 @@ class SearchActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+
+
+
 
 
         // Установка слушателя для выполнения поиска при нажатии на клавиатуре "Done"

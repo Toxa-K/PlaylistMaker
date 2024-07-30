@@ -28,16 +28,16 @@
     </FrameLayout>
 
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwither"
         style="@style/swith_onoff"
-        android:text="Темная тема"
-        android:paddingLeft="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
         android:paddingVertical="21dp"
         android:layout_marginTop="24dp"
-        android:textSize="@dimen/text_16"
-        android:id="@+id/themeSwither"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:text="@string/dark_mode"
+        android:textSize="@dimen/text_16"/>
 
 
 
@@ -47,7 +47,7 @@
         style="@style/TextButtonSettings"
         android:text="@string/share"
         android:drawableEnd="@drawable/share"
-        android:paddingRight="16dp"/>
+        android:paddingEnd="16dp"/>
 
 
     <!-- Написать в поддержку -->
@@ -56,7 +56,7 @@
         style="@style/TextButtonSettings"
         android:text="@string/support"
         android:drawableEnd="@drawable/support"
-        android:paddingRight="14dp"/>
+        android:paddingEnd="14dp"/>
 
 
     <!-- Пользовательское соглашение -->
@@ -65,7 +65,7 @@
         style="@style/TextButtonSettings"
         android:text="@string/agree"
         android:drawableEnd="@drawable/strelka"
-        android:paddingRight="20dp"/>
+        android:paddingEnd="20dp"/>
 
 
 
