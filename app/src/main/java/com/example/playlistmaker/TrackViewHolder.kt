@@ -31,10 +31,6 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(dpToPx(2f, artwork.context)))
             .into(artwork)
     }
-
-
-
-
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,

@@ -7,4 +7,6 @@
     <string name="nothing_found">Nothing found</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="dark_mode">Dark mode</string>
+    <string name="you_search">You are looking for</string>
+    <string name="clear_histori">Clear history</string>
 </resources>
