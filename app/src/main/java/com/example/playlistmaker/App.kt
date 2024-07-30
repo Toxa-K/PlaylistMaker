@@ -2,8 +2,6 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.bumptech.glide.disklrucache.DiskLruCache.Editor
-import com.google.android.material.switchmaterial.SwitchMaterial
 
 const val SHARE_PREFERENCES = "AppPreferences"
 const val THEME_SWITHER = "theme"

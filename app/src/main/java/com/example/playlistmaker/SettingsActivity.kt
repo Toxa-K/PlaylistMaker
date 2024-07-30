@@ -1,18 +1,12 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.switchmaterial.SwitchMaterial
-
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +15,6 @@ class SettingsActivity : AppCompatActivity() {
 
         val sharedPrefs = getSharedPreferences(SHARE_PREFERENCES, MODE_PRIVATE)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)//Переключатель темы
-
-
-
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
@@ -35,7 +26,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         // Установка начального состояния переключателя
         themeSwitcher.isChecked = sharedPrefs.getBoolean(THEME_SWITHER, false)
-
 
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
         backButton.setOnClickListener{

@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -23,7 +24,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val CONST1 = "Test_Preferences"
+const val HISTORY_KEY = "HISTORY_KEY"
 
 class SearchActivity : AppCompatActivity() {
 
@@ -44,6 +45,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var storyView: RecyclerView
     private lateinit var textSearch: TextView
     private lateinit var clearHistoryButton: Button
+    private lateinit var containerHistory: ConstraintLayout
+    private lateinit var placeholderMessage: TextView
+    private lateinit var placeholderButton: Button
+    private lateinit var placeholderIcon: ImageView
 
 
 
@@ -57,19 +62,21 @@ class SearchActivity : AppCompatActivity() {
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)//Возврат на пред. страницу
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)//Список треков
-        val placeholderButton = findViewById<Button>(R.id.placeholderButton)//
+        placeholderMessage = findViewById(R.id.placeholderMessage)
+        placeholderButton = findViewById(R.id.placeholderButton)
+        placeholderIcon = findViewById(R.id.placeholderIcon)
+        containerHistory = findViewById(R.id.containerHistory)
         storyView = findViewById(R.id.storyView)//Список old треков
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
         textSearch = findViewById(R.id. youSearch)//Текст:Вы искали
 
 
-        val sharedPreferences = getSharedPreferences(CONST1, MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
 
         adapter = TrackAdapter(tracks) { track ->
             // Сохранение трека в истории и вывод сообщения при нажатии на карточку
             searchHistory.saveTrack(track)
-            /*Toast.makeText(this, "Нажата карточка основного списка: ${track.trackName}", Toast.LENGTH_SHORT).show()*/
 //            updateHistoryUI()
         }
 
@@ -80,7 +87,6 @@ class SearchActivity : AppCompatActivity() {
         storyView.adapter = TrackAdapter(searchHistory.getTrackList()) { track ->
             // Обработка нажатия на элемент из истории
             searchHistory.saveTrack(track)
-            /*Toast.makeText(this, "Нажата карточка из истории: ${track.trackName}", Toast.LENGTH_SHORT).show()*/
             updateHistoryUI()
         }
 
@@ -101,11 +107,15 @@ class SearchActivity : AppCompatActivity() {
                     storyView.visibility = View.VISIBLE
                     clearHistoryButton.visibility = View.VISIBLE
                     textSearch.visibility = View.VISIBLE
+                    containerHistory.visibility = View.VISIBLE
                 } else{
                     storyView.visibility = View.GONE
                     clearHistoryButton.visibility = View.GONE
                     textSearch.visibility = View.GONE
-
+                    containerHistory.visibility = View.GONE
+                    placeholderMessage.visibility = View.GONE
+                    placeholderButton.visibility = View.GONE
+                    placeholderIcon.visibility = View.GONE
                 }
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
@@ -120,14 +130,12 @@ class SearchActivity : AppCompatActivity() {
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 // Выполнение поискового запроса
-                Log.d("SearchActivity", "Starting search for: ${searchInput.text}")
                 iTunesService.search(searchInput.text.toString())
                     .enqueue(object : Callback<TrackResponse> {
                         override fun onResponse(
                             call: Call<TrackResponse>,
                             response: Response<TrackResponse>
                         ) {
-                            Log.d("SearchActivity", "Response code: ${response.code()}")
                             if (response.isSuccessful) {
                                 val results = response.body()?.results ?: emptyList()
                                 tracks.clear()
@@ -176,6 +184,9 @@ class SearchActivity : AppCompatActivity() {
             searchInput.setText("")
             hideKeyboard(searchInput)
             tracks.clear() // Очистка списка треков
+            placeholderMessage.visibility = View.GONE
+            placeholderButton.visibility = View.GONE
+            placeholderIcon.visibility = View.GONE
             updateHistoryUI()
             adapter.notifyDataSetChanged() // Уведомление адаптера об изменении данных
         }
@@ -194,12 +205,10 @@ class SearchActivity : AppCompatActivity() {
         updateHistoryUI()
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT_KEY, searchText)
     }
-
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
@@ -208,13 +217,11 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
-
 
     // Определение видимости кнопки очистки
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -225,17 +232,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
     private companion object {
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
     }
 
-
     // Отображение сообщения пользователю ошибки
     private fun showMessage(text: String, additionalMessage: String) {
-        val placeholderMessage = findViewById<TextView>(R.id.placeholderMessage)
-        val placeholderButton = findViewById<Button>(R.id.placeholderButton)
-        val placeholderIcon = findViewById<ImageView>(R.id.placeholderIcon)
+
         if (text.isNotEmpty()) {
             placeholderMessage.visibility = View.VISIBLE
             tracks.clear()
@@ -246,10 +249,18 @@ class SearchActivity : AppCompatActivity() {
                 placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
                 placeholderIcon.visibility = View.VISIBLE
                 placeholderButton.visibility = View.VISIBLE
+                storyView.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
+                textSearch.visibility = View.GONE
+                containerHistory.visibility = View.GONE
             }
             else{//Отсутствие треков
                 placeholderIcon.setImageResource(R.drawable.none_search)
                 placeholderIcon.visibility = View.VISIBLE
+                storyView.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
+                textSearch.visibility = View.GONE
+                containerHistory.visibility = View.GONE
             }
         } else {
             placeholderMessage.visibility = View.GONE
@@ -263,6 +274,7 @@ class SearchActivity : AppCompatActivity() {
         storyView.visibility = if (hasHistory) View.VISIBLE else View.GONE
         textSearch.visibility = if (hasHistory) View.VISIBLE else View.GONE
         clearHistoryButton.visibility = if (hasHistory) View.VISIBLE else View.GONE
+        containerHistory.visibility = if (hasHistory) View.VISIBLE else View.GONE
 
         if (hasHistory) {
             (storyView.adapter as TrackAdapter).apply {

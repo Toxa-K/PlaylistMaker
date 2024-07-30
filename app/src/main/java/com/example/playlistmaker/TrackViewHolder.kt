@@ -24,12 +24,20 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         trackName.text = model.trackName
         artistName.text = model.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
-        Glide.with(artwork.context)
-            .load(model.artworkUrl100)
-            .placeholder(R.drawable.vector)
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(2f, artwork.context)))
-            .into(artwork)
+        val artworkUrl = model.artworkUrl100
+        if (artworkUrl.isNullOrEmpty()) {
+            Glide.with(artwork.context)
+                .load(R.drawable.vector) // Placeholder image
+                .transform(RoundedCorners(dpToPx(2f, artwork.context)))
+                .into(artwork)
+        } else {
+            Glide.with(artwork.context)
+                .load(artworkUrl)
+                .placeholder(R.drawable.vector)
+                .centerCrop()
+                .transform(RoundedCorners(dpToPx(2f, artwork.context)))
+                .into(artwork)
+        }
     }
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
