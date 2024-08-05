@@ -45,7 +45,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var storyView: RecyclerView
     private lateinit var textSearch: TextView
     private lateinit var clearHistoryButton: Button
-    private lateinit var containerHistory: ConstraintLayout
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
     private lateinit var placeholderIcon: ImageView
@@ -65,7 +64,6 @@ class SearchActivity : AppCompatActivity() {
         placeholderMessage = findViewById(R.id.placeholderMessage)
         placeholderButton = findViewById(R.id.placeholderButton)
         placeholderIcon = findViewById(R.id.placeholderIcon)
-        containerHistory = findViewById(R.id.containerHistory)
         storyView = findViewById(R.id.storyView)//Список old треков
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
         textSearch = findViewById(R.id. youSearch)//Текст:Вы искали
@@ -75,9 +73,8 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = SearchHistory(sharedPreferences)
 
         adapter = TrackAdapter(tracks) { track ->
-            // Сохранение трека в истории и вывод сообщения при нажатии на карточку
+            // Сохранение трека в истории
             searchHistory.saveTrack(track)
-//            updateHistoryUI()
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -90,10 +87,15 @@ class SearchActivity : AppCompatActivity() {
             updateHistoryUI()
         }
 
-        //условие для отображения подсказки
-        searchInput.setOnFocusChangeListener { view, hasFocus ->
-            storyView.visibility =
-                if (hasFocus && searchInput.text.isEmpty()) View.VISIBLE else View.GONE
+        //условие для отображения Истории поиска
+        searchInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && searchInput.text.isEmpty()) {
+                updateHistoryUI()
+            } else {
+                storyView.visibility =  View.GONE
+                textSearch.visibility = View.GONE
+                clearHistoryButton.visibility =  View.GONE
+            }
         }
 
         // логика по работе с введённым значением
@@ -104,15 +106,17 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true){
-                    storyView.visibility = View.VISIBLE
-                    clearHistoryButton.visibility = View.VISIBLE
+                    View.VISIBLE
+                    storyView.visibility =  View.VISIBLE
                     textSearch.visibility = View.VISIBLE
-                    containerHistory.visibility = View.VISIBLE
+                    clearHistoryButton.visibility =  View.VISIBLE
+                    adapter.notifyDataSetChanged()
+                    tracks.clear()
+                    updateHistoryUI()
                 } else{
-                    storyView.visibility = View.GONE
-                    clearHistoryButton.visibility = View.GONE
+                    storyView.visibility =  View.GONE
                     textSearch.visibility = View.GONE
-                    containerHistory.visibility = View.GONE
+                    clearHistoryButton.visibility =  View.GONE
                     placeholderMessage.visibility = View.GONE
                     placeholderButton.visibility = View.GONE
                     placeholderIcon.visibility = View.GONE
@@ -146,6 +150,7 @@ class SearchActivity : AppCompatActivity() {
                                     showMessage(getString(R.string.nothing_found), "")
                                 }
                                 adapter.notifyDataSetChanged()
+
                             } else {
                                 showMessage(
                                     getString(R.string.something_went_wrong),
@@ -184,11 +189,11 @@ class SearchActivity : AppCompatActivity() {
             searchInput.setText("")
             hideKeyboard(searchInput)
             tracks.clear() // Очистка списка треков
+            adapter.notifyDataSetChanged() // Уведомление адаптера об изменении данных
             placeholderMessage.visibility = View.GONE
             placeholderButton.visibility = View.GONE
             placeholderIcon.visibility = View.GONE
             updateHistoryUI()
-            adapter.notifyDataSetChanged() // Уведомление адаптера об изменении данных
         }
 
 
@@ -252,7 +257,6 @@ class SearchActivity : AppCompatActivity() {
                 storyView.visibility = View.GONE
                 clearHistoryButton.visibility = View.GONE
                 textSearch.visibility = View.GONE
-                containerHistory.visibility = View.GONE
             }
             else{//Отсутствие треков
                 placeholderIcon.setImageResource(R.drawable.none_search)
@@ -260,7 +264,6 @@ class SearchActivity : AppCompatActivity() {
                 storyView.visibility = View.GONE
                 clearHistoryButton.visibility = View.GONE
                 textSearch.visibility = View.GONE
-                containerHistory.visibility = View.GONE
             }
         } else {
             placeholderMessage.visibility = View.GONE
@@ -274,7 +277,6 @@ class SearchActivity : AppCompatActivity() {
         storyView.visibility = if (hasHistory) View.VISIBLE else View.GONE
         textSearch.visibility = if (hasHistory) View.VISIBLE else View.GONE
         clearHistoryButton.visibility = if (hasHistory) View.VISIBLE else View.GONE
-        containerHistory.visibility = if (hasHistory) View.VISIBLE else View.GONE
 
         if (hasHistory) {
             (storyView.adapter as TrackAdapter).apply {

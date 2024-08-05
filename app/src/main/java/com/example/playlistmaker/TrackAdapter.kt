@@ -21,6 +21,7 @@ class TrackAdapter(
         }
     }
 
+
     override fun getItemCount(): Int = tracks.size
     // Метод для обновления треков
     fun updateTracks(newTracks: List<Track>) {
