@@ -55,7 +55,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-
         // Инициализация UI элементов
         searchInput = findViewById(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
@@ -67,7 +66,6 @@ class SearchActivity : AppCompatActivity() {
         storyView = findViewById(R.id.storyView)//Список old треков
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
         textSearch = findViewById(R.id. youSearch)//Текст:Вы искали
-
 
         val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
@@ -92,9 +90,8 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus && searchInput.text.isEmpty()) {
                 updateHistoryUI()
             } else {
-                storyView.visibility =  View.GONE
-                textSearch.visibility = View.GONE
-                clearHistoryButton.visibility =  View.GONE
+                hideHistoryUI()
+
             }
         }
 
@@ -114,9 +111,7 @@ class SearchActivity : AppCompatActivity() {
                     tracks.clear()
                     updateHistoryUI()
                 } else{
-                    storyView.visibility =  View.GONE
-                    textSearch.visibility = View.GONE
-                    clearHistoryButton.visibility =  View.GONE
+                    hideHistoryUI()
                     placeholderMessage.visibility = View.GONE
                     placeholderButton.visibility = View.GONE
                     placeholderIcon.visibility = View.GONE
@@ -207,7 +202,6 @@ class SearchActivity : AppCompatActivity() {
             updateHistoryUI()
         }
 
-        updateHistoryUI()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -254,16 +248,12 @@ class SearchActivity : AppCompatActivity() {
                 placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
                 placeholderIcon.visibility = View.VISIBLE
                 placeholderButton.visibility = View.VISIBLE
-                storyView.visibility = View.GONE
-                clearHistoryButton.visibility = View.GONE
-                textSearch.visibility = View.GONE
+                hideHistoryUI()
             }
             else{//Отсутствие треков
                 placeholderIcon.setImageResource(R.drawable.none_search)
                 placeholderIcon.visibility = View.VISIBLE
-                storyView.visibility = View.GONE
-                clearHistoryButton.visibility = View.GONE
-                textSearch.visibility = View.GONE
+                hideHistoryUI()
             }
         } else {
             placeholderMessage.visibility = View.GONE
@@ -284,5 +274,10 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         }
+    private fun hideHistoryUI() {
+        storyView.visibility = View.GONE
+        textSearch.visibility = View.GONE
+        clearHistoryButton.visibility = View.GONE
+    }
 }
 
