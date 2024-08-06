@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity"
     android:orientation="vertical"
-    android:background="@color/white_black">
+    android:background="@color/white_black"
+    tools:context=".SearchActivity">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -30,6 +31,7 @@
             android:textFontWeight="500"/>
     </FrameLayout>
     <RelativeLayout
+        android:id="@+id/R_search"
         android:layout_width="match_parent"
         android:layout_height="52dp">
         <EditText
@@ -40,22 +42,16 @@
             android:layout_marginHorizontal="@dimen/marg_16"
             android:layout_marginVertical="@dimen/marg_8"
             android:paddingHorizontal="12dp"
-
             android:hint="@string/search"
             android:background="@drawable/test"
             android:textColorHint="@color/search_text"
-
             android:drawableStart="@drawable/search"
             android:drawableTint="@color/gray_black"
             android:drawablePadding="@dimen/marg_8"
-
             android:textColor="@color/black"
             android:textSize="@dimen/text_16"
             android:maxLines="4"
-
             android:textCursorDrawable="@drawable/cursor_color"
-
-
             android:imeOptions="actionDone"
             android:singleLine="true"/>
         <ImageView
@@ -71,16 +67,55 @@
             app:tint="@color/gray_black"
             android:visibility="gone"/>
     </RelativeLayout>
+    <TextView
+        android:id="@+id/youSearch"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/you_search"
+        android:textAlignment="center"
+        android:textColor="@color/black_white"
+        android:textFontWeight="500"
+        android:textSize="19sp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/containerHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white_black">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/storyView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
+        <Button
+            android:id="@+id/clearHistoryButton"
+            style="@style/text_error_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_24"
+            android:backgroundTint="@color/black_white"
+            android:text="@string/clear_histori"
+            android:textFontWeight="500"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:cornerRadius="54dp" />
+
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/marg_16"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        />
 
     <ImageView
         android:id="@+id/placeholderIcon"
