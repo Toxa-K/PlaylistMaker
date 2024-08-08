@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -70,9 +71,12 @@ class SearchActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
 
+
+        // Сохранение трека в истории
         adapter = TrackAdapter(tracks) { track ->
-            // Сохранение трека в истории
             searchHistory.saveTrack(track)
+            val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            startActivity(displayIntent)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -83,6 +87,9 @@ class SearchActivity : AppCompatActivity() {
             // Обработка нажатия на элемент из истории
             searchHistory.saveTrack(track)
             updateHistoryUI()
+            val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            startActivity(displayIntent)
+
         }
 
         //условие для отображения Истории поиска
