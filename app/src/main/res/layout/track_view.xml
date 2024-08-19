@@ -33,7 +33,7 @@
             tools:text="Very long track name"
             android:ellipsize="end"
             android:maxLines="1"/>
-<!--ToDo ConstraintLayout переработать в LinearLayout т.к. время трека может уйти за границу-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
