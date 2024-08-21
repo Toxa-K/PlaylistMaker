@@ -8,14 +8,14 @@
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="24dp"
+        app:layout_constraintGuide_begin="@dimen/size_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightBorder"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="24dp"
+        app:layout_constraintGuide_end="@dimen/size_24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -47,7 +47,7 @@
         android:id="@+id/back_button"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/marg_16"
         android:src="@drawable/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -60,9 +60,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="30dp"
         android:background="@color/white_black"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:src="@drawable/vector"
-        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintBottom_toTopOf="@id/song_title"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/back_button" />
@@ -72,11 +73,11 @@
         android:id="@+id/song_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/size_24"
         android:gravity="start"
         android:textColor="@color/black_white"
         android:fontFamily="@font/ys_display_medium"
-        android:textSize="22sp"
+        android:textSize="@dimen/text_22"
         android:textStyle="bold"
         android:ellipsize="end"
         android:maxLines="1"
@@ -144,7 +145,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="5:35"
+        tools:text="5:35"
         android:textColor="@color/black_white"
         android:fontFamily="@font/ys_display_medium"
         android:textSize="14sp"
@@ -155,31 +156,25 @@
 
     <!-- Duration Info -->
     <TextView
+        style="@style/my_text_player"
         android:id="@+id/song_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="@dimen/marg_8"
-        android:fontFamily="@font/ys_display_regular"
-        android:text="Длительность"
-        android:textColor="#777777"
-        android:textSize="13sp"
+        android:text="@string/duration"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/textsBarrier" />
 
     <!-- Duration Info my text-->
     <TextView
+        style="@style/text_player"
         android:id="@+id/song_duration1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:fontFamily="@font/ys_display_regular"
         android:layout_marginBottom="@dimen/marg_8"
         tools:text="5:35"
-        android:textColor="@color/black_white"
-        android:textSize="13sp"
-        android:ellipsize="end"
-        android:maxLines="1"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintStart_toEndOf="@id/texts2Barrier"
         app:layout_constraintHorizontal_bias="1"
@@ -187,19 +182,18 @@
 
     <!-- Album Info -->
     <TextView
+        style="@style/my_text_player"
         android:id="@+id/album_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:layout_marginBottom="@dimen/marg_8"
-        android:text="Альбом"
-        android:fontFamily="@font/ys_display_regular"
-        android:textColor="#777777"
-        android:textSize="13sp"
+        android:text="@string/albom"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/song_duration" />
     <!-- Album Info my text -->
     <TextView
+        style="@style/text_player"
         android:id="@+id/album_info1"
         android:layout_width="0dp"
         android:gravity="end"
@@ -208,30 +202,24 @@
         android:layout_marginBottom="@dimen/marg_8"
         tools:text="Yesterday (Remastered 2009)"
         app:layout_constraintHorizontal_bias="1"
-        android:fontFamily="@font/ys_display_regular"
         app:layout_constraintStart_toEndOf="@id/texts2Barrier"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/black_white"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintTop_toBottomOf="@id/song_duration1" />
 
     <!-- Year Info -->
     <TextView
+        style="@style/my_text_player"
         android:id="@+id/year_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:layout_marginBottom="@dimen/marg_8"
-        android:text="Год"
-        android:textColor="#777777"
-        android:textSize="13sp"
-        android:fontFamily="@font/ys_display_regular"
+        android:text="@string/year"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/album_info" />
     <!-- Year Info my text -->
     <TextView
+        style="@style/text_player"
         android:id="@+id/year_info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -240,29 +228,23 @@
         tools:text="1965"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@id/texts2Barrier"
-        android:ellipsize="end"
-        android:fontFamily="@font/ys_display_regular"
-        android:maxLines="1"
-        android:textColor="@color/black_white"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintTop_toBottomOf="@id/album_info1" />
 
     <!-- Genre Info -->
     <TextView
+        style="@style/my_text_player"
         android:id="@+id/genre_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:layout_marginBottom="@dimen/marg_8"
-        android:text="Жанр"
-        android:textColor="#777777"
-        android:textSize="13sp"
+        android:text="@string/genre"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        android:fontFamily="@font/ys_display_regular"
         app:layout_constraintTop_toBottomOf="@id/year_info" />
     <!-- Genre Info my text-->
     <TextView
+        style="@style/text_player"
         android:id="@+id/genre_info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -271,40 +253,33 @@
         tools:text="Rock"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@id/texts2Barrier"
-        android:textColor="@color/black_white"
-        android:fontFamily="@font/ys_display_regular"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintTop_toBottomOf="@id/year_info1" />
 
     <!-- Country Info -->
     <TextView
         android:id="@+id/country_info"
+        style="@style/my_text_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
-        android:text="Страна"
-        android:textColor="#777777"
-        android:textSize="13sp"
+        android:layout_marginBottom="@dimen/marg_8"
+        android:text="@string/country"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        android:fontFamily="@font/ys_display_regular"
         app:layout_constraintTop_toBottomOf="@id/genre_info" />
     <!-- Country Info my text-->
     <TextView
         android:id="@+id/country_info1"
+        style="@style/text_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
-        tools:text="Великобритания"
-        app:layout_constraintHorizontal_bias="1"
-        android:fontFamily="@font/ys_display_regular"
-        app:layout_constraintStart_toEndOf="@id/texts2Barrier"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@color/black_white"
-        android:textSize="13sp"
+        android:layout_marginBottom="@dimen/marg_8"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
-        app:layout_constraintTop_toBottomOf="@id/genre_info1" />
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/texts2Barrier"
+        app:layout_constraintTop_toBottomOf="@id/genre_info1"
+        tools:text="Великобритания" />
 </androidx.constraintlayout.widget.ConstraintLayout>

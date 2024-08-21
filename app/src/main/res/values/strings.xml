@@ -20,5 +20,11 @@
     <string name="dark_mode" translatable="true">Темная тема</string>
     <string name="you_search" translatable="true">Вы искали</string>
     <string name="clear_histori" translatable="true">Очистить историю</string>
+    <string name="country" translatable="false">Страна</string>
+    <string name="genre" translatable="false">Жанр</string>
+    <string name="duration" translatable="false">Длительность</string>
+    <string name="year" translatable="false">Год</string>
+    <string name="albom" translatable="false">Альбом</string>
+
 
 </resources>
