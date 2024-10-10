@@ -34,6 +34,7 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+        private const val UPDATE_TIME = 250
     }
 
     private var mediaPlayer = MediaPlayer()
@@ -87,7 +88,7 @@ class PlayerActivity : AppCompatActivity() {
             if (playerState == STATE_PLAYING) {
                 val currentPosition = mediaPlayer.getCurrentPosition()
                 songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                mainThreadHandler?.postDelayed(this, 250)  // обновляем каждые 300 мс
+                mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
             }
         }
     }
