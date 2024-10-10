@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -25,6 +27,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var artistName: TextView
     private lateinit var albumCover: ImageView
     private lateinit var playButton: ImageView
+    private lateinit var songTime:TextView
 
     companion object {
         private const val STATE_DEFAULT = 0
@@ -36,10 +39,13 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
     private var url: String? = ""
     private var playerState = STATE_DEFAULT
+    private var mainThreadHandler: Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         // Инициализация UI элементов
         trackTime = findViewById(R.id.song_duration1)
@@ -51,6 +57,7 @@ class PlayerActivity : AppCompatActivity() {
         artistName = findViewById(R.id.artist_name)
         albumCover = findViewById(R.id.album_cover)
         playButton = findViewById(R.id.play_button)
+        songTime = findViewById(R.id.song_time)
         val backButton = findViewById<ImageView>(R.id.back_button)
 
 
@@ -72,6 +79,17 @@ class PlayerActivity : AppCompatActivity() {
         playButton.setOnClickListener {
             playbackControl()
         }
+
+    }
+
+    private fun  updateTimeRunnable() = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) {
+                val currentPosition = mediaPlayer.getCurrentPosition()
+                songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                mainThreadHandler?.postDelayed(this, 250)  // обновляем каждые 300 мс
+            }
+        }
     }
 
     override fun onPause() {
@@ -80,6 +98,7 @@ class PlayerActivity : AppCompatActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
         mediaPlayer.release()
     }
 
@@ -96,6 +115,8 @@ class PlayerActivity : AppCompatActivity() {
             mediaPlayer.setOnCompletionListener {
                 playButton.setImageResource(R.drawable.ic_play)
                 playerState = STATE_PREPARED
+                songTime.text = "00:00"  // Сброс времени после окончания
+                mainThreadHandler?.removeCallbacks(updateTimeRunnable())
             }
         }
         else {
@@ -108,13 +129,16 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.start()
         playButton.setImageResource(R.drawable.ic_pause)
         playerState = STATE_PLAYING
+        mainThreadHandler?.post(updateTimeRunnable())  // Запуск обновления времени
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         playButton.setImageResource(R.drawable.ic_play)
         playerState = STATE_PAUSED
+        mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
     }
+
 
     private fun playbackControl() {
         when(playerState) {
