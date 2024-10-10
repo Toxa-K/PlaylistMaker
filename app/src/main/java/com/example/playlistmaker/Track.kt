@@ -6,6 +6,7 @@ import java.io.Serializable
 
 
 data class Track(
+        val previewUrl: String?,
         val trackId: Int,
         val trackName: String, // Название композиции
         val artistName: String, // Имя исполнителя
@@ -17,4 +18,6 @@ data class Track(
         val country: String? //Страна исполнителя
 ): Serializable {
         fun getCoverArtwork() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
+
+
 }

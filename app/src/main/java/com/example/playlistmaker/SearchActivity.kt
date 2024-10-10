@@ -15,6 +15,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,7 +61,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
     private lateinit var placeholderIcon: ImageView
-
+    private lateinit var progressBar: LinearLayout
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,13 +72,14 @@ class SearchActivity : AppCompatActivity() {
         searchInput = findViewById(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)//Возврат на пред. страницу
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)//Список треков
+        recyclerView = findViewById(R.id.recyclerView)//Список треков
         placeholderMessage = findViewById(R.id.placeholderMessage)
         placeholderButton = findViewById(R.id.placeholderButton)
         placeholderIcon = findViewById(R.id.placeholderIcon)
         storyView = findViewById(R.id.storyView)//Список old треков
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
         textSearch = findViewById(R.id.youSearch)//Текст:Вы искали
+        progressBar = findViewById(R.id.progressBar)//ProgressBar
 
         val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
@@ -106,7 +110,6 @@ class SearchActivity : AppCompatActivity() {
                 }
                 startActivity(displayIntent)
             }
-
         }
 
         //условие для отображения Истории поиска
@@ -115,18 +118,15 @@ class SearchActivity : AppCompatActivity() {
                 updateHistoryUI()
             } else {
                 hideHistoryUI()
-
             }
         }
 
         // логика по работе с введённым значением
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
+                searchDebounce()
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
                     storyView.visibility = View.VISIBLE
@@ -145,7 +145,6 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
         })
@@ -180,12 +179,12 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
+
         // Установка слушателя для кнопки очистки истории
         clearHistoryButton.setOnClickListener {
             searchHistory.clearHistory()
             updateHistoryUI()
         }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -202,20 +201,31 @@ class SearchActivity : AppCompatActivity() {
 
     // Выполнение поискового запроса
     private fun searchRequest() {
+        progressBar.visibility = View.VISIBLE
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        placeholderIcon.visibility = View.GONE
+        recyclerView.visibility = View.GONE
         iTunesService.search(searchInput.text.toString()).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+
                 if (response.isSuccessful) {
                     val results = response.body()?.results ?: emptyList()
                     tracks.clear()
                     if (results.isNotEmpty()) {
+                        progressBar.visibility = View.GONE
                         tracks.addAll(results)
                         showMessage("", "")
                     } else {
+                        progressBar.visibility = View.GONE
                         showMessage(getString(R.string.nothing_found), "")
                     }
                     adapter.notifyDataSetChanged()
+                    progressBar.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
 
                 } else {
+                    progressBar.visibility = View.GONE
                     showMessage(
                         getString(R.string.something_went_wrong),
                         response.code().toString()
@@ -223,6 +233,7 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 showMessage(
                     getString(R.string.something_went_wrong),
                     t.message.toString()
