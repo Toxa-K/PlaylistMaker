@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val HISTORY_KEY = "HISTORY_KEY"
 const val KEY_TRACK = "KEY_TRACK"
 
-private const val SEARCH_DEBOUNCE_DELAY = 2000L
+private const val SEARCH_DEBOUNCE_DELAY = 1000L
 private const val CLICK_DEBOUNCE_DELAY = 1000L
 
 
@@ -124,23 +125,26 @@ class SearchActivity : AppCompatActivity() {
         // логика по работе с введённым значением
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                searchDebounce()
+
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
+                    updateHistoryUI()
                     storyView.visibility = View.VISIBLE
                     textSearch.visibility = View.VISIBLE
                     clearHistoryButton.visibility = View.VISIBLE
                     adapter.notifyDataSetChanged()
                     tracks.clear()
-                    updateHistoryUI()
+
+
                 } else {
                     searchDebounce()
                     hideHistoryUI()
                     placeholderMessage.visibility = View.GONE
                     placeholderButton.visibility = View.GONE
                     placeholderIcon.visibility = View.GONE
+
                 }
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
@@ -239,7 +243,9 @@ class SearchActivity : AppCompatActivity() {
                     t.message.toString()
                 )
             }
+
         }
+
         )
     }
 
@@ -247,6 +253,7 @@ class SearchActivity : AppCompatActivity() {
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+
     }
 
 

@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import com.bumptech.glide.Glide
@@ -29,13 +30,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playButton: ImageView
     private lateinit var songTime:TextView
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val UPDATE_TIME = 250
-    }
+
 
     private var mediaPlayer = MediaPlayer()
     private var url: String? = ""
@@ -123,6 +118,7 @@ class PlayerActivity : AppCompatActivity() {
         else {
             // Обработка ошибки: URL не задан
             playButton.isEnabled = false
+            Toast.makeText(this@PlayerActivity, "Трек не доступен", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -174,6 +170,13 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.placeholder2)
             .transform(RoundedCorners(dpToPx(8f, albumCover.context))) // Скругленные углы
             .into(albumCover)
+    }
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val UPDATE_TIME = 250
     }
 }
 private fun dpToPx(dp: Float, context: Context): Int {
