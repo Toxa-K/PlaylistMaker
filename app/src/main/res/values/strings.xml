@@ -25,7 +25,7 @@
     <string name="duration" translatable="false">Длительность</string>
     <string name="year" translatable="false">Год</string>
     <string name="albom" translatable="false">Альбом</string>
-    <string name="time" translatable="false">5:30</string>
+    <string name="time" translatable="false">00:30</string>
 
 
 </resources>

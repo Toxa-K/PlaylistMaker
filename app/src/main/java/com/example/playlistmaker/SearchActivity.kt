@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Editable
@@ -13,7 +15,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +30,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 const val HISTORY_KEY = "HISTORY_KEY"
-const val KEY_TRACK ="KEY_TRACK"
+const val KEY_TRACK = "KEY_TRACK"
+
+private const val SEARCH_DEBOUNCE_DELAY = 1000L
+private const val CLICK_DEBOUNCE_DELAY = 1000L
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -33,6 +42,10 @@ class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
     private lateinit var searchInput: EditText
 
+    private var isClickAllowed = true
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { searchRequest() }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
@@ -49,8 +62,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderMessage: TextView
     private lateinit var placeholderButton: Button
     private lateinit var placeholderIcon: ImageView
-
-
+    private lateinit var progressBar: LinearLayout
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,40 +73,44 @@ class SearchActivity : AppCompatActivity() {
         searchInput = findViewById(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)//Возврат на пред. страницу
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)//Список треков
+        recyclerView = findViewById(R.id.recyclerView)//Список треков
         placeholderMessage = findViewById(R.id.placeholderMessage)
         placeholderButton = findViewById(R.id.placeholderButton)
         placeholderIcon = findViewById(R.id.placeholderIcon)
         storyView = findViewById(R.id.storyView)//Список old треков
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
-        textSearch = findViewById(R.id. youSearch)//Текст:Вы искали
+        textSearch = findViewById(R.id.youSearch)//Текст:Вы искали
+        progressBar = findViewById(R.id.progressBar)//ProgressBar
 
         val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
 
 
-        // Сохранение трека в истории
+        // Обработка нажатия на список треков и добавление его в историю
         adapter = TrackAdapter(tracks) { track ->
-            searchHistory.saveTrack(track)
-            val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                putExtra(KEY_TRACK, track)
+            if (clickDebounce()) {
+                searchHistory.saveTrack(track)
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
+                    putExtra(KEY_TRACK, track)
+                }
+                startActivity(displayIntent)
             }
-            startActivity(displayIntent)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
         storyView.layoutManager = LinearLayoutManager(this)
+        // Обработка нажатия на трек из истории
         storyView.adapter = TrackAdapter(searchHistory.getTrackList()) { track ->
-            // Обработка нажатия на элемент из истории
-            searchHistory.saveTrack(track)
-            updateHistoryUI()
-            val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                putExtra(KEY_TRACK, track)
+            if (clickDebounce()) {
+                searchHistory.saveTrack(track)
+                updateHistoryUI()
+                val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
+                    putExtra(KEY_TRACK, track)
+                }
+                startActivity(displayIntent)
             }
-            startActivity(displayIntent)
-
         }
 
         //условие для отображения Истории поиска
@@ -102,85 +119,44 @@ class SearchActivity : AppCompatActivity() {
                 updateHistoryUI()
             } else {
                 hideHistoryUI()
-
             }
         }
 
         // логика по работе с введённым значением
         searchInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?,start: Int, count: Int, after: Int ) {
-                // empty
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
+            }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (searchInput.hasFocus() && s?.isEmpty() == true){
+                if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
-                    storyView.visibility =  View.VISIBLE
+                    updateHistoryUI()
+                    storyView.visibility = View.VISIBLE
                     textSearch.visibility = View.VISIBLE
-                    clearHistoryButton.visibility =  View.VISIBLE
+                    clearHistoryButton.visibility = View.VISIBLE
                     adapter.notifyDataSetChanged()
                     tracks.clear()
-                    updateHistoryUI()
-                } else{
+
+
+                } else {
+                    searchDebounce()
                     hideHistoryUI()
                     placeholderMessage.visibility = View.GONE
                     placeholderButton.visibility = View.GONE
                     placeholderIcon.visibility = View.GONE
+
                 }
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
         })
 
 
-        // Установка слушателя для выполнения поиска при нажатии на клавиатуре "Done"
-        searchInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                // Выполнение поискового запроса
-                iTunesService.search(searchInput.text.toString())
-                    .enqueue(object : Callback<TrackResponse> {
-                        override fun onResponse(
-                            call: Call<TrackResponse>,
-                            response: Response<TrackResponse>
-                        ) {
-                            if (response.isSuccessful) {
-                                val results = response.body()?.results ?: emptyList()
-                                tracks.clear()
-                                if (results.isNotEmpty()) {
-                                    tracks.addAll(results)
-                                    showMessage("", "")
-                                } else {
-                                    showMessage(getString(R.string.nothing_found), "")
-                                }
-                                adapter.notifyDataSetChanged()
-
-                            } else {
-                                showMessage(
-                                    getString(R.string.something_went_wrong),
-                                    response.code().toString()
-                                )
-                            }
-                        }
-
-                        override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                            showMessage(
-                                getString(R.string.something_went_wrong),
-                                t.message.toString()
-                            )
-                        }
-                    }
-                    )
-                true
-            }
-            false
-        }
-
         //Принудительное прожатие "DONE" поля ввода
         placeholderButton.setOnClickListener {
-            searchInput.onEditorAction(EditorInfo.IME_ACTION_DONE)
+            searchRequest()
         }
 
 
@@ -207,12 +183,12 @@ class SearchActivity : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
+
         // Установка слушателя для кнопки очистки истории
         clearHistoryButton.setOnClickListener {
             searchHistory.clearHistory()
             updateHistoryUI()
         }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -227,9 +203,74 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    // Выполнение поискового запроса
+    private fun searchRequest() {
+        progressBar.visibility = View.VISIBLE
+        placeholderMessage.visibility = View.GONE
+        placeholderButton.visibility = View.GONE
+        placeholderIcon.visibility = View.GONE
+        recyclerView.visibility = View.GONE
+        iTunesService.search(searchInput.text.toString()).enqueue(object : Callback<TrackResponse> {
+            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+
+                if (response.isSuccessful) {
+                    val results = response.body()?.results ?: emptyList()
+                    tracks.clear()
+                    if (results.isNotEmpty()) {
+                        progressBar.visibility = View.GONE
+                        tracks.addAll(results)
+                        showMessage("", "")
+                    } else {
+                        progressBar.visibility = View.GONE
+                        showMessage(getString(R.string.nothing_found), "")
+                    }
+                    adapter.notifyDataSetChanged()
+                    progressBar.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+
+                } else {
+                    progressBar.visibility = View.GONE
+                    showMessage(
+                        getString(R.string.something_went_wrong),
+                        response.code().toString()
+                    )
+                }
+            }
+            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
+                showMessage(
+                    getString(R.string.something_went_wrong),
+                    t.message.toString()
+                )
+            }
+
+        }
+
+        )
+    }
+
+    //Автоматический поиск каждые 2000L
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+
+    }
+
+
+    //Разрешение пользователю нажимать на элементы списка не чаще одного раза в секунду
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
@@ -260,8 +301,7 @@ class SearchActivity : AppCompatActivity() {
                 placeholderIcon.visibility = View.VISIBLE
                 placeholderButton.visibility = View.VISIBLE
                 hideHistoryUI()
-            }
-            else{//Отсутствие треков
+            } else {//Отсутствие треков
                 placeholderIcon.setImageResource(R.drawable.none_search)
                 placeholderIcon.visibility = View.VISIBLE
                 hideHistoryUI()
@@ -272,6 +312,7 @@ class SearchActivity : AppCompatActivity() {
             placeholderIcon.visibility = View.GONE
         }
     }
+
     private fun updateHistoryUI() {
         val trackList = searchHistory.getTrackList()
         val hasHistory = trackList.isNotEmpty()
@@ -284,7 +325,8 @@ class SearchActivity : AppCompatActivity() {
                 updateTracks(trackList)
             }
         }
-        }
+    }
+
     private fun hideHistoryUI() {
         storyView.visibility = View.GONE
         textSearch.visibility = View.GONE
