@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.songs
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -28,7 +30,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var artistName: TextView
     private lateinit var albumCover: ImageView
     private lateinit var playButton: ImageView
-    private lateinit var songTime:TextView
+    private lateinit var songTime: TextView
 
 
 
@@ -154,7 +156,8 @@ class PlayerActivity : AppCompatActivity() {
         artistName.text = model.artistName
         if (model.collectionName.isNullOrEmpty()) {
             albumInfo.visibility = View.GONE
-            findViewById<TextView>(R.id.album_info).visibility = View.GONE // Скрываем метку "Альбом:"
+            findViewById<TextView>(R.id.album_info).visibility =
+                View.GONE // Скрываем метку "Альбом:"
         }else {
             albumInfo.text = model.collectionName
             albumInfo.visibility = View.VISIBLE
@@ -178,11 +181,12 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PAUSED = 3
         private const val UPDATE_TIME = 250
     }
-}
-private fun dpToPx(dp: Float, context: Context): Int {
-    return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp,
-        context.resources.displayMetrics
-    ).toInt()
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
+    }
+
 }
