@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.KEY_TRACK
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -65,7 +64,7 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val track = IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)?.let {
+        val track = IntentCompat.getSerializableExtra(intent, "KEY_TRACK1", Track::class.java)?.let {
             it
         }
 

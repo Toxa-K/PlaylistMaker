@@ -13,7 +13,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import com.example.playlistmaker.ui.KEY_TRACK
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -29,17 +28,17 @@ import com.example.playlistmaker.ui.player.PlayerActivity
 
 
 
-private const val SEARCH_DEBOUNCE_DELAY = 1000L
-private const val CLICK_DEBOUNCE_DELAY = 1000L
+private const val SEARCH_DEBOUNCE_DELAY = 2000L
+private const val CLICK_DEBOUNCE_DELAY = 2000L
 
 
 class SearchActivity : AppCompatActivity() {
+
     private var searchText: String = ""
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var searchInput: EditText
     private lateinit var adapter: TrackAdapter
-    private lateinit var searchHistory: SearchHistory
     private lateinit var storyView: RecyclerView
     private lateinit var textSearch: TextView
     private lateinit var clearHistoryButton: Button
@@ -50,8 +49,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
 
 
-    private val getTrackList = Creator.provideTrackInteractor()
-
+    private val getTrackList  = Creator.provideTrackInteractor()
+    private val getHistory by lazy{Creator.provideGetHistoryUseCase(applicationContext)}
+    private val setHistory by lazy {Creator.provideSetHistoryUseCase(applicationContext)}
+    private val clearHistory by lazy{ Creator.provideClearTrackHistoryUseCase(applicationContext)}
 
 
 
@@ -80,20 +81,13 @@ class SearchActivity : AppCompatActivity() {
 
 
 
-        val sharedPreferences = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
-
-
-
-
-        searchHistory = SearchHistory(sharedPreferences)
-
 
         // Обработка нажатия на список треков и добавление его в историю
         adapter = TrackAdapter(tracks) { track ->
             if (clickDebounce()) {
-                searchHistory.saveTrack(track)
+                setHistory.execute(track)
                 val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                    putExtra(KEY_TRACK, track)
+                    putExtra("KEY_TRACK1", track)
                 }
                 startActivity(displayIntent)
             }
@@ -102,15 +96,13 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         storyView.layoutManager = LinearLayoutManager(this)
-
-
         // Обработка нажатия на трек из истории
-        storyView.adapter = TrackAdapter(searchHistory.getTrackList()) { track ->
+        storyView.adapter = TrackAdapter(getHistory.execute()) { track ->
             if (clickDebounce()) {
-                searchHistory.saveTrack(track)
+                setHistory.execute(track)
                 updateHistoryUI()
                 val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                    putExtra(KEY_TRACK, track)
+                    putExtra("KEY_TRACK1", track)
                 }
                 startActivity(displayIntent)
             }
@@ -181,7 +173,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Установка слушателя для кнопки очистки истории
         clearHistoryButton.setOnClickListener {
-            searchHistory.clearHistory()
+            clearHistory.execute()
             updateHistoryUI()
         }
     }
@@ -287,7 +279,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun updateHistoryUI() {
-        val trackList = searchHistory.getTrackList()
+        val trackList = getHistory.execute()
         if(trackList.isNotEmpty()){
             (storyView.adapter as TrackAdapter).apply {updateTracks(trackList)}
             showHistoryUi()
