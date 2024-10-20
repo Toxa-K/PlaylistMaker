@@ -19,18 +19,16 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)//Переключатель темы
-        // Установка начального состояния переключателя
-        themeSwitcher.isChecked = getTheme(applicationContext)
-            .getThemeSetting()
-        themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            themeSwitcherCase.execute(checked)
-        }
+        //Переключатель темы
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)
+        themeSwitcher.isChecked = getTheme(applicationContext).getThemeSetting()
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->themeSwitcherCase.execute(checked)}
 
-
+        //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
         backButton.setOnClickListener{finish()}
 
+        //Поделиться приложением
         val shareButton = findViewById<TextView>(R.id.share_btn)
         shareButton.setOnClickListener {
             val shareIntent = Intent().apply {
@@ -42,6 +40,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         }
 
+        //Написать разработчикам
         val supportButton = findViewById<TextView>(R.id.support_btn)
         supportButton.setOnClickListener {
             val emailIntent  = Intent().apply {
@@ -54,6 +53,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
+        //Пользовательское соглашение
         val agreeButton = findViewById<TextView>(R.id.agree_btn)
         agreeButton.setOnClickListener {
             val agreeIntent = Intent().apply {

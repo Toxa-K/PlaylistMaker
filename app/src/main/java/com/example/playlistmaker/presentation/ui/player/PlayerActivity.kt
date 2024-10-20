@@ -1,6 +1,6 @@
 package com.example.playlistmaker.presentation.ui.player
 
-import android.content.Context
+
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +39,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         mainThreadHandler = Handler(Looper.getMainLooper())
+
         // Инициализация UI элементов
         trackTime = findViewById(R.id.song_duration1)
         albumInfo = findViewById(R.id.album_info1)
@@ -52,8 +53,10 @@ class PlayerActivity : AppCompatActivity() {
         playButton = findViewById(R.id.play_button)
         songTime = findViewById(R.id.song_time)
 
+        //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {finish()}
+
 
         playerViewHolder = PlayerViewHolder(
             songTitle,
@@ -73,17 +76,19 @@ class PlayerActivity : AppCompatActivity() {
             "KEY_TRACK1",
             Track::class.java
         )
-
+        //Загрузка данных в View
         track?.let {
             playerViewHolder.bind(it)
             preparePlayer(it.previewUrl)
         }
 
-
+        //Кнопка контроля проигрывания
         playButton.setOnClickListener {
             playbackControl()
         }
     }
+
+
 
     private fun  updateTimeRunnable() = object : Runnable {
         override fun run() {
@@ -104,7 +109,7 @@ class PlayerActivity : AppCompatActivity() {
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
         mediaPlayer.release()
     }
-
+    //Логика работы кнопки контроля
     private fun preparePlayer(url:String?) {
         if (!url.isNullOrEmpty()) {
             mediaPlayer.setDataSource(url)
