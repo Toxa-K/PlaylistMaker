@@ -16,6 +16,4 @@ data class Track(
         val country: String? //Страна исполнителя
 ): Serializable {
         fun getCoverArtwork() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
-
-
 }

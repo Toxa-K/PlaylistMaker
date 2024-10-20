@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.mediateca
+package com.example.playlistmaker.presentation.ui.mediateca
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

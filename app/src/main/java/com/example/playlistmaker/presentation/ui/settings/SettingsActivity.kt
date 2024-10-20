@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.settings
+package com.example.playlistmaker.presentation.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -6,35 +6,30 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.playlistmaker.App
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SHARE_PREFERENCES
-import com.example.playlistmaker.THEME_SWITHER
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.creator.Creator.getTheme
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private val themeSwitcherCase by lazy { Creator.provideSwitchThemeUseCase(applicationContext) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val sharedPrefs = getSharedPreferences(SHARE_PREFERENCES, MODE_PRIVATE)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)//Переключатель темы
-
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            // Сохранение состояния переключателя в SharedPreferences
-            sharedPrefs.edit()
-                .putBoolean(THEME_SWITHER, checked)
-                .apply()
-
-        }
         // Установка начального состояния переключателя
-        themeSwitcher.isChecked = sharedPrefs.getBoolean(THEME_SWITHER, false)
+        themeSwitcher.isChecked = getTheme(applicationContext)
+            .getThemeSetting()
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            themeSwitcherCase.execute(checked)
+        }
+
 
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
-        backButton.setOnClickListener{
-            finish()
-        }
+        backButton.setOnClickListener{finish()}
 
         val shareButton = findViewById<TextView>(R.id.share_btn)
         shareButton.setOnClickListener {
@@ -47,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         }
 
-        val supportButton =findViewById<TextView>(R.id.support_btn)
+        val supportButton = findViewById<TextView>(R.id.support_btn)
         supportButton.setOnClickListener {
             val emailIntent  = Intent().apply {
                 action = Intent.ACTION_SENDTO
