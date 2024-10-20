@@ -1,19 +1,17 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.player
 
-import android.content.Context
+
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -28,24 +26,24 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var artistName: TextView
     private lateinit var albumCover: ImageView
     private lateinit var playButton: ImageView
-    private lateinit var songTime:TextView
-
-
+    private lateinit var songTime: TextView
+    private lateinit var playerViewHolder: PlayerViewHolder
+    private lateinit var albumInfoLabel: TextView
 
     private var mediaPlayer = MediaPlayer()
-    private var url: String? = ""
     private var playerState = STATE_DEFAULT
     private var mainThreadHandler: Handler? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
         mainThreadHandler = Handler(Looper.getMainLooper())
 
         // Инициализация UI элементов
         trackTime = findViewById(R.id.song_duration1)
         albumInfo = findViewById(R.id.album_info1)
+        albumInfoLabel = findViewById(R.id.album_info)
         yearInfo = findViewById(R.id.year_info1)
         genreInfo = findViewById(R.id.genre_info1)
         countryInfo = findViewById(R.id.country_info1)
@@ -54,29 +52,43 @@ class PlayerActivity : AppCompatActivity() {
         albumCover = findViewById(R.id.album_cover)
         playButton = findViewById(R.id.play_button)
         songTime = findViewById(R.id.song_time)
+
+        //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.back_button)
+        backButton.setOnClickListener {finish()}
 
 
+        playerViewHolder = PlayerViewHolder(
+            songTitle,
+            artistName,
+            albumInfo,
+            yearInfo,
+            genreInfo,
+            countryInfo,
+            trackTime,
+            albumCover,
+            albumInfoLabel
+        )
 
-        backButton.setOnClickListener {
-            finish()
-        }
-
-        val track = IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)?.let {
-            it as Track
-        }
-
+        //Получение трека из intent
+        val track = IntentCompat.getSerializableExtra(
+            intent,
+            "KEY_TRACK1",
+            Track::class.java
+        )
+        //Загрузка данных в View
         track?.let {
-            bind(it)
-            preparePlayer()
+            playerViewHolder.bind(it)
+            preparePlayer(it.previewUrl)
         }
 
-
+        //Кнопка контроля проигрывания
         playButton.setOnClickListener {
             playbackControl()
         }
-
     }
+
+
 
     private fun  updateTimeRunnable() = object : Runnable {
         override fun run() {
@@ -97,11 +109,9 @@ class PlayerActivity : AppCompatActivity() {
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
         mediaPlayer.release()
     }
-
-
-
-    private fun preparePlayer() {
-        if (url != null) {
+    //Логика работы кнопки контроля
+    private fun preparePlayer(url:String?) {
+        if (!url.isNullOrEmpty()) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
@@ -148,29 +158,7 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun bind(model: Track) {
-        url = model.previewUrl
-        songTitle.text = model.trackName
-        artistName.text = model.artistName
-        if (model.collectionName.isNullOrEmpty()) {
-            albumInfo.visibility = View.GONE
-            findViewById<TextView>(R.id.album_info).visibility = View.GONE // Скрываем метку "Альбом:"
-        }else {
-            albumInfo.text = model.collectionName
-            albumInfo.visibility = View.VISIBLE
-            findViewById<TextView>(R.id.album_info).visibility = View.VISIBLE
-        }
-        yearInfo.text = model.releaseDate?.substring(0, 4)
-        countryInfo.text = model.country
-        genreInfo.text = model.primaryGenreName
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTimeMillis.toLong())
-        // Загрузка изображения с использованием Glide
-        Glide.with(albumCover.context)
-            .load(model.getCoverArtwork())
-            .placeholder(R.drawable.placeholder2)
-            .transform(RoundedCorners(dpToPx(8f, albumCover.context))) // Скругленные углы
-            .into(albumCover)
-    }
+
     companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
@@ -178,11 +166,4 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PAUSED = 3
         private const val UPDATE_TIME = 250
     }
-}
-private fun dpToPx(dp: Float, context: Context): Int {
-    return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp,
-        context.resources.displayMetrics
-    ).toInt()
 }
