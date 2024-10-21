@@ -4,6 +4,7 @@ package com.example.playlistmaker.creator
 import android.content.Context
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.repository.HistoryRepositoryImpl
+import com.example.playlistmaker.data.repository.PlayerRepository
 import com.example.playlistmaker.data.repository.ThemeRepositoryImpl
 import com.example.playlistmaker.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.domain.api.TrackInteractor
@@ -68,10 +69,12 @@ object Creator {
     fun getThemeManager(): ThemeManager {
         return ThemeManager()
     }
-    fun getPlayerControl()=PlayerControlUseCase(PlayerControlRepositoryImpl())
-
-
-
+    private fun getPlayerRepository(url:String): PlayerRepository {
+        return PlayerRepository(url)
+    }
+    fun providePlayerUseCase(url:String): PlayerControlUseCase {
+        return PlayerControlUseCase(getPlayerRepository(url))
+    }
 }
 
 

@@ -9,8 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.domain.use_case.PlayerControl
+import com.example.playlistmaker.domain.use_case.PlayerControlUseCase
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -27,7 +28,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var songTime: TextView
     private lateinit var playerViewHolder: PlayerViewHolder
     private lateinit var albumInfoLabel: TextView
-    private lateinit var playerControl : PlayerControl
+    private lateinit var playerControl : PlayerControlUseCase
 
     private var mainThreadHandler: Handler? = null
 
@@ -51,7 +52,9 @@ class PlayerActivity : AppCompatActivity() {
 
         //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.back_button)
-        backButton.setOnClickListener {finish()}
+        backButton.setOnClickListener {
+
+            finish()}
 
         playerViewHolder = PlayerViewHolder(
             songTitle,artistName,albumInfo,yearInfo,
@@ -65,7 +68,7 @@ class PlayerActivity : AppCompatActivity() {
         //Загрузка данных в View
         track?.let {playerViewHolder.bind(it)}
 
-        playerControl = PlayerControl(track?.previewUrl)
+        playerControl = Creator.providePlayerUseCase(track?.previewUrl.toString())
 
         if (playerControl.prepare()){
             playButton.isEnabled = true
@@ -74,7 +77,7 @@ class PlayerActivity : AppCompatActivity() {
             Toast.makeText(this@PlayerActivity, "Трек не доступен", Toast.LENGTH_SHORT).show()
         }
 
-        //Кнопка контроля проигрывания
+        //Изменение UI контроля проигрывания
         playButton.setOnClickListener {
             if (playerControl.playbackControl()){
                 playButton.setImageResource(R.drawable.ic_pause)
@@ -86,30 +89,33 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+
     private fun  updateTimeRunnable() = object : Runnable {
         override fun run() {
-            if(playerControl.palyerState()){
+            if(!playerControl.playerState()){
                 val currentPosition =playerControl.getPosition()
                 songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
                 mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
             }else{
                 songTime.text = "00:00"  // Сброс времени после окончания
                 playButton.setImageResource(R.drawable.ic_play)
-            }
+           }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        playerControl.pause()
         playButton.setImageResource(R.drawable.ic_play)
+        playerControl.pause()
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
         playerControl.release()
+        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
+
     }
 
     companion object {

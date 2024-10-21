@@ -7,8 +7,6 @@ class SetHistoryUseCase(private val historyRepository: HistoryRepository) {
 
     fun execute(track: Track) {
         var trackList = historyRepository.getTrackHistory().toMutableList()
-//      val trackList = getHistoryUseCase.execute().toMutableList()
-        /*val trackList = trackRepository.getTrackHistory().toMutableList()*/
 
         // Проверка на наличие трека в списке
         val existingTrackIndex = trackList.indexOfFirst { it.trackId == track.trackId }

@@ -1,71 +1,27 @@
 package com.example.playlistmaker.domain.use_case
 
-import android.media.MediaPlayer
 
-class PlayerControl (private var url: String?){
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
+import com.example.playlistmaker.domain.api.PlayerControlInteractor
 
-    //Логика работы кнопки контроля
+class PlayerControlUseCase (private var playerControl: PlayerControlInteractor){
+
     fun prepare() :Boolean{
-        if (!url.isNullOrEmpty()) {
-            mediaPlayer.setDataSource(url)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playerState = STATE_PREPARED
-            }
-            mediaPlayer.setOnCompletionListener {
-                playerState = STATE_PREPARED
-            }
-            return true
-        }
-        else {// Обработка ошибки: URL не задан
-            return false
-        }
+        return playerControl.prepare()
     }
-    //Прожатие паузы
     fun pause() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        return playerControl.pause()
     }
-
-    //Прожатие старта
-    fun start() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-    }
-    //рестарт трека
     fun release(){
-        mediaPlayer.release()
+        return playerControl.release()
     }
     fun playbackControl(): Boolean {
-        return when(playerState) {
-            STATE_PLAYING -> {
-                pause()
-                false
-            }
-
-            STATE_PREPARED, STATE_PAUSED -> {
-                start()
-                true
-            }
-            else -> false
-        }
+        return playerControl.playbackControl()
     }
-    fun palyerState():Boolean{
-        if (playerState == STATE_PLAYING) {
-            return true
-        }else{
-            return false
-        }
+    fun playerState():Boolean{
+        return playerControl.playerState()
     }
     fun getPosition(): Int {
-        return mediaPlayer.getCurrentPosition()
+        return playerControl.getPosition()
     }
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-    }
+
 }
