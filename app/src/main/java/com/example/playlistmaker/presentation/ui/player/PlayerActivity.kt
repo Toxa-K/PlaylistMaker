@@ -1,7 +1,5 @@
 package com.example.playlistmaker.presentation.ui.player
 
-
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.use_case.PlayerControl
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
-
     private lateinit var trackTime: TextView
     private lateinit var albumInfo: TextView
     private lateinit var yearInfo: TextView
@@ -29,11 +27,9 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var songTime: TextView
     private lateinit var playerViewHolder: PlayerViewHolder
     private lateinit var albumInfoLabel: TextView
+    private lateinit var playerControl : PlayerControl
 
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
     private var mainThreadHandler: Handler? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,113 +53,67 @@ class PlayerActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {finish()}
 
-
         playerViewHolder = PlayerViewHolder(
-            songTitle,
-            artistName,
-            albumInfo,
-            yearInfo,
-            genreInfo,
-            countryInfo,
-            trackTime,
-            albumCover,
+            songTitle,artistName,albumInfo,yearInfo,
+            genreInfo,countryInfo,trackTime,albumCover,
             albumInfoLabel
         )
 
-        //Получение трека из intent
-        val track = IntentCompat.getSerializableExtra(
-            intent,
-            "KEY_TRACK1",
-            Track::class.java
-        )
+        //Получение трека
+        val track = IntentCompat.getSerializableExtra(intent,KEY_TRACK,Track::class.java)
+
         //Загрузка данных в View
-        track?.let {
-            playerViewHolder.bind(it)
-            preparePlayer(it.previewUrl)
+        track?.let {playerViewHolder.bind(it)}
+
+        playerControl = PlayerControl(track?.previewUrl)
+
+        if (playerControl.prepare()){
+            playButton.isEnabled = true
+        }else{
+            playButton.isEnabled = false
+            Toast.makeText(this@PlayerActivity, "Трек не доступен", Toast.LENGTH_SHORT).show()
         }
 
         //Кнопка контроля проигрывания
         playButton.setOnClickListener {
-            playbackControl()
+            if (playerControl.playbackControl()){
+                playButton.setImageResource(R.drawable.ic_pause)
+                mainThreadHandler?.post(updateTimeRunnable())  // Запуск обновления времени
+            }else{
+                playButton.setImageResource(R.drawable.ic_play)
+                mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
+            }
         }
     }
 
-
-
     private fun  updateTimeRunnable() = object : Runnable {
         override fun run() {
-            if (playerState == STATE_PLAYING) {
-                val currentPosition = mediaPlayer.getCurrentPosition()
+            if(playerControl.palyerState()){
+                val currentPosition =playerControl.getPosition()
                 songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
                 mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
+            }else{
+                songTime.text = "00:00"  // Сброс времени после окончания
+                playButton.setImageResource(R.drawable.ic_play)
             }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        mediaPlayer.release()
-    }
-    //Логика работы кнопки контроля
-    private fun preparePlayer(url:String?) {
-        if (!url.isNullOrEmpty()) {
-            mediaPlayer.setDataSource(url)
-            mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                playButton.isEnabled = true
-                playerState = STATE_PREPARED
-            }
-            mediaPlayer.setOnCompletionListener {
-                playButton.setImageResource(R.drawable.ic_play)
-                playerState = STATE_PREPARED
-                songTime.text = "00:00"  // Сброс времени после окончания
-                mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-            }
-        }
-        else {
-            // Обработка ошибки: URL не задан
-            playButton.isEnabled = false
-            Toast.makeText(this@PlayerActivity, "Трек не доступен", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playButton.setImageResource(R.drawable.ic_pause)
-        playerState = STATE_PLAYING
-        mainThreadHandler?.post(updateTimeRunnable())  // Запуск обновления времени
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
+        playerControl.pause()
         playButton.setImageResource(R.drawable.ic_play)
-        playerState = STATE_PAUSED
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
     }
 
-
-    private fun playbackControl() {
-        when(playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
+        playerControl.release()
     }
 
-
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val UPDATE_TIME = 250
+        private const val KEY_TRACK = "KEY_TRACK1"
     }
 }

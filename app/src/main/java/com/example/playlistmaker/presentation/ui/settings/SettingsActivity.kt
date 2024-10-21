@@ -24,9 +24,11 @@ class SettingsActivity : AppCompatActivity() {
         themeSwitcher.isChecked = getTheme(applicationContext).getThemeSetting()
         themeSwitcher.setOnCheckedChangeListener { _, checked ->themeSwitcherCase.execute(checked)}
 
+
         //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
         backButton.setOnClickListener{finish()}
+
 
         //Поделиться приложением
         val shareButton = findViewById<TextView>(R.id.share_btn)
@@ -39,6 +41,7 @@ class SettingsActivity : AppCompatActivity() {
             }
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         }
+
 
         //Написать разработчикам
         val supportButton = findViewById<TextView>(R.id.support_btn)

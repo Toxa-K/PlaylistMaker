@@ -26,11 +26,8 @@ import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.ui.player.PlayerActivity
 
-
-
-private const val SEARCH_DEBOUNCE_DELAY = 2000L
+private const val SEARCH_DEBOUNCE_DELAY = 2500L
 private const val CLICK_DEBOUNCE_DELAY = 2000L
-
 
 class SearchActivity : AppCompatActivity() {
 
@@ -48,19 +45,14 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: LinearLayout
     private lateinit var recyclerView: RecyclerView
 
-
     private val getTrackList  = Creator.provideTrackInteractor()
     private val getHistory by lazy{Creator.provideGetHistoryUseCase(applicationContext)}
     private val setHistory by lazy {Creator.provideSetHistoryUseCase(applicationContext)}
     private val clearHistory by lazy{ Creator.provideClearTrackHistoryUseCase(applicationContext)}
 
-
-
-    /////
     private var isClickAllowed = true
     private val searchRunnable = Runnable { searchRequest() }
     private val tracks = ArrayList<Track>()
-    /////
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,14 +72,12 @@ class SearchActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)//ProgressBar
 
 
-
-
         // Обработка нажатия на список треков и добавление его в историю
         adapter = TrackAdapter(tracks) { track ->
             if (clickDebounce()) {
                 setHistory.execute(track)
                 val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                    putExtra("KEY_TRACK1", track)
+                    putExtra(KEY_TRACK, track)
                 }
                 startActivity(displayIntent)
             }
@@ -102,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
                 setHistory.execute(track)
                 updateHistoryUI()
                 val displayIntent = Intent(this@SearchActivity, PlayerActivity::class.java).apply {
-                    putExtra("KEY_TRACK1", track)
+                    putExtra(KEY_TRACK, track)
                 }
                 startActivity(displayIntent)
             }
@@ -125,16 +115,15 @@ class SearchActivity : AppCompatActivity() {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
-                    hidePlaseholderMessageUi()
                     View.VISIBLE
                     updateHistoryUI()
                     adapter.notifyDataSetChanged()
                     tracks.clear()
                 } else {
-                    searchDebounce()
                     hideHistoryUi()
-                    hidePlaseholderMessageUi()
+                    searchDebounce()
                 }
+                hidePlaseholderMessageUi()
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
@@ -142,18 +131,15 @@ class SearchActivity : AppCompatActivity() {
             }
         })
 
-
         //Принудительное прожатие "DONE" поля ввода
         placeholderButton.setOnClickListener {
             searchRequest()
         }
 
-
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
             searchInput.setText(searchText)
         }
-
 
         // Установка слушателя для кнопки очистки поля ввода
         clearButton.setOnClickListener {
@@ -165,16 +151,15 @@ class SearchActivity : AppCompatActivity() {
             updateHistoryUI()
         }
 
-
         // Установка слушателя для кнопки назад
         backButton.setOnClickListener {
             finish()
         }
-
         // Установка слушателя для кнопки очистки истории
         clearHistoryButton.setOnClickListener {
             clearHistory.execute()
             updateHistoryUI()
+            hidePlaseholderMessageUi()
         }
     }
 
@@ -197,7 +182,6 @@ class SearchActivity : AppCompatActivity() {
         hidePlaseholderMessageUi()
         getTrackList.searchTrack(searchInput.text.toString(), object : TrackInteractor.TrackConsumer {
             override fun consume(foundTrack: List<Track>) {
-                Log.d("SearchActivity", "Found tracks: ${foundTrack.size}")
                 runOnUiThread {
                     progressBar.isVisible = false
                     if (foundTrack != null && foundTrack.isNotEmpty()) {
@@ -249,6 +233,7 @@ class SearchActivity : AppCompatActivity() {
 
     private companion object {
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
+        const val KEY_TRACK ="KEY_TRACK1"
         const val HISTORY_KEY = "HISTORY_KEY"
     }
 
@@ -267,7 +252,7 @@ class SearchActivity : AppCompatActivity() {
                 placeholderIcon.isVisible = true
                 placeholderButton.isVisible = true
                 hideHistoryUi()
-                //Отсутствие треков
+            //Отсутствие треков
             } else {
                 placeholderIcon.setImageResource(R.drawable.none_search)
                 placeholderIcon.isVisible = true
@@ -307,4 +292,5 @@ class SearchActivity : AppCompatActivity() {
         textSearch.isVisible = true
         clearHistoryButton.isVisible = true
     }
+
 }

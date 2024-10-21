@@ -21,8 +21,6 @@ class SetHistoryUseCase(private val historyRepository: HistoryRepository) {
         if (trackList.size > 10) {
             trackList.removeAt(trackList.size - 1) // Ограничение истории до 10 элементов
         }
-
-
         historyRepository.saveTrackHistory(trackList)
     }
 }

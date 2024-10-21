@@ -17,4 +17,7 @@ class ThemeRepositoryImpl (context: Context) : ThemeRepository {
     override fun getThemeSetting(): Boolean {
         return sharedPreferences.getBoolean(THEME_SWITHER, false)
     }
+
+
+
 }
