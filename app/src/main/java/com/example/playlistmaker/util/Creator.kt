@@ -1,4 +1,4 @@
-package com.example.playlistmaker.creator
+package com.example.playlistmaker.util
 
 
 import android.content.Context
@@ -57,13 +57,13 @@ object Creator {
     }
 
     // Предоставляет TrackInteractor для поиска треков
-    fun provideTrackInteractor(): TrackInteractor {
-        return TrackInteractorImpl(getTrackRepository())
+    fun provideTrackInteractor(context: Context): TrackInteractor {
+        return TrackInteractorImpl(getTrackRepository(context))
     }
 
     // Возвращает репозиторий для поиска треков
-    private fun getTrackRepository(): TrackRepository {
-        return TrackRepositoryImpl(networkClient = RetrofitNetworkClient())
+    private fun getTrackRepository(context: Context): TrackRepository {
+        return TrackRepositoryImpl(networkClient = RetrofitNetworkClient(context))
     }
 
     fun getThemeManager(): ThemeManager {

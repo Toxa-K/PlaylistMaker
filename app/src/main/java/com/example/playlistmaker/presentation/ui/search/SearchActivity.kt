@@ -20,7 +20,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.ui.player.PlayerActivity
@@ -44,7 +44,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: LinearLayout
     private lateinit var recyclerView: RecyclerView
 
-    private val getTrackList  = Creator.provideTrackInteractor()
+    private val getTrackList  = Creator.provideTrackInteractor(this)
     private val getHistory by lazy{Creator.provideGetHistoryUseCase(applicationContext)}
     private val setHistory by lazy {Creator.provideSetHistoryUseCase(applicationContext)}
     private val clearHistory by lazy{ Creator.provideClearTrackHistoryUseCase(applicationContext)}
@@ -180,17 +180,21 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.isVisible = false
         hidePlaceholderMessageUi()
         getTrackList.searchTrack(searchInput.text.toString(), object : TrackInteractor.TrackConsumer {
-            override fun consume(foundTrack: List<Track>) {
+            override fun consume(foundTrack: List<Track>?,errorMessage:String?) {
                 runOnUiThread {
-                    progressBar.isVisible = false
-                    if (foundTrack != null && foundTrack.isNotEmpty()) {
-                        tracks.clear()
-                        tracks.addAll(foundTrack)
-                        recyclerView.isVisible = true
-                        adapter.notifyDataSetChanged()
-                        showMessage("", "")
-                    } else {
-                        showMessage(getString(R.string.nothing_found), "")
+                    handler.post {
+                        progressBar.isVisible = false
+                        if (foundTrack != null && foundTrack.isNotEmpty()) {
+                            tracks.clear()
+                            tracks.addAll(foundTrack)
+                            recyclerView.isVisible = true
+                            adapter.notifyDataSetChanged()
+                            showMessage("", "")
+                        } else if (errorMessage != null) {
+                                showMessage(errorMessage, getString(R.string.something_went_wrong))
+                        } else {
+                                showMessage(getString(R.string.nothing_found), "")
+                            }
                     }
                 }
             }

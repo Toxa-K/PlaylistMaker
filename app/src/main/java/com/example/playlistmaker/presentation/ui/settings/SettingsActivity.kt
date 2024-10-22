@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.creator.Creator.getTheme
+import com.example.playlistmaker.util.Creator
+import com.example.playlistmaker.util.Creator.getTheme
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
