@@ -16,7 +16,6 @@ import com.example.playlistmaker.domain.use_case.ClearTrackHistoryUseCase
 import com.example.playlistmaker.domain.use_case.GetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
-import com.example.playlistmaker.data.repository.ThemeManager
 import com.example.playlistmaker.domain.use_case.PlayerUseCase
 
 object Creator {
@@ -66,14 +65,12 @@ object Creator {
         return TrackRepositoryImpl(networkClient = RetrofitNetworkClient(context))
     }
 
-    fun getThemeManager(): ThemeManager {
-        return ThemeManager()
-    }
+
     private fun getPlayerRepository(url:String): PlayerRepositoryImpl {
         return PlayerRepositoryImpl(url)
     }
     fun providePlayerUseCase(url:String): PlayerUseCase {
-        return PlayerUseCase(getPlayerRepository(url))
+        return PlayerUseCase(playerControl = getPlayerRepository(url))
     }
 }
 
