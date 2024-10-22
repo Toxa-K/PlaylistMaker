@@ -43,7 +43,7 @@ object Creator {
 
     // Предоставляет use case для переключения темы приложения
     fun provideSwitchThemeUseCase(context: Context):SwitchThemeUseCase{
-        return SwitchThemeUseCase(saveTheveSettings(context), themeManager = ThemeManager())
+        return SwitchThemeUseCase(saveTheveSettings(context))
     }
 
     // Возвращает экземпляр репозитория для сохранения настроек темы
