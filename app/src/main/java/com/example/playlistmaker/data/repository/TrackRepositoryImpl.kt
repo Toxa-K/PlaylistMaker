@@ -1,5 +1,7 @@
 package com.example.playlistmaker.data.repository
 
+
+import com.example.playlistmaker.R
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.dto.TrackRequest
 import com.example.playlistmaker.data.dto.TrackResponse
@@ -12,7 +14,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
         val response = networkClient.doRequest(TrackRequest(expression))
         return when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                Resource.Error(R.string.check_internet_connection.toString())
             }
             200 -> {Resource.Success((response as TrackResponse).results.map {
                     Track(
@@ -28,7 +30,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
                         it.country)})
             }
 
-            else -> {Resource.Error("Ошибка сервера")}
+            else -> {Resource.Error(R.string.network_error.toString())}
         }
     }
 }

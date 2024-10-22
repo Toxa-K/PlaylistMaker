@@ -9,13 +9,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import com.example.playlistmaker.R
-import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.domain.use_case.PlayerControlUseCase
+import com.example.playlistmaker.presentation.presenter.player.PlayerPresenter
+import com.example.playlistmaker.presentation.presenter.player.PlayerView
+import com.example.playlistmaker.util.Creator
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), PlayerView {
+
     private lateinit var trackTime: TextView
     private lateinit var albumInfo: TextView
     private lateinit var yearInfo: TextView
@@ -28,7 +30,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var songTime: TextView
     private lateinit var playerViewHolder: PlayerViewHolder
     private lateinit var albumInfoLabel: TextView
-    private lateinit var playerControl : PlayerControlUseCase
+    private lateinit var playerPresenter: PlayerPresenter
 
     private var mainThreadHandler: Handler? = null
 
@@ -37,7 +39,6 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_player)
         mainThreadHandler = Handler(Looper.getMainLooper())
 
-        // Инициализация UI элементов
         trackTime = findViewById(R.id.song_duration1)
         albumInfo = findViewById(R.id.album_info1)
         albumInfoLabel = findViewById(R.id.album_info)
@@ -49,79 +50,80 @@ class PlayerActivity : AppCompatActivity() {
         albumCover = findViewById(R.id.album_cover)
         playButton = findViewById(R.id.play_button)
         songTime = findViewById(R.id.song_time)
-
-        //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {
             finish()
         }
-
+        //создание холдера для заполнения данных о треке
         playerViewHolder = PlayerViewHolder(
             songTitle,artistName,albumInfo,yearInfo,
             genreInfo,countryInfo,trackTime,albumCover,
             albumInfoLabel
         )
-
-        //Получение трека
-        val track = IntentCompat.getSerializableExtra(intent,KEY_TRACK,Track::class.java)
-
-        //Загрузка данных в View
-        track?.let {playerViewHolder.bind(it)}
-
-        playerControl = Creator.providePlayerUseCase(track?.previewUrl.toString())
-
-        if (playerControl.prepare()){
-            playButton.isEnabled = true
-        }else{
-            playButton.isEnabled = false
-            Toast.makeText(this@PlayerActivity, "Трек не доступен", Toast.LENGTH_SHORT).show()
-        }
-
-        //Изменение UI контроля проигрывания
-        playButton.setOnClickListener {
-            if (playerControl.playbackControl()){
-                playButton.setImageResource(R.drawable.ic_pause)
-                mainThreadHandler?.post(updateTimeRunnable())  // Запуск обновления времени
-            }else{
-                playButton.setImageResource(R.drawable.ic_play)
-                mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
-            }
-        }
-    }
+        //получение трека из прошлого окна
+        val track = IntentCompat.getSerializableExtra(intent, KEY_TRACK,Track::class.java)
 
 
-    private fun  updateTimeRunnable() = object : Runnable {
+        //создание плеера
+        val playerControl = Creator.providePlayerUseCase(url = track?.previewUrl.toString())
 
-        override fun run() {
-            if (!isFinishing) {
-                if(!playerControl.playerState()){
-                    val currentPosition =playerControl.getPosition()
-                    songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                    mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
-                }else{
-                    songTime.text = "00:00"  // Сброс времени после окончания
-                    playButton.setImageResource(R.drawable.ic_play)
-                }
-            }
+        playerPresenter = PlayerPresenter(playerUseCase = playerControl, view = this)
+
+
+        track?.let {playerPresenter.onTrackLoaded(it)}
+
+        //Определение работоспособности кнопки play
+        playerPresenter.preparePlayer()
+
+        playButton.setOnClickListener{
+            playerPresenter.onPlayButtonClicked()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        playButton.setImageResource(R.drawable.ic_play)
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
-        playerControl.pause()
+        playerPresenter.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        playerControl.release()
-
+        playerPresenter.onDestroy()
     }
 
+    override fun showTrackData(track: Track) {
+        playerViewHolder.bind(track)
+    }
+
+    // Реализация методов PlayerView
+    override fun updatePlayButton(isPlay :Boolean) {
+        if(isPlay){
+            playButton.setImageResource(R.drawable.ic_pause)
+        }else{
+            playButton.setImageResource(R.drawable.ic_play)
+        }
+    }
+
+    override fun enablePlayButton(enable:Boolean) {
+        playButton.isEnabled = enable
+    }
+
+
+    override fun showTrackUnavailableMessage() {
+        Toast.makeText(this, R.string.track_unavailable, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun updateSongTime(timeInMillis: Int) {
+        songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
+    }
+
+    override fun resetSongTime() {
+        songTime.text = "00:00"
+    }
+
+    override fun Finishing(): Boolean {
+        return isFinishing
+    }
     companion object {
-        private const val UPDATE_TIME = 250
         private const val KEY_TRACK = "KEY_TRACK1"
     }
 }

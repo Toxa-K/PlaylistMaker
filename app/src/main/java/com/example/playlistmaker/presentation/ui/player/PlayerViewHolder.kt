@@ -1,6 +1,7 @@
 package com.example.playlistmaker.presentation.ui.player
 
 import android.content.Context
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -24,6 +25,7 @@ class PlayerViewHolder(
     private val albumInfoLabel: TextView // Метка "Альбом:"
     )
 {
+
     private var url: String? = ""
 
     fun bind(track:Track)  {

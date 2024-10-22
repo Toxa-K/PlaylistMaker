@@ -7,14 +7,13 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
-private const val KEY_TRACK = "KEY_TRACK1"
 class HistoryRepositoryImpl(context: Context) : HistoryRepository {
 
-    private val trackListKey = "track_list1"
+
     private val sharedPreferences = context.getSharedPreferences(KEY_TRACK, Context.MODE_PRIVATE)
 
     override fun getTrackHistory(): List<Track> {
-        val jsonTrackList = sharedPreferences.getString(trackListKey, null)
+        val jsonTrackList = sharedPreferences.getString(TRACK_LIST_KEY, null)
 
         return if (jsonTrackList != null) {
             try {
@@ -30,10 +29,14 @@ class HistoryRepositoryImpl(context: Context) : HistoryRepository {
 
     override fun saveTrackHistory(trackList: List<Track>) {
         val jsonTrackList = Gson().toJson(trackList)
-        sharedPreferences.edit().putString(trackListKey, jsonTrackList).apply()
+        sharedPreferences.edit().putString(TRACK_LIST_KEY, jsonTrackList).apply()
     }
 
     override fun clearTrackHistory() {
-        sharedPreferences.edit().remove(trackListKey).apply()
+        sharedPreferences.edit().remove(TRACK_LIST_KEY).apply()
+    }
+    companion object{
+        private const val KEY_TRACK = "KEY_TRACK1"
+        private const val TRACK_LIST_KEY = "track_list1"
     }
 }

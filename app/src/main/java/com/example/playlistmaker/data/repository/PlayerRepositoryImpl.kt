@@ -1,9 +1,10 @@
 package com.example.playlistmaker.data.repository
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.api.PlayerControlInteractor
 
-class PlayerRepository(private var url:String):PlayerControlInteractor {
+import com.example.playlistmaker.domain.repository.PlayerRepository
+
+class PlayerRepositoryImpl(private var url:String):PlayerRepository {
     private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     override fun prepare(): Boolean {
@@ -22,7 +23,6 @@ class PlayerRepository(private var url:String):PlayerControlInteractor {
             return false
         }
     }
-
 
     private fun play() {
         mediaPlayer.start()

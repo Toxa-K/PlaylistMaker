@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.api
 
-interface PlayerControlInteractor {
+interface PlayerInteractor {
     fun prepare() :Boolean
     fun pause()
     fun release()
