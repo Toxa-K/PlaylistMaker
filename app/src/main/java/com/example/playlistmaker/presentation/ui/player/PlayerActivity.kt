@@ -53,8 +53,8 @@ class PlayerActivity : AppCompatActivity() {
         //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {
-
-            finish()}
+            finish()
+        }
 
         playerViewHolder = PlayerViewHolder(
             songTitle,artistName,albumInfo,yearInfo,
@@ -91,30 +91,32 @@ class PlayerActivity : AppCompatActivity() {
 
 
     private fun  updateTimeRunnable() = object : Runnable {
+
         override fun run() {
-            if(!playerControl.playerState()){
-                val currentPosition =playerControl.getPosition()
-                songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
-                mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
-            }else{
-                songTime.text = "00:00"  // Сброс времени после окончания
-                playButton.setImageResource(R.drawable.ic_play)
-           }
+            if (!isFinishing) {
+                if(!playerControl.playerState()){
+                    val currentPosition =playerControl.getPosition()
+                    songTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
+                    mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
+                }else{
+                    songTime.text = "00:00"  // Сброс времени после окончания
+                    playButton.setImageResource(R.drawable.ic_play)
+                }
+            }
         }
     }
 
     override fun onPause() {
         super.onPause()
         playButton.setImageResource(R.drawable.ic_play)
-        playerControl.pause()
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())  // Остановка обновления времени
-
+        playerControl.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerControl.release()
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
+        playerControl.release()
 
     }
 

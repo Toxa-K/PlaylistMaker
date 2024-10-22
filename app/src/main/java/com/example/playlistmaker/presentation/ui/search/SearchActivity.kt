@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -26,7 +25,7 @@ import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.ui.player.PlayerActivity
 
-private const val SEARCH_DEBOUNCE_DELAY = 2500L
+private const val SEARCH_DEBOUNCE_DELAY = 2000L
 private const val CLICK_DEBOUNCE_DELAY = 2000L
 
 class SearchActivity : AppCompatActivity() {
@@ -103,7 +102,7 @@ class SearchActivity : AppCompatActivity() {
         searchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchInput.text.isEmpty()) {
                 updateHistoryUI()
-                hidePlaseholderMessageUi()
+                hidePlaceholderMessageUi()
             } else {
                 hideHistoryUi()
             }
@@ -119,11 +118,11 @@ class SearchActivity : AppCompatActivity() {
                     updateHistoryUI()
                     adapter.notifyDataSetChanged()
                     tracks.clear()
+                    hidePlaceholderMessageUi()
                 } else {
                     hideHistoryUi()
                     searchDebounce()
                 }
-                hidePlaseholderMessageUi()
                 clearButton.visibility = clearButtonVisibility(s)
                 searchText = s.toString()
             }
@@ -147,8 +146,8 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard(searchInput)
             tracks.clear() // Очистка списка треков
             adapter.notifyDataSetChanged() // Уведомление адаптера об изменении данных
-            hidePlaseholderMessageUi()
             updateHistoryUI()
+            hidePlaceholderMessageUi()
         }
 
         // Установка слушателя для кнопки назад
@@ -159,7 +158,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton.setOnClickListener {
             clearHistory.execute()
             updateHistoryUI()
-            hidePlaseholderMessageUi()
+            hidePlaceholderMessageUi()
         }
     }
 
@@ -179,7 +178,7 @@ class SearchActivity : AppCompatActivity() {
     private fun searchRequest() {
         progressBar.isVisible = true
         recyclerView.isVisible = false
-        hidePlaseholderMessageUi()
+        hidePlaceholderMessageUi()
         getTrackList.searchTrack(searchInput.text.toString(), object : TrackInteractor.TrackConsumer {
             override fun consume(foundTrack: List<Track>) {
                 runOnUiThread {
@@ -219,7 +218,7 @@ class SearchActivity : AppCompatActivity() {
     private fun hideKeyboard(view: View) {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     // Определение видимости кнопки очистки
@@ -231,14 +230,14 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private companion object {
-        const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
-        const val KEY_TRACK ="KEY_TRACK1"
-        const val HISTORY_KEY = "HISTORY_KEY"
-    }
+
 
     // Отображение сообщения пользователю ошибки
     private fun showMessage(text: String, additionalMessage: String) {
+        if (searchInput.text.isEmpty()) {
+            hidePlaceholderMessageUi()
+            return
+        }
         if (text.isNotEmpty()) {
             placeholderMessage.isVisible = true
             tracks.clear()
@@ -253,13 +252,11 @@ class SearchActivity : AppCompatActivity() {
                 placeholderButton.isVisible = true
                 hideHistoryUi()
             //Отсутствие треков
-            } else {
-                placeholderIcon.setImageResource(R.drawable.none_search)
-                placeholderIcon.isVisible = true
-                hideHistoryUi()
+            } else{
+                    placeholderIcon.setImageResource(R.drawable.none_search)
+                    placeholderIcon.isVisible = true
+                    hideHistoryUi()
             }
-        } else {
-            hidePlaseholderMessageUi()
         }
     }
 
@@ -274,7 +271,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     //скрытие всех сообщений об ошибке
-    private fun hidePlaseholderMessageUi(){
+    private fun hidePlaceholderMessageUi(){
         placeholderMessage.isVisible = false
         placeholderButton.isVisible = false
         placeholderIcon.isVisible = false
@@ -291,6 +288,11 @@ class SearchActivity : AppCompatActivity() {
         storyView.isVisible = true
         textSearch.isVisible = true
         clearHistoryButton.isVisible = true
+    }
+
+    private companion object {
+        const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
+        const val KEY_TRACK ="KEY_TRACK1"
     }
 
 }
