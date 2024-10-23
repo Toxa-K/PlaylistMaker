@@ -1,27 +1,26 @@
 package com.example.playlistmaker.domain.use_case
 
 
-import com.example.playlistmaker.domain.api.PlayerInteractor
 import com.example.playlistmaker.domain.repository.PlayerRepository
 
-class PlayerUseCase (private var playerControl: PlayerRepository):PlayerInteractor{
+class PlayerUseCase (private var playerControl: PlayerRepository){
 
-    override fun prepare() :Boolean{
+    fun prepare() :Boolean{
         return playerControl.prepare()
     }
-    override fun pause() {
+    fun pause() {
         return playerControl.pause()
     }
-    override fun release(){
+    fun release(){
         return playerControl.release()
     }
-    override fun playbackControl(): Boolean {
+    fun playbackControl(): Boolean {
         return playerControl.playbackControl()
     }
-    override fun playerState():Boolean{
+    fun playerState():Boolean{
         return playerControl.playerState()
     }
-    override fun getPosition(): Int {
+    fun getPosition(): Int {
         return playerControl.getPosition()
     }
 
