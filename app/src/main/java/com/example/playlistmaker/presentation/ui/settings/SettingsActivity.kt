@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -6,32 +6,31 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.util.Creator
+import com.example.playlistmaker.util.Creator.getTheme
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private val themeSwitcherCase by lazy { Creator.provideSwitchThemeUseCase(applicationContext) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val sharedPrefs = getSharedPreferences(SHARE_PREFERENCES, MODE_PRIVATE)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)//Переключатель темы
+        //Переключатель темы
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwither)
+        themeSwitcher.isChecked = getTheme(applicationContext).getThemeSetting()
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->themeSwitcherCase.execute(checked)}
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            // Сохранение состояния переключателя в SharedPreferences
-            sharedPrefs.edit()
-                .putBoolean(THEME_SWITHER, checked)
-                .apply()
 
-        }
-        // Установка начального состояния переключателя
-        themeSwitcher.isChecked = sharedPrefs.getBoolean(THEME_SWITHER, false)
-
+        //Возврат на прошлый экран
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
-        backButton.setOnClickListener{
-            finish()
-        }
+        backButton.setOnClickListener{finish()}
 
+
+        //Поделиться приложением
         val shareButton = findViewById<TextView>(R.id.share_btn)
         shareButton.setOnClickListener {
             val shareIntent = Intent().apply {
@@ -43,7 +42,9 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
         }
 
-        val supportButton =findViewById<TextView>(R.id.support_btn)
+
+        //Написать разработчикам
+        val supportButton = findViewById<TextView>(R.id.support_btn)
         supportButton.setOnClickListener {
             val emailIntent  = Intent().apply {
                 action = Intent.ACTION_SENDTO
@@ -55,6 +56,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
+        //Пользовательское соглашение
         val agreeButton = findViewById<TextView>(R.id.agree_btn)
         agreeButton.setOnClickListener {
             val agreeIntent = Intent().apply {

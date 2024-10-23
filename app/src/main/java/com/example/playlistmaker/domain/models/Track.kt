@@ -1,7 +1,5 @@
-package com.example.playlistmaker;
+package com.example.playlistmaker.domain.models;
 
-import android.os.Parcel
-import android.os.Parcelable
 import java.io.Serializable
 
 
@@ -18,6 +16,4 @@ data class Track(
         val country: String? //Страна исполнителя
 ): Serializable {
         fun getCoverArtwork() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
-
-
 }
