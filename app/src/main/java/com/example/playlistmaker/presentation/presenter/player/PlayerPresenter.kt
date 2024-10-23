@@ -4,17 +4,16 @@ package com.example.playlistmaker.presentation.presenter.player
 import android.os.Handler
 import android.os.Looper
 import com.example.playlistmaker.domain.api.PlayerInteractor
-import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.models.Track
 
 class PlayerPresenter(
-    private val playerIntImpl: PlayerInteractor,
+    private val playerInter: PlayerInteractor,
     private val view: PlayerView
 ) {
     private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
 
     fun onPlayButtonClicked() {
-        if (playerIntImpl.playbackControl()) {
+        if (playerInter.playbackControl()) {
             view.updatePlayButton(isPlay = true)
             mainThreadHandler?.post(updateTimeRunnable())
         } else {
@@ -29,7 +28,7 @@ class PlayerPresenter(
 
     // досупность кнопки плей
     fun preparePlayer() {
-        if (playerIntImpl.prepare()) {
+        if (playerInter.prepare()) {
             view.enablePlayButton(enable = true)
         } else {
             view.enablePlayButton(enable = false)
@@ -40,20 +39,20 @@ class PlayerPresenter(
     fun onPause() {
         view.updatePlayButton(isPlay = false)
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        playerIntImpl.pause()
+        playerInter.pause()
     }
 
     fun onDestroy() {
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        playerIntImpl.release()
+        playerInter.release()
     }
 
     private fun updateTimeRunnable() = object : Runnable {
         override fun run() {
             try {
                 if (!view.Finishing()) {
-                    if (!playerIntImpl.playerState()) {
-                        val currentPosition = playerIntImpl.getPosition()
+                    if (!playerInter.playerState()) {
+                        val currentPosition = playerInter.getPosition()
                         view.updateSongTime(timeInMillis = currentPosition)
                         mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
                     } else {

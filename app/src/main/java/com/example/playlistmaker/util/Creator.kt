@@ -12,6 +12,7 @@ import com.example.playlistmaker.domain.api.TrackInteractor
 import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.TrackInteractorImpl
 import com.example.playlistmaker.domain.repository.HistoryRepository
+import com.example.playlistmaker.domain.repository.PlayerRepository
 import com.example.playlistmaker.domain.repository.ThemeRepository
 import com.example.playlistmaker.domain.repository.TrackRepository
 import com.example.playlistmaker.domain.use_case.ClearTrackHistoryUseCase
@@ -67,7 +68,7 @@ object Creator {
     }
 
 
-    private fun getPlayerReposy(url:String): PlayerRepositoryImpl {
+    private fun getPlayerReposy(url:String): PlayerRepository {
         return PlayerRepositoryImpl(url)
     }
     fun providePlayerInteractor(url:String): PlayerInteractor {
