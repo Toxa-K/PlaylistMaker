@@ -19,25 +19,19 @@ class PlayerRepositoryImpl(private var url:String):PlayerRepository {
             }
             return true
         }
-        else {
-            return false
-        }
+        else {            return false        }
     }
-
     private fun play() {
         mediaPlayer.start()
         playerState = STATE_PLAYING
     }
-
     override fun pause() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
     }
-
     override fun release() {
         mediaPlayer.release()
     }
-
     override fun playbackControl(): Boolean {
         return when(playerState) {
             STATE_PLAYING -> {
@@ -48,15 +42,12 @@ class PlayerRepositoryImpl(private var url:String):PlayerRepository {
                 play()
                 true
             }
-
             else -> {false}
         }
     }
-
     override fun playerState(): Boolean {
         return playerState == STATE_PREPARED
     }
-
     override fun getPosition(): Int {
         return mediaPlayer.getCurrentPosition()
     }

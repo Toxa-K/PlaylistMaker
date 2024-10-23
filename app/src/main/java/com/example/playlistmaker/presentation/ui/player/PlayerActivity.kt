@@ -65,9 +65,9 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
 
 
         //создание плеера
-        val playerControl = Creator.providePlayerUseCase(url = track?.previewUrl.toString())
+        val playerControl = Creator.providePlayerInteractor(url = track?.previewUrl.toString())
 
-        playerPresenter = PlayerPresenter(playerUseCase = playerControl, view = this)
+        playerPresenter = PlayerPresenter(view = this, playerIntImpl = playerControl)
 
 
         track?.let {playerPresenter.onTrackLoaded(it)}

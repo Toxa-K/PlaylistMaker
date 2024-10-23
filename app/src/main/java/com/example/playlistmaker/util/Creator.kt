@@ -7,7 +7,9 @@ import com.example.playlistmaker.data.repository.HistoryRepositoryImpl
 import com.example.playlistmaker.data.repository.PlayerRepositoryImpl
 import com.example.playlistmaker.data.repository.ThemeRepositoryImpl
 import com.example.playlistmaker.data.repository.TrackRepositoryImpl
+import com.example.playlistmaker.domain.api.PlayerInteractor
 import com.example.playlistmaker.domain.api.TrackInteractor
+import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.TrackInteractorImpl
 import com.example.playlistmaker.domain.repository.HistoryRepository
 import com.example.playlistmaker.domain.repository.ThemeRepository
@@ -16,7 +18,6 @@ import com.example.playlistmaker.domain.use_case.ClearTrackHistoryUseCase
 import com.example.playlistmaker.domain.use_case.GetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
-import com.example.playlistmaker.domain.use_case.PlayerUseCase
 
 object Creator {
 
@@ -66,12 +67,14 @@ object Creator {
     }
 
 
-    private fun getPlayerRepository(url:String): PlayerRepositoryImpl {
+    private fun getPlayerReposy(url:String): PlayerRepositoryImpl {
         return PlayerRepositoryImpl(url)
     }
-    fun providePlayerUseCase(url:String): PlayerUseCase {
-        return PlayerUseCase(playerControl = getPlayerRepository(url))
+    fun providePlayerInteractor(url:String): PlayerInteractor {
+        return PlayerInteractorImpl(playerRepository = getPlayerReposy(url))
     }
+
+
 }
 
 

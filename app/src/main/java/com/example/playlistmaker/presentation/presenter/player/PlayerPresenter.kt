@@ -3,17 +3,18 @@ package com.example.playlistmaker.presentation.presenter.player
 
 import android.os.Handler
 import android.os.Looper
+import com.example.playlistmaker.domain.api.PlayerInteractor
+import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.domain.use_case.PlayerUseCase
 
 class PlayerPresenter(
-    private val playerUseCase: PlayerUseCase,
+    private val playerIntImpl: PlayerInteractor,
     private val view: PlayerView
 ) {
     private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
 
     fun onPlayButtonClicked() {
-        if (playerUseCase.playbackControl()) {
+        if (playerIntImpl.playbackControl()) {
             view.updatePlayButton(isPlay = true)
             mainThreadHandler?.post(updateTimeRunnable())
         } else {
@@ -28,7 +29,7 @@ class PlayerPresenter(
 
     // досупность кнопки плей
     fun preparePlayer() {
-        if (playerUseCase.prepare()) {
+        if (playerIntImpl.prepare()) {
             view.enablePlayButton(enable = true)
         } else {
             view.enablePlayButton(enable = false)
@@ -39,20 +40,20 @@ class PlayerPresenter(
     fun onPause() {
         view.updatePlayButton(isPlay = false)
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        playerUseCase.pause()
+        playerIntImpl.pause()
     }
 
     fun onDestroy() {
         mainThreadHandler?.removeCallbacks(updateTimeRunnable())
-        playerUseCase.release()
+        playerIntImpl.release()
     }
 
     private fun updateTimeRunnable() = object : Runnable {
         override fun run() {
             try {
                 if (!view.Finishing()) {
-                    if (!playerUseCase.playerState()) {
-                        val currentPosition = playerUseCase.getPosition()
+                    if (!playerIntImpl.playerState()) {
+                        val currentPosition = playerIntImpl.getPosition()
                         view.updateSongTime(timeInMillis = currentPosition)
                         mainThreadHandler?.postDelayed(this, UPDATE_TIME.toLong())
                     } else {
