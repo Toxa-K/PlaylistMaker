@@ -191,7 +191,7 @@ class SearchActivity : AppCompatActivity() {
                             adapter.notifyDataSetChanged()
                             showMessage("", "")
                         } else if (errorMessage != null) {
-                                showMessage(errorMessage, getString(R.string.something_went_wrong))
+                                showMessage( getString(R.string.something_went_wrong),errorMessage)
                         } else {
                                 showMessage(getString(R.string.nothing_found), "")
                             }
