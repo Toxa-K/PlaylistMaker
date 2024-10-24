@@ -19,6 +19,9 @@ import com.example.playlistmaker.domain.use_case.ClearTrackHistoryUseCase
 import com.example.playlistmaker.domain.use_case.GetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SetHistoryUseCase
 import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
+import com.example.playlistmaker.presentation.presenter.search.SearchPresenter
+import com.example.playlistmaker.presentation.presenter.search.SearchView
+import com.example.playlistmaker.presentation.ui.search.TrackAdapter
 
 object Creator {
 
@@ -75,6 +78,15 @@ object Creator {
         return PlayerInteractorImpl(playerRepository = getPlayerReposy(url))
     }
 
+    fun provideSearchPresenter(
+        searchView: SearchView,
+        context: Context
+    ):SearchPresenter{
+        return SearchPresenter(
+            view = searchView,
+            context = context
+        )
+    }
 
 }
 

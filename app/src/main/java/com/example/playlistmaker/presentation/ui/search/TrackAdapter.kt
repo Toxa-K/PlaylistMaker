@@ -7,7 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 
 class TrackAdapter(
-    private var tracks: List<Track>,
+    var tracks: List<Track>,
     private val onItemClick: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder> () {
 
@@ -25,6 +25,10 @@ class TrackAdapter(
 
 
     override fun getItemCount(): Int = tracks.size
+
+
+
+
     // Метод для обновления треков
     fun updateTracks(newTracks: List<Track>) {
         tracks = newTracks
