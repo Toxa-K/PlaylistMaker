@@ -29,5 +29,6 @@ class TrackAdapter(
     fun updateTracks(newTracks: List<Track>) {
         tracks = newTracks
         notifyDataSetChanged()
+
     }
 }
