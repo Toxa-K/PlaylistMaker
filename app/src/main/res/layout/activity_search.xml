@@ -104,7 +104,6 @@
             android:layout_marginTop="@dimen/size_24"
             android:backgroundTint="@color/black_white"
             android:text="@string/clear_histori"
-            android:textColor="@color/white_black"
             android:textFontWeight="500"
             android:textSize="14sp"
             android:visibility="gone"
