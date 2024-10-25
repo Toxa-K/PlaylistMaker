@@ -14,19 +14,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.presenter.search.SearchState
-import com.example.playlistmaker.presentation.presenter.search.SearchView
+import com.example.playlistmaker.presentation.presenter.search.SearchViewModel
 import com.example.playlistmaker.presentation.ui.player.PlayerActivity
 
 
-class SearchActivity : AppCompatActivity(),SearchView {
+class SearchActivity : ComponentActivity() {
 
     private var searchText: String = ""
     private lateinit var searchInput: EditText
@@ -40,8 +41,9 @@ class SearchActivity : AppCompatActivity(),SearchView {
     private lateinit var adapterHistory: TrackAdapter
     private lateinit var storyView: RecyclerView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var textWatcher: TextWatcher
 
-    private val searchPresenter = Creator.provideSearchPresenter(searchView = this, context = this)
     private val tracksSearch = ArrayList<Track>()
     private val clearHistory by lazy{ Creator.provideClearTrackHistoryUseCase(this)}
     private val getHistory by lazy{ Creator.provideGetHistoryUseCase(this)}
@@ -50,6 +52,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
         // Инициализация UI элементов
         searchInput = findViewById(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
@@ -70,10 +73,10 @@ class SearchActivity : AppCompatActivity(),SearchView {
         }
 
         adapterSearch = TrackAdapter(tracksSearch) { track ->
-            searchPresenter.onTrackClicked(track)
+            viewModel.onTrackClicked(track)
         }
         adapterHistory = TrackAdapter(getHistory.execute()) { track ->
-            searchPresenter.onTrackClicked(track)
+            viewModel.onTrackClicked(track)
             updateHistoryUI()
         }
 
@@ -95,7 +98,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         }
 
         // логика по работе с введённым значением
-        searchInput.addTextChangedListener(object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -108,18 +111,19 @@ class SearchActivity : AppCompatActivity(),SearchView {
                     hidePlaceholderMessageUi()
                 } else {
                     historyUiIs(false)
-                    searchPresenter.searchDebounce(changedText = s.toString())
+                    viewModel.searchDebounce(changedText = s.toString())
                 }
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
             }
             override fun afterTextChanged(s: Editable?) {
             }
-        })
+        }
+        searchInput.addTextChangedListener(textWatcher)
 
         //Принудительное прожатие "DONE" поля ввода
         placeholderButton.setOnClickListener {
-            searchPresenter.searchDebounce(changedText = searchInput.text.toString())
+            viewModel.searchDebounce(changedText = searchInput.text.toString())
         }
 
         //Сохранение значения в строке поиска после разрушение активити
@@ -142,9 +146,17 @@ class SearchActivity : AppCompatActivity(),SearchView {
         clearHistoryButton.setOnClickListener {
             clearHistory.execute()
             updateHistoryUI()
-            hidePlaceholderMessageUi()
         }
 
+        viewModel.observeState().observe(this){
+            render(it)
+        }
+        viewModel.observeShowToast().observe(this) { toast ->
+            showToast(toast)
+        }
+        viewModel.observeGo().observe(this) { track ->
+            goToPlayer(track)
+        }
     }
 
 
@@ -158,7 +170,6 @@ class SearchActivity : AppCompatActivity(),SearchView {
         super.onRestoreInstanceState(savedInstanceState)
         searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
         findViewById<EditText>(R.id.search_input).setText(searchText)
-
     }
 
 
@@ -168,7 +179,6 @@ class SearchActivity : AppCompatActivity(),SearchView {
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
-
 
     private fun updateHistoryUI() {
         val trackList = getHistory.execute()
@@ -195,16 +205,14 @@ class SearchActivity : AppCompatActivity(),SearchView {
     }
 
 
-
     //Реализация View
-
-    override fun showLoading() {
+    private fun showLoading() {
         progressBar.isVisible = true
         historyUiIs(false)
         hidePlaceholderMessageUi()
     }
 
-    override fun showError(errorMessage: String) {
+    private fun showError(errorMessage: String) {
         placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
         placeholderIcon.isVisible = true
         placeholderButton.isVisible = true
@@ -214,7 +222,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         progressBar.isVisible = false
     }
 
-    override fun showEmpty(emptyMessage: String) {
+    private fun showEmpty(emptyMessage: String) {
         historyUiIs(false)
         placeholderIcon.setImageResource(R.drawable.none_search)
         placeholderMessage.text = emptyMessage
@@ -224,7 +232,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         progressBar.isVisible = false
     }
 
-    override fun showContent(track: List<Track>) {
+    private fun showContent(track: List<Track>) {
         progressBar.isVisible = false
         recyclerView.isVisible = true
         adapterSearch.updateTracks(track)
@@ -232,20 +240,18 @@ class SearchActivity : AppCompatActivity(),SearchView {
         historyUiIs(false)
     }
 
-    override fun showToast(additionalMessage: String) {
-        Toast.makeText(this, "Вероятно, чтото пошло не так", Toast.LENGTH_SHORT).show()
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(this, "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
     }
 
-
-
-    override fun goToPlayer(track: Track) {
+    private fun goToPlayer(track: Track) {
         val displayIntent = Intent(this, PlayerActivity::class.java).apply {
             putExtra(KEY_TRACK, track)
         }
         startActivity(displayIntent)
     }
 
-    override fun render(state: SearchState) {
+    private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showLoading()
             is SearchState.Content -> showContent(state.track)
@@ -260,7 +266,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
     }
 
     override fun onDestroy() {
-        searchPresenter.onDestroy()
         super.onDestroy()
+        textWatcher?.let{searchInput.removeTextChangedListener(it)}
     }
 }
