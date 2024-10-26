@@ -2,7 +2,9 @@ package com.example.playlistmaker.presentation.ui.player
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerActivity :ComponentActivity() {
+class PlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityPlayerBinding
@@ -34,7 +36,9 @@ class PlayerActivity :ComponentActivity() {
         playerViewHolder = PlayerViewHolder(
             binding = binding
         )
-        viewModel = ViewModelProvider(this,PlayerViewModel.getViewModelFactory(track!!))[PlayerViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            PlayerViewModel.getViewModelFactory(track!!))[PlayerViewModel::class.java]
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
@@ -50,15 +54,14 @@ class PlayerActivity :ComponentActivity() {
             binding.playButton.isEnabled = isTrackReady
         }
         viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
+            Log.d("PlayerViewModel", "Observer: playStatus.isPlaying = ${playStatus.isPlaying}, progress = ${playStatus.progress}")
             changeButtonStyle(playStatus)//Стиль кнопки проигрывания
             binding.songTime.text =  SimpleDateFormat("mm:ss", Locale.getDefault()).format(playStatus.progress)
         }
         binding.playButton.setOnClickListener {
-                viewModel.togglePlayPause()
+                viewModel.onButtonClicked()
         }
     }
-
-
 
     companion object {
         private const val KEY_TRACK = "KEY_TRACK1"
@@ -71,10 +74,6 @@ class PlayerActivity :ComponentActivity() {
         binding.genreInfo1.isVisible = Visible
         binding.playButton.isEnabled = Visible
    }
-
-
-
-
 
     private fun changeButtonStyle(playStatus: PlayStatus) {
         if(playStatus.isPlaying){

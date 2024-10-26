@@ -4,6 +4,8 @@ package com.example.playlistmaker.presentation.ui.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,19 +16,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.presenter.search.SearchState
-import com.example.playlistmaker.presentation.presenter.search.SearchView
+import com.example.playlistmaker.presentation.presenter.search.TrackSearchViewModel
 import com.example.playlistmaker.presentation.ui.player.PlayerActivity
 
-
-class SearchActivity : AppCompatActivity(),SearchView {
+class SearchActivity :  AppCompatActivity() {
 
     private var searchText: String = ""
     private lateinit var searchInput: EditText
@@ -40,8 +43,10 @@ class SearchActivity : AppCompatActivity(),SearchView {
     private lateinit var adapterHistory: TrackAdapter
     private lateinit var storyView: RecyclerView
     private lateinit var recyclerView: RecyclerView
-
-    private val searchPresenter = Creator.provideSearchPresenter(searchView = this, context = this)
+    private lateinit var viewModel: TrackSearchViewModel
+    private lateinit var textWatcher: TextWatcher
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
     private val tracksSearch = ArrayList<Track>()
     private val clearHistory by lazy{ Creator.provideClearTrackHistoryUseCase(this)}
     private val getHistory by lazy{ Creator.provideGetHistoryUseCase(this)}
@@ -64,17 +69,33 @@ class SearchActivity : AppCompatActivity(),SearchView {
         progressBar = findViewById(R.id.progressBar)//ProgressBar
 
 
+        viewModel = ViewModelProvider(this,TrackSearchViewModel.getViewModelFactory())[TrackSearchViewModel::class.java]
+
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        viewModel.observeShowToast().observe(this) { toast ->
+            showToast(toast)
+        }
+
         // Установка слушателя для кнопки назад
         backButton.setOnClickListener {
             finish()
         }
 
         adapterSearch = TrackAdapter(tracksSearch) { track ->
-            searchPresenter.onTrackClicked(track)
+            if (clickDebounce()) {
+                viewModel.onTrackClicked(track)
+                goToPlayer(track)
+            }
         }
         adapterHistory = TrackAdapter(getHistory.execute()) { track ->
-            searchPresenter.onTrackClicked(track)
-            updateHistoryUI()
+            if (clickDebounce()) {
+                viewModel.onTrackClicked(track)
+                updateHistoryUI()
+                goToPlayer(track)
+            }
         }
 
         //Создание адаптера списка треков поиска
@@ -95,9 +116,10 @@ class SearchActivity : AppCompatActivity(),SearchView {
         }
 
         // логика по работе с введённым значением
-        searchInput.addTextChangedListener(object : TextWatcher {
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
@@ -108,18 +130,20 @@ class SearchActivity : AppCompatActivity(),SearchView {
                     hidePlaceholderMessageUi()
                 } else {
                     historyUiIs(false)
-                    searchPresenter.searchDebounce(changedText = s.toString())
+                    viewModel.searchDebounce(changedText = s.toString())
                 }
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
             }
             override fun afterTextChanged(s: Editable?) {
             }
-        })
+        }
+        textWatcher?.let{searchInput.addTextChangedListener(it)}
+
 
         //Принудительное прожатие "DONE" поля ввода
         placeholderButton.setOnClickListener {
-            searchPresenter.searchDebounce(changedText = searchInput.text.toString())
+            viewModel.searchDebounce(changedText = searchInput.text.toString())
         }
 
         //Сохранение значения в строке поиска после разрушение активити
@@ -147,8 +171,6 @@ class SearchActivity : AppCompatActivity(),SearchView {
 
     }
 
-
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT_KEY, searchText)
@@ -161,12 +183,11 @@ class SearchActivity : AppCompatActivity(),SearchView {
 
     }
 
-
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+        inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 
@@ -194,17 +215,15 @@ class SearchActivity : AppCompatActivity(),SearchView {
         clearHistoryButton.isVisible = isVisible
     }
 
-
-
     //Реализация View
 
-    override fun showLoading() {
+    private fun showLoading() {
         progressBar.isVisible = true
         historyUiIs(false)
         hidePlaceholderMessageUi()
     }
 
-    override fun showError(errorMessage: String) {
+    private fun showError(errorMessage: String) {
         placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
         placeholderIcon.isVisible = true
         placeholderButton.isVisible = true
@@ -214,7 +233,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         progressBar.isVisible = false
     }
 
-    override fun showEmpty(emptyMessage: String) {
+    private fun showEmpty(emptyMessage: String) {
         historyUiIs(false)
         placeholderIcon.setImageResource(R.drawable.none_search)
         placeholderMessage.text = emptyMessage
@@ -224,7 +243,7 @@ class SearchActivity : AppCompatActivity(),SearchView {
         progressBar.isVisible = false
     }
 
-    override fun showContent(track: List<Track>) {
+    private fun showContent(track: List<Track>) {
         progressBar.isVisible = false
         recyclerView.isVisible = true
         adapterSearch.updateTracks(track)
@@ -232,20 +251,19 @@ class SearchActivity : AppCompatActivity(),SearchView {
         historyUiIs(false)
     }
 
-    override fun showToast(additionalMessage: String) {
-        Toast.makeText(this, "Вероятно, чтото пошло не так", Toast.LENGTH_SHORT).show()
+    private fun showToast(additionalMessage: String) {
+        Toast.makeText(this, "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
     }
 
 
-
-    override fun goToPlayer(track: Track) {
+    private fun goToPlayer(track: Track) {
         val displayIntent = Intent(this, PlayerActivity::class.java).apply {
             putExtra(KEY_TRACK, track)
         }
         startActivity(displayIntent)
     }
 
-    override fun render(state: SearchState) {
+    private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showLoading()
             is SearchState.Content -> showContent(state.track)
@@ -255,12 +273,25 @@ class SearchActivity : AppCompatActivity(),SearchView {
     }
 
     companion object {
+        const val CLICK_DEBOUNCE_DELAY = 2000L
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
         const val KEY_TRACK ="KEY_TRACK1"
     }
 
     override fun onDestroy() {
-        searchPresenter.onDestroy()
         super.onDestroy()
+        textWatcher?.let{searchInput.removeTextChangedListener(it)}
+    }
+    //Разрешение пользователю нажимать на элементы списка не чаще одного раза в секунду
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 }
+
+
+

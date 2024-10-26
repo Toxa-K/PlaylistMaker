@@ -11,11 +11,9 @@ class TrackPlayerRepositoryImpl(private var trackUrl: String) : TrackPlayerRepos
 
     override fun play(statusObserver: TrackPlayerInteractor.StatusObserver) {
         if (mediaPlayer.isPlaying) {
-            statusObserver.onProgress(seek())
         } else {
             mediaPlayer.start()
             currentState = STATE_PLAYING
-            statusObserver.onPlay()
         }
     }
 
