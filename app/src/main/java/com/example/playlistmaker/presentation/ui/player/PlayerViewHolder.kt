@@ -6,50 +6,63 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewHolder(
-    private val songTitle: TextView,
-    private val artistName: TextView,
-    private val albumInfo: TextView,
-    private val yearInfo: TextView,
-    private val genreInfo: TextView,
-    private val countryInfo: TextView,
-    private val trackTime: TextView,
-    private val albumCover: ImageView,
-    private val albumInfoLabel: TextView // Метка "Альбом:"
-    )
+    private val binding: ActivityPlayerBinding    )
 {
+
 
     private var url: String? = ""
 
     fun bind(track:Track)  {
         url = track.previewUrl
-        songTitle.text = track.trackName
-        artistName.text = track.artistName
+        Log.d("PlayerViewHolder", "Binding track: ${track.trackName}")
+
+        binding.songTitle.text = track.trackName
+        Log.d("PlayerViewHolder", "Set songTitle: ${track.trackName}")
+
+        binding.artistName.text = track.artistName
+        Log.d("PlayerViewHolder", "Set artistName: ${track.artistName}")
+
         if (track.collectionName.isNullOrEmpty()) {
-            albumInfo.visibility = View.GONE
-            albumInfoLabel.visibility =View.GONE // Скрываем метку "Альбом:"
+            binding.albumInfo.isVisible = false
+            binding.albumInfo1.isVisible = false// Скрываем метку "Альбом:"
+            Log.d("PlayerViewHolder", "Collection name is empty, hiding album info")
+
         }else {
-            albumInfo.text = track.collectionName
-            albumInfo.visibility = View.VISIBLE
-            albumInfoLabel.visibility = View.VISIBLE
+            binding.albumInfo1.text = track.collectionName
+            binding.albumInfo.isVisible = true
+            binding.albumInfo1.isVisible = true
+            Log.d("PlayerViewHolder", "Set albumInfo: ${track.collectionName}")
         }
-        yearInfo.text = track.releaseDate?.substring(0, 4)
-        countryInfo.text = track.country
-        genreInfo.text = track.primaryGenreName
-        trackTime.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
+
+        binding.yearInfo1.text = track.releaseDate?.substring(0, 4)
+        Log.d("PlayerViewHolder", "Set yearInfo: ${binding.yearInfo.text}")
+
+        binding.countryInfo1.text = track.country
+        Log.d("PlayerViewHolder", "Set countryInfo: ${track.country}")
+
+        binding.genreInfo1.text = track.primaryGenreName
+        Log.d("PlayerViewHolder", "Set genreInfo: ${track.primaryGenreName}")
+
+        binding.songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
+        Log.d("PlayerViewHolder", "Set songTime: ${binding.songTime.text}")
+
         // Загрузка изображения с использованием Glide
-        Glide.with(albumCover.context)
+        Glide.with(binding.albumCover.context)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.placeholder2)
-            .transform(RoundedCorners(dpToPx(8f, albumCover.context))) // Скругленные углы
-            .into(albumCover)
+            .transform(RoundedCorners(dpToPx(8f, binding.albumCover.context))) // Скругленные углы
+            .into(binding.albumCover)
+        Log.d("PlayerViewHolder", "Set albumCover with URL: ${track.getCoverArtwork()}")
     }
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
