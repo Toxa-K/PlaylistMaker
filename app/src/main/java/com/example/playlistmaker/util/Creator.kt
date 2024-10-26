@@ -2,29 +2,23 @@ package com.example.playlistmaker.util
 
 
 import android.content.Context
-import com.example.playlistmaker.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.repository.HistoryRepositoryImpl
-import com.example.playlistmaker.data.repository.PlayerRepositoryImpl
-import com.example.playlistmaker.data.repository.ThemeRepositoryImpl
-import com.example.playlistmaker.data.repository.TrackPlayerRepositoryImpl
-import com.example.playlistmaker.data.repository.TrackRepositoryImpl
-import com.example.playlistmaker.domain.api.PlayerInteractor
-import com.example.playlistmaker.domain.api.TrackInteractor
-import com.example.playlistmaker.domain.api.TrackPlayerInteractor
-import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.domain.impl.TrackInteractorImpl
-import com.example.playlistmaker.domain.impl.TrackPlayerInteractorImpl
-import com.example.playlistmaker.domain.repository.HistoryRepository
-import com.example.playlistmaker.domain.repository.PlayerRepository
-import com.example.playlistmaker.domain.repository.ThemeRepository
-import com.example.playlistmaker.domain.repository.TrackPlayerRepository
-import com.example.playlistmaker.domain.repository.TrackRepository
-import com.example.playlistmaker.domain.use_case.ClearTrackHistoryUseCase
-import com.example.playlistmaker.domain.use_case.GetHistoryUseCase
-import com.example.playlistmaker.domain.use_case.SetHistoryUseCase
-import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
-
-import com.example.playlistmaker.presentation.presenter.search.SearchView
+import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
+import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
+import com.example.playlistmaker.player.data.repository.PlayerRepositoryImpl
+import com.example.playlistmaker.settings.data.repository.ThemeRepositoryImpl
+import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
+import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.search.domain.api.TrackInteractor
+import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
+import com.example.playlistmaker.search.domain.repository.HistoryRepository
+import com.example.playlistmaker.player.domain.repository.PlayerRepository
+import com.example.playlistmaker.settings.domain.repository.ThemeRepository
+import com.example.playlistmaker.search.domain.repository.TrackRepository
+import com.example.playlistmaker.search.domain.usecase.ClearTrackHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.GetHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
+import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 
 object Creator {
 
@@ -49,12 +43,12 @@ object Creator {
     }
 
     // Предоставляет use case для переключения темы приложения
-    fun provideSwitchThemeUseCase(context: Context):SwitchThemeUseCase{
+    fun provideSwitchThemeUseCase(context: Context): SwitchThemeUseCase {
         return SwitchThemeUseCase(saveTheveSettings(context))
     }
 
     // Возвращает экземпляр репозитория для сохранения настроек темы
-    private fun saveTheveSettings(context: Context): ThemeRepository{
+    private fun saveTheveSettings(context: Context): ThemeRepository {
         return ThemeRepositoryImpl(context)
     }
 
@@ -81,12 +75,7 @@ object Creator {
         return PlayerInteractorImpl(playerRepository = getPlayerReposy(url))
     }
 
-    private fun getTrackPlayerReposy(trackUrl:String): TrackPlayerRepository {
-        return TrackPlayerRepositoryImpl(trackUrl = trackUrl)
-    }
-    fun provideTrackPlayerInteractor(trackUrl:String): TrackPlayerInteractor {
-        return TrackPlayerInteractorImpl(repository = getTrackPlayerReposy(trackUrl = trackUrl))
-    }
+
 
 
 
