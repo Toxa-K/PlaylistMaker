@@ -1,6 +1,7 @@
 package com.example.playlistmaker.util
 
 
+import android.app.Application
 import android.content.Context
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
@@ -21,50 +22,57 @@ import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 
 object Creator {
+    private lateinit var appContext: Application
+
+    fun setAppContext(context: Application) {
+        appContext = context
+    }
+    fun getAppContext(): Application = appContext
+
 
     // Возвращает экземпляр репозитория истории воспроизведений
-    private fun getHistoryRepository(context: Context): HistoryRepository {
-        return HistoryRepositoryImpl(context)
+    private fun getHistoryRepository(): HistoryRepository {
+        return HistoryRepositoryImpl(appContext)
     }
 
     // Предоставляет use case для очистки истории треков
-    fun provideClearTrackHistoryUseCase(context: Context): ClearTrackHistoryUseCase {
-        return ClearTrackHistoryUseCase(getHistoryRepository(context))
+    fun provideClearTrackHistoryUseCase(): ClearTrackHistoryUseCase {
+        return ClearTrackHistoryUseCase(getHistoryRepository())
     }
 
     // Предоставляет use case для получения истории треков
-    fun provideGetHistoryUseCase(context: Context): GetHistoryUseCase {
-        return GetHistoryUseCase(getHistoryRepository(context))
+    fun provideGetHistoryUseCase(): GetHistoryUseCase {
+        return GetHistoryUseCase(getHistoryRepository())
     }
 
     // Предоставляет use case для сохранения трека в истории
-    fun provideSetHistoryUseCase(context: Context): SetHistoryUseCase {
-        return SetHistoryUseCase(getHistoryRepository(context))
+    fun provideSetHistoryUseCase(): SetHistoryUseCase {
+        return SetHistoryUseCase(getHistoryRepository())
     }
 
     // Предоставляет use case для переключения темы приложения
-    fun provideSwitchThemeUseCase(context: Context): SwitchThemeUseCase {
-        return SwitchThemeUseCase(saveTheveSettings(context))
+    fun provideSwitchThemeUseCase(): SwitchThemeUseCase {
+        return SwitchThemeUseCase(saveTheveSettings())
     }
 
     // Возвращает экземпляр репозитория для сохранения настроек темы
-    private fun saveTheveSettings(context: Context): ThemeRepository {
-        return ThemeRepositoryImpl(context)
+    private fun saveTheveSettings(): ThemeRepository {
+        return ThemeRepositoryImpl(appContext)
     }
 
     // Возвращает экземпляр репозитория для работы с темой
-     fun getTheme(context: Context): ThemeRepositoryImpl {
-        return ThemeRepositoryImpl(context)
+     fun getTheme(): ThemeRepositoryImpl {
+        return ThemeRepositoryImpl(appContext)
     }
 
     // Предоставляет TrackInteractor для поиска треков
-    fun provideTrackInteractor(context: Context): TrackInteractor {
-        return TrackInteractorImpl(getTrackRepository(context))
+    fun provideTrackInteractor(): TrackInteractor {
+        return TrackInteractorImpl(getTrackRepository())
     }
 
     // Возвращает репозиторий для поиска треков
-    private fun getTrackRepository(context: Context): TrackRepository {
-        return TrackRepositoryImpl(networkClient = RetrofitNetworkClient(context))
+    private fun getTrackRepository(): TrackRepository {
+        return TrackRepositoryImpl(networkClient = RetrofitNetworkClient(appContext))
     }
 
 

@@ -7,12 +7,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        Creator.setAppContext(this)
         // Получаем UseCase для работы с темой
-        val switchThemeUseCase = Creator.provideSwitchThemeUseCase(applicationContext)
+        val switchThemeUseCase = Creator.provideSwitchThemeUseCase()
 
         // Получаем текущее состояние темы и применяем его через UseCase
-        val darkEnabled = Creator.getTheme(this).getThemeSetting()
+        val darkEnabled = Creator.getTheme().getThemeSetting()
 
         switchThemeUseCase.execute(darkEnabled)
     }

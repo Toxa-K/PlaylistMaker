@@ -133,10 +133,10 @@ class TrackSearchViewModel(
             initializer {
 
                 val myApp = this[APPLICATION_KEY] as Application
-                val trackInteractor = Creator.provideTrackInteractor(myApp)
-                val setHistory = Creator.provideSetHistoryUseCase(myApp)
-                val getHistory = Creator.provideGetHistoryUseCase(myApp)
-                val clearHistory = Creator.provideClearTrackHistoryUseCase(myApp)
+                val trackInteractor = Creator.provideTrackInteractor()
+                val setHistory = Creator.provideSetHistoryUseCase()
+                val getHistory = Creator.provideGetHistoryUseCase()
+                val clearHistory = Creator.provideClearTrackHistoryUseCase()
                 TrackSearchViewModel(
                     trackInteractor,
                     setHistory,
