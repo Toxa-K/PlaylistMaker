@@ -13,11 +13,11 @@ sealed interface SearchState {
     ): SearchState
 
     data class Error(
-        @StyleRes val errorMessage: Int
+        @StringRes val errorMessage: Int
     ): SearchState
 
     data class Empty(
-        @StyleRes val message: Int
+        @StringRes val message: Int
     ): SearchState
 
     data class History(

@@ -132,7 +132,6 @@ class TrackSearchViewModel(
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
 
-                val myApp = this[APPLICATION_KEY] as Application
                 val trackInteractor = Creator.provideTrackInteractor()
                 val setHistory = Creator.provideSetHistoryUseCase()
                 val getHistory = Creator.provideGetHistoryUseCase()

@@ -1,7 +1,6 @@
 package com.example.playlistmaker.settings.ui
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.presentation.viewmodel.SettingsViewModel
+import com.example.playlistmaker.settings.presenter.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -26,7 +25,8 @@ class SettingsActivity : AppCompatActivity() {
         val supportButton = findViewById<TextView>(R.id.support_btn)
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
 
-        viewModel = ViewModelProvider(this,SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
+        viewModel = ViewModelProvider(this,
+            SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
         backButton.setOnClickListener { finish() }
 
@@ -39,18 +39,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         shareButton.setOnClickListener {
-            val shareIntent = viewModel.shareApp()
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
+           viewModel.shareApp()
         }
 
         supportButton.setOnClickListener {
-            val emailIntent = viewModel.support()
-            startActivity(emailIntent)
+            viewModel.support()
         }
 
         agreeButton.setOnClickListener {
-            val agreeIntent = viewModel.agree()
-            startActivity(agreeIntent)
+            viewModel.agree()
         }
     }
 }

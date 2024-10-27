@@ -1,7 +1,6 @@
 package com.example.playlistmaker.util
 
 
-import android.app.Application
 import android.content.Context
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
@@ -20,14 +19,23 @@ import com.example.playlistmaker.search.domain.usecase.ClearTrackHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.GetHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
+import com.example.playlistmaker.sharing.domain.api.SharingInteractor
+import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
 object Creator {
-    private lateinit var appContext: Application
+    private lateinit var appContext: Context
 
-    fun setAppContext(context: Application) {
+    fun setAppContext(context: Context) {
         appContext = context
     }
-    fun getAppContext(): Application = appContext
+    fun getAppContext(): Context = appContext
+
+
+    fun provideSharingInteractor(): SharingInteractor {
+        val externalNavigator = ExternalNavigator(appContext)
+        return SharingInteractorImpl(externalNavigator)
+    }
 
 
     // Возвращает экземпляр репозитория истории воспроизведений

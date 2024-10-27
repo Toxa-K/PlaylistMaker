@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PlayerViewModel
@@ -39,9 +38,6 @@ class PlayerActivity : AppCompatActivity() {
 
         val track = IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)
 
-
-
-
         viewModel = ViewModelProvider(
             this,
             PlayerViewModel.getViewModelFactory(track?.previewUrl.toString()))[PlayerViewModel::class.java]
@@ -52,9 +48,8 @@ class PlayerActivity : AppCompatActivity() {
             when (screenState) {
                 is PlayerScreenState.Content -> {
                     changeContentVisibility(Visible = true)
-                    bind(track!!)
 
-
+                    bind(track)
 
                 }
                 is PlayerScreenState.Loading -> {
@@ -70,9 +65,12 @@ class PlayerActivity : AppCompatActivity() {
         binding.playButton.setOnClickListener {
             viewModel.onButtonClicked()
         }
-
     }
-    private fun bind(track: Track)  {
+
+
+
+    private fun bind(track: Track?)  {
+        if (track == null) return //По логике, учитывая что Track передается из прошлого экрана, он 100% не null, получается эта проверка для IDE?
         binding.songTitle.text = track.trackName
         binding.artistName.text = track.artistName
         if (track.collectionName.isNullOrEmpty()) {
@@ -94,6 +92,8 @@ class PlayerActivity : AppCompatActivity() {
             .transform(RoundedCorners(dpToPx(8f, binding.albumCover.context))) // Скругленные углы
             .into(binding.albumCover)
     }
+
+
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -101,6 +101,7 @@ class PlayerActivity : AppCompatActivity() {
             context.resources.displayMetrics
         ).toInt()
     }
+
     private fun formatTrackTime(trackTimeMillis: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
     }
