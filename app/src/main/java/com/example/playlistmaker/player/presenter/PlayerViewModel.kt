@@ -16,25 +16,20 @@ import com.example.playlistmaker.util.Creator
 class PlayerViewModel(
     private val track : Track,
 ): ViewModel() {
-
     private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
     private val trackUrl = track.previewUrl.toString()
     private val trackPlayer: PlayerInteractor
-
     private val screenStateLiveData = MutableLiveData<PlayerScreenState>(PlayerScreenState.Loading)
     private val playStatusLiveData = MutableLiveData<PlayStatus>()
     private val buttonStatusLiveData = MutableLiveData<Boolean>()
-
     init {
         screenStateLiveData.postValue(PlayerScreenState.Content(track))
         trackPlayer = Creator.providePlayerInteractor(trackUrl)
         buttonStatusLiveData.postValue(trackPlayer.prepare())
     }
-
     fun getScreenStateLiveData(): LiveData<PlayerScreenState> = screenStateLiveData
     fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
     fun getButtonStatusLiveData(): LiveData<Boolean> = buttonStatusLiveData
-
     fun onButtonClicked() {
         if (trackPlayer.playbackControl()) {
             playStatusLiveData.value =
@@ -47,7 +42,6 @@ class PlayerViewModel(
             mainThreadHandler?.removeCallbacks(updateTimeRunnable)
         }
     }
-
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
             if (!trackPlayer.playerState()) {
@@ -60,20 +54,16 @@ class PlayerViewModel(
             }
         }
     }
-
-
     private fun onPause() {
         playStatusLiveData.value =
             PlayStatus(progress = playStatusLiveData.value?.progress ?: 0, isPlaying = false)
         mainThreadHandler?.removeCallbacks(updateTimeRunnable)
         trackPlayer.pause()
     }
-
     override fun onCleared() {
         mainThreadHandler?.removeCallbacks(updateTimeRunnable)
         trackPlayer.release()
     }
-
     companion object {
         private const val UPDATE_TIME = 250L
         fun getViewModelFactory(track: Track): ViewModelProvider.Factory=viewModelFactory {
@@ -84,5 +74,4 @@ class PlayerViewModel(
             }
         }
     }
-
 }
