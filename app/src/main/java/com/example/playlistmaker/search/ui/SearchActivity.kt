@@ -89,15 +89,14 @@ class SearchActivity :  AppCompatActivity() {
         adapterSearch = TrackAdapter(listOf()) { track ->
             if (clickDebounce()) {
                 viewModel.onTrackSearchClicked(track)
-
-
+                progressBar.isVisible = false
                 goToPlayer(track)
             }
         }
         adapterHistory = TrackAdapter(listOf()) { track ->
             if (clickDebounce()) {
                 viewModel.onTrackHistoryClicked(track)
-
+                progressBar.isVisible =false
                 goToPlayer(track)
             }
         }

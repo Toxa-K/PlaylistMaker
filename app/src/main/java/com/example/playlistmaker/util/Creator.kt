@@ -20,8 +20,9 @@ import com.example.playlistmaker.search.domain.usecase.GetHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
-import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.repository.ExternalNavigator
 
 object Creator {
     private lateinit var appContext: Context
@@ -33,8 +34,17 @@ object Creator {
 
 
     fun provideSharingInteractor(): SharingInteractor {
-        val externalNavigator = ExternalNavigator(appContext)
-        return SharingInteractorImpl(externalNavigator)
+        return SharingInteractorImpl(getExternalNavigator())
+    }
+    private fun getExternalNavigator(): ExternalNavigator {
+        return ExternalNavigatorImpl(appContext)
+    }
+
+    private fun getPlayerReposy(url:String): PlayerRepository {
+        return PlayerRepositoryImpl(url)
+    }
+    fun providePlayerInteractor(url:String): PlayerInteractor {
+        return PlayerInteractorImpl(playerRepository = getPlayerReposy(url))
     }
 
 
@@ -84,12 +94,7 @@ object Creator {
     }
 
 
-    private fun getPlayerReposy(url:String): PlayerRepository {
-        return PlayerRepositoryImpl(url)
-    }
-    fun providePlayerInteractor(url:String): PlayerInteractor {
-        return PlayerInteractorImpl(playerRepository = getPlayerReposy(url))
-    }
+
 
 
 

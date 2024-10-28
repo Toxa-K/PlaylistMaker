@@ -6,12 +6,13 @@ import android.net.Uri
 import android.util.Log
 import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.domain.model.EmailData
+import com.example.playlistmaker.sharing.domain.repository.ExternalNavigator
 
-class ExternalNavigator (private val context: Context) {
+class ExternalNavigatorImpl (private val context: Context): ExternalNavigator {
 
 
 
-    fun shareLink(pair: Pair<Int, Int>) {
+    override fun shareLink(pair: Pair<Int, Int>) {
         val message = context.getString(pair.first) + context.getString(pair.second)
         val intent = Intent().apply {
             Log.d("ExternalNavigator", "Creating intent for sharing")
@@ -26,7 +27,7 @@ class ExternalNavigator (private val context: Context) {
     }
 
 
-    fun openLink(link: Int) {
+    override fun openLink(link: Int) {
         Log.d("ExternalNavigator", "Opening link: ${context.getString(link)}")
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
@@ -36,7 +37,7 @@ class ExternalNavigator (private val context: Context) {
         context.startActivity(intent)
     }
 
-    fun openEmail(emailData: EmailData) {
+    override fun openEmail(emailData: EmailData) {
         Log.d("ExternalNavigator", "Opening email to: ${emailData.email}")
         val intent = Intent().apply {
             action = Intent.ACTION_SENDTO
