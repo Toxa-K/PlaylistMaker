@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
+import com.example.playlistmaker.sharing.domain.model.EmailData
 import com.example.playlistmaker.util.Creator
 import com.example.playlistmaker.util.Creator.getTheme
 
@@ -32,16 +34,25 @@ class SettingsViewModel(
     }
 
 
+
     fun shareApp() {
-        sharingInter.shareApp()
+        val message =R.string.share_message
+        val email= R.string.curse_email
+        sharingInter.shareApp(message = message, email = email)
     }
 
     fun support() {
-        sharingInter.openSupport()
+        val emailData = EmailData(
+            email = R.string.mymail,
+            subject = R.string.support_subject,
+            body = R.string.support_body
+        )
+        sharingInter.openSupport(emailData)
     }
 
     fun agree() {
-        sharingInter.openTerms()
+        val link = R.string.offer
+        sharingInter.openTerms(link)
     }
 
     companion object{

@@ -9,32 +9,16 @@ import com.example.playlistmaker.sharing.domain.repository.ExternalNavigator
 class SharingInteractorImpl(
     private val externalNavigator: ExternalNavigator,
 ) : SharingInteractor {
-    override fun shareApp() {
-        externalNavigator.shareLink(getShareAppLink())
+    override fun shareApp(message: Int, email: Int) {
+        externalNavigator.shareLink(Pair(message, email))
     }
 
-    override fun openTerms() {
-        externalNavigator.openLink(getTermsLink())
+    override fun openTerms(link:Int) {
+        externalNavigator.openLink(link)
     }
 
-    override fun openSupport() {
-        externalNavigator.openEmail(getSupportEmailData())
+    override fun openSupport(emailData: EmailData) {
+        externalNavigator.openEmail(emailData)
     }
 
-    private fun getShareAppLink(): Pair<Int,Int> {
-
-        return Pair(R.string.share_message,  R.string.curse_email)
-    }
-
-    private fun getSupportEmailData(): EmailData {
-        return EmailData(
-            email = R.string.mymail,
-            subject = R.string.support_subject,
-            body = R.string.support_body
-        )
-    }
-
-    private fun getTermsLink(): Int {
-        return  R.string.offer
-    }
 }

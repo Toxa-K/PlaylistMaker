@@ -8,6 +8,13 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Creator.setAppContext(this)
+
+//        startkoin {
+//            androidContext(this@App)
+//            modules()
+//        }
+
+
         // Получаем UseCase для работы с темой
         val switchThemeUseCase = Creator.provideSwitchThemeUseCase()
 

@@ -84,7 +84,7 @@ class TrackSearchViewModel(
                                 errorMessage = R.string.something_went_wrong
                             )
                         )
-                        showToast.postValue(errorMessage)
+                        showToast.postValue(errorMessage!!)
                     }
                     tracksSearch.isEmpty() ->{
                         renderState(
