@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white_black"
-    tools:context=".presentation.ui.search.SearchActivity">
+    tools:context=".search.ui.SearchActivity">
 
     <FrameLayout
         android:layout_width="match_parent"

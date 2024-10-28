@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="20dp"
-    tools:context=".presentation.ui.main.MainActivity"
+    tools:context=".main.ui.MainActivity"
     style="@style/BackgraundSettings">
 
 
