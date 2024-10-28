@@ -59,7 +59,7 @@ class TrackSearchViewModel(
 
     fun onTrackSearchClicked(track: Track) {
         setHistory.execute(track)
-        searchRequest(latestSearchText.toString())
+//        searchRequest(latestSearchText.toString())
     }
     fun onTrackHistoryClicked(track: Track) {
         setHistory.execute(track)
