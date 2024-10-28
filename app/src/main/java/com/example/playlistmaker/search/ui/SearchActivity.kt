@@ -129,6 +129,7 @@ class SearchActivity :  AppCompatActivity() {
                     View.VISIBLE
                     viewModel.loadHistory()
                 } else {
+                    showLoading()
                     viewModel.searchDebounce(changedText = s.toString())
                 }
                 clearButton.isVisible = !s.isNullOrEmpty()
@@ -140,7 +141,7 @@ class SearchActivity :  AppCompatActivity() {
         textWatcher?.let{searchInput.addTextChangedListener(it)}
 
 
-        //Принудительное прожатие "DONE" поля ввода
+
         placeholderButton.setOnClickListener {
             viewModel.searchDebounce(changedText = searchInput.text.toString())
         }
@@ -215,6 +216,7 @@ class SearchActivity :  AppCompatActivity() {
         progressBar.isVisible = true
         historyUiIs(false)
         hidePlaceholderMessageUi()
+        recyclerView.isVisible = false
     }
     private fun showError(errorMessage: String) {
         placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
@@ -224,6 +226,7 @@ class SearchActivity :  AppCompatActivity() {
         placeholderMessage.text =errorMessage
         historyUiIs(false)
         progressBar.isVisible = false
+        recyclerView.isVisible = false
     }
     private fun showEmpty(emptyMessage: String) {
         historyUiIs(false)
@@ -233,6 +236,7 @@ class SearchActivity :  AppCompatActivity() {
         placeholderIcon.isVisible = true
         placeholderButton.isVisible = false
         progressBar.isVisible = false
+        recyclerView.isVisible = false
     }
     private fun showContent(track: List<Track>) {
         adapterSearch.updateTracks(track)

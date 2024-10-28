@@ -108,9 +108,9 @@ class TrackSearchViewModel(
 
     //Автоматический поиск каждые 2000L
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
-            return
-        }
+//        if (latestSearchText == changedText) {
+//            return
+//        }
 
         this.latestSearchText = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
