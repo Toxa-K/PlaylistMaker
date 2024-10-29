@@ -1,23 +1,19 @@
 package com.example.playlistmaker.search.presenter
 
-import android.app.Application
+
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.usecase.ClearTrackHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.GetHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
-import com.example.playlistmaker.util.Creator
+
 
 
 class TrackSearchViewModel(
@@ -59,7 +55,6 @@ class TrackSearchViewModel(
 
     fun onTrackSearchClicked(track: Track) {
         setHistory.execute(track)
-//        searchRequest(latestSearchText.toString())
     }
     fun onTrackHistoryClicked(track: Track) {
         setHistory.execute(track)
@@ -108,9 +103,6 @@ class TrackSearchViewModel(
 
     //Автоматический поиск каждые 2000L
     fun searchDebounce(changedText: String) {
-//        if (latestSearchText == changedText) {
-//            return
-//        }
 
         this.latestSearchText = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
@@ -129,20 +121,5 @@ class TrackSearchViewModel(
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-
-                val trackInteractor = Creator.provideTrackInteractor()
-                val setHistory = Creator.provideSetHistoryUseCase()
-                val getHistory = Creator.provideGetHistoryUseCase()
-                val clearHistory = Creator.provideClearTrackHistoryUseCase()
-                TrackSearchViewModel(
-                    trackInteractor,
-                    setHistory,
-                    getHistory,
-                    clearHistory
-                )
-            }
-        }
     }
 }

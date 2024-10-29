@@ -10,10 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.presenter.SettingsViewModel
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +27,6 @@ class SettingsActivity : AppCompatActivity() {
         val supportButton = findViewById<TextView>(R.id.support_btn)
         val backButton = findViewById<ImageView>(R.id.btn_settings_back)
 
-        viewModel = ViewModelProvider(this,
-            SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
         backButton.setOnClickListener { finish() }
 

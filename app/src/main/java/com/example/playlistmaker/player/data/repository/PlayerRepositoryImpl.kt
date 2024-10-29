@@ -1,10 +1,14 @@
 package com.example.playlistmaker.player.data.repository
 
 import android.media.MediaPlayer
+import android.util.Log
 
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
 
 class PlayerRepositoryImpl(private var url:String): PlayerRepository {
+    init {
+
+    }
     private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     override fun prepare(): Boolean {

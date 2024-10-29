@@ -1,9 +1,13 @@
 package com.example.playlistmaker.player.domain.impl
 
+import android.util.Log
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 
 class PlayerInteractorImpl(private val playerRepository: PlayerRepository): PlayerInteractor {
+    init {
+
+    }
     override fun prepare() :Boolean{
         return playerRepository.prepare()
     }

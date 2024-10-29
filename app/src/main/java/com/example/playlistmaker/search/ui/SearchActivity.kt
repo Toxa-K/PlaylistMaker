@@ -26,6 +26,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presenter.SearchState
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity :  AppCompatActivity() {
 
@@ -42,15 +43,16 @@ class SearchActivity :  AppCompatActivity() {
     private lateinit var adapterHistory: TrackAdapter
     private lateinit var storyView: RecyclerView
     private lateinit var recyclerView: RecyclerView
-    //viewModel
-    private lateinit var viewModel: TrackSearchViewModel
+
 
     private lateinit var textWatcher: TextWatcher
     private val handler = Handler(Looper.getMainLooper())
+
     //переменные: пустая строка для поля ввода, пдля clickDebounce
     private var isClickAllowed = true
     private var searchText: String = ""
 
+    private val viewModel by viewModel<TrackSearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +70,6 @@ class SearchActivity :  AppCompatActivity() {
         clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
         textSearch = findViewById(R.id.youSearch)//Текст:Вы искали
         progressBar = findViewById(R.id.progressBar)//ProgressBar
-
-
-        viewModel = ViewModelProvider(this,
-            TrackSearchViewModel.getViewModelFactory())[TrackSearchViewModel::class.java]
 
 
         viewModel.observeState().observe(this) {

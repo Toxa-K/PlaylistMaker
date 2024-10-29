@@ -4,27 +4,25 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
+import com.example.playlistmaker.settings.domain.repository.ThemeRepository
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
-import com.example.playlistmaker.util.Creator
-import com.example.playlistmaker.util.Creator.getTheme
+
 
 class SettingsViewModel(
     private val switchTheme:SwitchThemeUseCase,
-    private val sharingInter: SharingInteractor
+    private val sharingInter: SharingInteractor,
+    private val themeRepository: ThemeRepository
 ) :ViewModel() {
 
     private val settingsLiveData = MutableLiveData<SettingsModel>()
     fun getSettingsModelLiveData(): LiveData<SettingsModel> = settingsLiveData
 
     init {
-
-        val isThemeEnabled = getTheme().getThemeSetting()
+        val isThemeEnabled = themeRepository.getThemeSetting()
+//            getTheme().getThemeSetting()
         settingsLiveData.value = SettingsModel(isThemeEnabled)
     }
 
@@ -56,16 +54,5 @@ class SettingsViewModel(
     }
 
     companion object{
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val switchTheme = Creator.provideSwitchThemeUseCase()
-                val sharingInter = Creator.provideSharingInteractor()
-                SettingsViewModel(
-                    switchTheme,
-                    sharingInter
-
-                )
-            }
-        }
     }
 }
