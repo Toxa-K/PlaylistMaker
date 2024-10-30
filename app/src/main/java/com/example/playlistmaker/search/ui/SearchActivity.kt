@@ -6,8 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -26,6 +28,7 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presenter.SearchState
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
+
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity :  AppCompatActivity() {
@@ -48,9 +51,11 @@ class SearchActivity :  AppCompatActivity() {
     private lateinit var textWatcher: TextWatcher
     private val handler = Handler(Looper.getMainLooper())
 
+
     //переменные: пустая строка для поля ввода, пдля clickDebounce
     private var isClickAllowed = true
     private var searchText: String = ""
+    private var latestSearchText: String? = null
 
     private val viewModel by viewModel<TrackSearchViewModel>()
 
@@ -119,18 +124,22 @@ class SearchActivity :  AppCompatActivity() {
         // логика по работе с введённым значением
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                Log.d("TextWatcher", "beforeTextChanged: s = $s, start = $start, count = $count, after = $after")
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
+                    Log.d("TextWatcher", "searchInput has focus and s is empty, loading history")
                     View.VISIBLE
+                    handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
                     viewModel.loadHistory()
+
                 } else {
-                    showLoading()
-                    viewModel.searchDebounce(changedText = s.toString())
+                    Log.d("TextWatcher", "searchInput has focus and s is not empty, calling searchDebounce")
+                    searchDebounce(changedText = s.toString())
                 }
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
+                Log.d("TextWatcher", "Updated searchText to $searchText")
             }
             override fun afterTextChanged(s: Editable?) {
             }
@@ -140,7 +149,7 @@ class SearchActivity :  AppCompatActivity() {
 
 
         placeholderButton.setOnClickListener {
-            viewModel.searchDebounce(changedText = searchInput.text.toString())
+            searchDebounce(changedText = searchInput.text.toString())
         }
 
         //Сохранение значения в строке поиска после разрушение активити
@@ -151,6 +160,10 @@ class SearchActivity :  AppCompatActivity() {
 
         // Установка слушателя для кнопки очистки поля ввода
         clearButton.setOnClickListener {
+
+
+            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+            progressBar.isVisible = false
             searchInput.setText("")
             hideKeyboard(searchInput)
             historyUiIs(true)
@@ -210,37 +223,53 @@ class SearchActivity :  AppCompatActivity() {
 
     //Реализация View
     private fun showLoading() {
-        progressBar.isVisible = true
-        historyUiIs(false)
-        hidePlaceholderMessageUi()
-        recyclerView.isVisible = false
+        if (searchInput.text.toString() == ""){
+            progressBar.isVisible = false
+        }else {
+            progressBar.isVisible = true
+            historyUiIs(false)
+            hidePlaceholderMessageUi()
+            recyclerView.isVisible = false
+        }
     }
     private fun showError(errorMessage: String) {
-        placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
-        placeholderIcon.isVisible = true
-        placeholderButton.isVisible = true
-        placeholderMessage.isVisible = true
-        placeholderMessage.text =errorMessage
-        historyUiIs(false)
-        progressBar.isVisible = false
-        recyclerView.isVisible = false
+        if (searchInput.text.toString() == ""){
+            return
+        }else {
+            placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
+            placeholderIcon.isVisible = true
+            placeholderButton.isVisible = true
+            placeholderMessage.isVisible = true
+            placeholderMessage.text = errorMessage
+            historyUiIs(false)
+            progressBar.isVisible = false
+            recyclerView.isVisible = false
+        }
     }
     private fun showEmpty(emptyMessage: String) {
-        historyUiIs(false)
-        placeholderIcon.setImageResource(R.drawable.none_search)
-        placeholderMessage.text = emptyMessage
-        placeholderMessage.isVisible = true
-        placeholderIcon.isVisible = true
-        placeholderButton.isVisible = false
-        progressBar.isVisible = false
-        recyclerView.isVisible = false
+        if (searchInput.text.toString() == ""){
+            return
+        }else {
+            historyUiIs(false)
+            placeholderIcon.setImageResource(R.drawable.none_search)
+            placeholderMessage.text = emptyMessage
+            placeholderMessage.isVisible = true
+            placeholderIcon.isVisible = true
+            placeholderButton.isVisible = false
+            progressBar.isVisible = false
+            recyclerView.isVisible = false
+        }
     }
     private fun showContent(track: List<Track>) {
-        adapterSearch.updateTracks(track)
-        progressBar.isVisible = false
-        recyclerView.isVisible = true
-        hidePlaceholderMessageUi()
-        historyUiIs(false)
+        if (searchInput.text.toString() == ""){
+            return
+        }else {
+            adapterSearch.updateTracks(track)
+            progressBar.isVisible = false
+            recyclerView.isVisible = true
+            hidePlaceholderMessageUi()
+            historyUiIs(false)
+        }
     }
     private fun showToast(additionalMessage: String) {
         Toast.makeText(this, "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
@@ -270,6 +299,7 @@ class SearchActivity :  AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let{searchInput.removeTextChangedListener(it)}
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
     //Разрешение пользователю нажимать на элементы списка не чаще одного раза в секунду
     private fun clickDebounce(): Boolean {
@@ -280,10 +310,29 @@ class SearchActivity :  AppCompatActivity() {
         }
         return current
     }
+
+    //Автоматический поиск каждые 2000L
+    fun searchDebounce(changedText: String) {
+
+        this.latestSearchText = changedText
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+
+        val searchRunnable = Runnable { viewModel.searchRequest(changedText) }
+
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        handler.postAtTime(
+            searchRunnable,
+            SEARCH_REQUEST_TOKEN,
+            postTime,
+        )
+    }
+
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 2000L
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
         const val KEY_TRACK ="KEY_TRACK1"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
 }

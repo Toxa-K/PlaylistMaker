@@ -23,7 +23,7 @@ class TrackSearchViewModel(
     private val clearHistory: ClearTrackHistoryUseCase
 
 ): ViewModel(){
-    private var latestSearchText: String? = null
+
     private val tracksSearch = ArrayList<Track>()
     private val handler = Handler(Looper.getMainLooper())
     init{
@@ -40,9 +40,9 @@ class TrackSearchViewModel(
     fun observeShowToast(): LiveData<String> = showToast
 
 
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+//    override fun onCleared() {
+//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+//    }
 
     fun loadHistory() {
         val historyTracks = getHistory.execute()
@@ -61,7 +61,7 @@ class TrackSearchViewModel(
         loadHistory()
     }
 
-    private fun searchRequest(newSearchText:String) {
+    fun searchRequest(newSearchText:String) {
         if (newSearchText.isNotEmpty()) {
             renderState(SearchState.Loading)}
 
@@ -101,25 +101,10 @@ class TrackSearchViewModel(
         })
     }
 
-    //Автоматический поиск каждые 2000L
-    fun searchDebounce(changedText: String) {
 
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
-    }
 
     companion object {
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
+
 
     }
 }

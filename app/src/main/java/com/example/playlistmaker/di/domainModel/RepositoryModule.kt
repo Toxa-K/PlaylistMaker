@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di.domainModel
 
+import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.repository.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
@@ -13,18 +14,24 @@ import com.example.playlistmaker.sharing.domain.repository.ExternalNavigator
 import org.koin.dsl.module
 
 val repositoryModule = module{
+    factory { MediaPlayer() }
+
     factory <PlayerRepository>{(url:String)->
-        PlayerRepositoryImpl(url)
+        PlayerRepositoryImpl(url,get())
     }
+
     single<ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
+
     single<HistoryRepository>{
         HistoryRepositoryImpl(get())
     }
+
     single<TrackRepository>{
         TrackRepositoryImpl(get())
     }
+
     single<ThemeRepository> {
         ThemeRepositoryImpl(get())
     }

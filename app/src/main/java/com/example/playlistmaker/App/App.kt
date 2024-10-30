@@ -6,6 +6,7 @@ import com.example.playlistmaker.di.domainModel.interactorModule
 import com.example.playlistmaker.di.domainModel.repositoryModule
 import com.example.playlistmaker.di.presentationModel.viewModelModule
 import com.example.playlistmaker.settings.domain.repository.ThemeRepository
+import com.example.playlistmaker.settings.domain.use_case.GetThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 import org.koin.android.ext.android.inject
 //import com.example.playlistmaker.util.Creator
@@ -29,10 +30,10 @@ class App : Application() {
     }
     private fun setInitialTheme() {
         val switchThemeUseCase: SwitchThemeUseCase by inject()
-        val themeRepository: ThemeRepository by inject()
+        val getThemeUseCase: GetThemeUseCase by inject()
 
         // Получаем текущее состояние темы и применяем его
-        val darkEnabled = themeRepository.getThemeSetting()
+        val darkEnabled = getThemeUseCase.execute()
         switchThemeUseCase.execute(darkEnabled)
     }
 }

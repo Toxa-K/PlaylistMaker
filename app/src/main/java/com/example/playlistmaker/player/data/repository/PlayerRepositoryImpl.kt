@@ -5,11 +5,11 @@ import android.util.Log
 
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
 
-class PlayerRepositoryImpl(private var url:String): PlayerRepository {
-    init {
+class PlayerRepositoryImpl(
+    private val url:String,
+    private val mediaPlayer: MediaPlayer
+): PlayerRepository {
 
-    }
-    private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     override fun prepare(): Boolean {
         if (!url.isNullOrEmpty()) {

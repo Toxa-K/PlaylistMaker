@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module{
+
     single<iTunesAPI>{
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com")
@@ -15,6 +16,7 @@ val dataModule = module{
             .build()
             .create(iTunesAPI::class.java)
     }
+
     single<NetworkClient> {
         RetrofitNetworkClient(get(), get())
     }

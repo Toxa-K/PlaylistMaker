@@ -1,11 +1,10 @@
 package com.example.playlistmaker.settings.presenter
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.R
-import com.example.playlistmaker.settings.domain.repository.ThemeRepository
+import com.example.playlistmaker.settings.domain.use_case.GetThemeUseCase
 import com.example.playlistmaker.settings.domain.use_case.SwitchThemeUseCase
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
@@ -14,15 +13,14 @@ import com.example.playlistmaker.sharing.domain.model.EmailData
 class SettingsViewModel(
     private val switchTheme:SwitchThemeUseCase,
     private val sharingInter: SharingInteractor,
-    private val themeRepository: ThemeRepository
+    private val getThemeUseCase: GetThemeUseCase
 ) :ViewModel() {
 
     private val settingsLiveData = MutableLiveData<SettingsModel>()
     fun getSettingsModelLiveData(): LiveData<SettingsModel> = settingsLiveData
 
     init {
-        val isThemeEnabled = themeRepository.getThemeSetting()
-//            getTheme().getThemeSetting()
+        val isThemeEnabled = getThemeUseCase.execute()
         settingsLiveData.value = SettingsModel(isThemeEnabled)
     }
 

@@ -9,12 +9,15 @@ import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 
 val viewModelModule = module{
+
     viewModel{
         TrackSearchViewModel(get(),get(),get(),get())
     }
+
     viewModel{(url: String?) ->
         PlayerViewModel(get<PlayerInteractor>{ parametersOf(url) })
     }
+
     viewModel{
         SettingsViewModel(get(),get(),get())
     }
