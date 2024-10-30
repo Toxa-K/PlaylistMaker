@@ -21,7 +21,6 @@
             android:layout_height="48dp"
             android:scaleType="center"
             android:id="@+id/btn_settings_back"/>
-        <!--  Изначально экран скопипастен с экрана настроек,в нем кнопка возврата на темной теме прячется => android:layout_marginLeft = "64dp"  костыль чтоб она не пряталась-->
         <TextView
             style="@style/head_text"
             android:layout_marginStart="64dp"

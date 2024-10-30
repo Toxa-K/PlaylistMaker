@@ -12,9 +12,11 @@
         android:orientation="horizontal">
 
         <ImageView
-            style="@style/head_back"
-            android:id="@+id/btn_settings_back"
-            android:src="@drawable/back"/>
+            style="@style/svap_color_b_w"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="center"
+            android:id="@+id/btn_settings_back"/>
 
         <TextView
             style="@style/head_text"

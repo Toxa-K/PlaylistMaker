@@ -3,6 +3,7 @@ package com.example.playlistmaker.player.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
@@ -15,6 +16,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.presenter.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -22,11 +25,18 @@ import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityPlayerBinding
+    private val track: Track? by lazy {IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)}
+
+    private val viewModel: PlayerViewModel by viewModel {
+
+        parametersOf(track?.previewUrl) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (track == null) {
+            return finish()
+        }
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -36,11 +46,7 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.playButton.isEnabled = false
 
-        val track = IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)
 
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(track?.previewUrl.toString()))[PlayerViewModel::class.java]
 
         viewModel.onCreate()
 
