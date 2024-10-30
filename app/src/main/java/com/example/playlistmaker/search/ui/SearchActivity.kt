@@ -124,22 +124,18 @@ class SearchActivity :  AppCompatActivity() {
         // логика по работе с введённым значением
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                Log.d("TextWatcher", "beforeTextChanged: s = $s, start = $start, count = $count, after = $after")
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
-                    Log.d("TextWatcher", "searchInput has focus and s is empty, loading history")
                     View.VISIBLE
                     handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
                     viewModel.loadHistory()
 
                 } else {
-                    Log.d("TextWatcher", "searchInput has focus and s is not empty, calling searchDebounce")
                     searchDebounce(changedText = s.toString())
                 }
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
-                Log.d("TextWatcher", "Updated searchText to $searchText")
             }
             override fun afterTextChanged(s: Editable?) {
             }
