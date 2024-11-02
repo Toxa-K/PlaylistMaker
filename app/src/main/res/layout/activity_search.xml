@@ -10,26 +10,15 @@
     android:background="@color/white_black"
     tools:context=".search.ui.SearchActivity">
 
-    <FrameLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarSearch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal">
+        android:background="@color/white_black"
+        app:navigationIcon="@drawable/back"
+        app:title="@string/search"
+        app:titleTextAppearance="@style/ToolbarTitleText"/>
 
-        <ImageView
-            style="@style/svap_color_b_w"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:scaleType="center"
-            android:id="@+id/btn_settings_back"/>
-        <TextView
-            style="@style/head_text"
-            android:layout_marginStart="64dp"
-            android:layout_gravity="center_vertical"
-            android:text="@string/search"
-            android:textSize="@dimen/text_22"
-            android:fontFamily="@font/ys_display_medium"
-            android:textFontWeight="500"/>
-    </FrameLayout>
     <RelativeLayout
         android:id="@+id/R_search"
         android:layout_width="match_parent"

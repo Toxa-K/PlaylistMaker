@@ -25,10 +25,10 @@ class SettingsActivity : AppCompatActivity() {
         val agreeButton = findViewById<TextView>(R.id.agree_btn)
         val shareButton = findViewById<TextView>(R.id.share_btn)
         val supportButton = findViewById<TextView>(R.id.support_btn)
-        val backButton = findViewById<ImageView>(R.id.btn_settings_back)
+        val backButton = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSettings)
 
 
-        backButton.setOnClickListener { finish() }
+        backButton.setNavigationOnClickListener { finish() }
 
         viewModel.getSettingsModelLiveData().observe(this, Observer { settings ->
             themeSwitcher.isChecked = settings.isThemeEnabled

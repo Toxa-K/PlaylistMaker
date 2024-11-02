@@ -9,7 +9,6 @@ import android.os.Looper
 import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -20,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
@@ -66,7 +64,7 @@ class SearchActivity :  AppCompatActivity() {
         // Инициализация UI элементов
         searchInput = findViewById(R.id.search_input) //Поле ввода
         val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
-        val backButton = findViewById<ImageView>(R.id.btn_settings_back)//Возврат на пред. страницу
+        val backButton = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSearch)//Возврат на пред. страницу
         recyclerView = findViewById(R.id.recyclerView)//Список треков
         placeholderMessage = findViewById(R.id.placeholderMessage)
         placeholderButton = findViewById(R.id.placeholderButton)
@@ -85,7 +83,7 @@ class SearchActivity :  AppCompatActivity() {
         }
 
         // Установка слушателя для кнопки назад
-        backButton.setOnClickListener {
+        backButton.setNavigationOnClickListener {
             finish()
         }
 
