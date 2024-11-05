@@ -1,5 +1,8 @@
 package com.example.playlistmaker.di.presentationModel
 
+import com.example.playlistmaker.mediateca.presenter.LikeViewModel
+import com.example.playlistmaker.mediateca.presenter.MediatecaViewModel
+import com.example.playlistmaker.mediateca.presenter.PlaylistViewModel
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.presenter.PlayerViewModel
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
@@ -20,5 +23,15 @@ val viewModelModule = module{
 
     viewModel{
         SettingsViewModel(get(),get(),get())
+    }
+
+    viewModel{
+        LikeViewModel()
+    }
+    viewModel{
+        PlaylistViewModel()
+    }
+    viewModel{
+        MediatecaViewModel()
     }
 }
