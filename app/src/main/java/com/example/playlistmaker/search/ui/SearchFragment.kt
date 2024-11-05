@@ -9,7 +9,9 @@ import android.os.Looper
 import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -17,21 +19,23 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presenter.SearchState
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
-import com.example.playlistmaker.player.ui.PlayerActivity
-
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity :  AppCompatActivity() {
+class SearchFragment : Fragment() {
 
-    //ui
+
+
+    private val viewModel by viewModel<TrackSearchViewModel>()
     private lateinit var searchInput: EditText
     private lateinit var textSearch: TextView
     private lateinit var clearHistoryButton: Button
@@ -44,6 +48,7 @@ class SearchActivity :  AppCompatActivity() {
     private lateinit var adapterHistory: TrackAdapter
     private lateinit var storyView: RecyclerView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var clearButton: ImageView
 
 
     private lateinit var textWatcher: TextWatcher
@@ -55,36 +60,34 @@ class SearchActivity :  AppCompatActivity() {
     private var searchText: String = ""
     private var latestSearchText: String? = null
 
-    private val viewModel by viewModel<TrackSearchViewModel>()
+    private lateinit var binding: FragmentSearchBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Инициализация UI элементов
-        searchInput = findViewById(R.id.search_input) //Поле ввода
-        val clearButton = findViewById<ImageView>(R.id.clear_button)//Кнопка отчистки поля ввода
-        val backButton = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarSearch)//Возврат на пред. страницу
-        recyclerView = findViewById(R.id.recyclerView)//Список треков
-        placeholderMessage = findViewById(R.id.placeholderMessage)
-        placeholderButton = findViewById(R.id.placeholderButton)
-        placeholderIcon = findViewById(R.id.placeholderIcon)
-        storyView = findViewById(R.id.storyView)//Список old треков
-        clearHistoryButton = findViewById(R.id.clearHistoryButton)//Кнопка отчистки истории
-        textSearch = findViewById(R.id.youSearch)//Текст:Вы искали
-        progressBar = findViewById(R.id.progressBar)//ProgressBar
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        searchInput = binding.searchInput
+        recyclerView = binding.recyclerView
+        placeholderIcon = binding.placeholderIcon
+        placeholderButton = binding.placeholderButton
+        placeholderMessage = binding.placeholderMessage
+        storyView = binding.storyView
+        clearHistoryButton = binding.clearHistoryButton
+        textSearch = binding.youSearch
+        progressBar = binding.progressBar
+        clearButton = binding.clearButton
 
 
-        viewModel.observeState().observe(this) {
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        viewModel.observeShowToast().observe(this) { toast ->
+        viewModel.observeShowToast().observe(viewLifecycleOwner) { toast ->
             showToast(toast)
-        }
-
-        // Установка слушателя для кнопки назад
-        backButton.setNavigationOnClickListener {
-            finish()
         }
 
         adapterSearch = TrackAdapter(listOf()) { track ->
@@ -103,10 +106,10 @@ class SearchActivity :  AppCompatActivity() {
         }
 
         //Создание списка треков поиска
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapterSearch
         //Создание списка треков ичтории
-        storyView.layoutManager = LinearLayoutManager(this)
+        storyView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         storyView.adapter = adapterHistory
 
         //условие для отображения Истории поиска
@@ -169,20 +172,7 @@ class SearchActivity :  AppCompatActivity() {
             hidePlaceholderMessageUi()
             historyUiIs(false)
         }
-
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TEXT_KEY, searchText)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
-        findViewById<EditText>(R.id.search_input).setText(searchText)
-    }
-
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showLoading()
@@ -196,8 +186,7 @@ class SearchActivity :  AppCompatActivity() {
 
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
@@ -266,7 +255,7 @@ class SearchActivity :  AppCompatActivity() {
         }
     }
     private fun showToast(additionalMessage: String) {
-        Toast.makeText(this, "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
     }
 
     private fun updateHistoryUI(history: List<Track>) {
@@ -284,7 +273,7 @@ class SearchActivity :  AppCompatActivity() {
     }
 
     private fun goToPlayer(track: Track) {
-        val displayIntent = Intent(this, PlayerActivity::class.java).apply {
+        val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
             putExtra(KEY_TRACK, track)
         }
         startActivity(displayIntent)
@@ -294,6 +283,7 @@ class SearchActivity :  AppCompatActivity() {
         super.onDestroy()
         textWatcher?.let{searchInput.removeTextChangedListener(it)}
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+
     }
     //Разрешение пользователю нажимать на элементы списка не чаще одного раза в секунду
     private fun clickDebounce(): Boolean {
@@ -320,7 +310,6 @@ class SearchActivity :  AppCompatActivity() {
             postTime,
         )
     }
-
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 2000L
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
@@ -328,15 +317,4 @@ class SearchActivity :  AppCompatActivity() {
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
     }
-
 }
-
-
-
-
-
-
-
-
-
-

@@ -2,8 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/white_black">
+    android:background="@color/white_black"
+    tools:context="com.example.playlistmaker.mediateca.ui.MediatecaFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarMediateca"
