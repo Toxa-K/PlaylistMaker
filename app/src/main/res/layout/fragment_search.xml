@@ -8,14 +8,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white_black"
-    tools:context=".search.ui.SearchActivity">
+    tools:context="com.example.playlistmaker.search.ui.SearchFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarSearch"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/white_black"
-        app:navigationIcon="@drawable/back"
+
         app:title="@string/search"
         app:titleTextAppearance="@style/ToolbarTitleText"/>
 
