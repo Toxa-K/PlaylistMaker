@@ -72,6 +72,10 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onButtonClicked()
         }
     }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish() // Завершение активности при нажатии аппаратной кнопки "Назад"
+    }
 
 
 

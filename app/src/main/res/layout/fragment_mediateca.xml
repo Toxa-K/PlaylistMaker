@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/white_black"
-        app:navigationIcon="@drawable/back"
         app:title="@string/mediateka"
         app:titleTextAppearance="@style/ToolbarTitleText"/>
 
