@@ -40,9 +40,6 @@ class TrackSearchViewModel(
     fun observeShowToast(): LiveData<String> = showToast
 
 
-//    override fun onCleared() {
-//        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-//    }
 
     fun loadHistory() {
         val historyTracks = getHistory.execute()
