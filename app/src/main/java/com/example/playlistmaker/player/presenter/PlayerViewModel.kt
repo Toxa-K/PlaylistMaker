@@ -1,35 +1,51 @@
 package com.example.playlistmaker.player.presenter
 
+import android.icu.text.SimpleDateFormat
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Locale
 
 
 class PlayerViewModel(
     private val trackPlayer: PlayerInteractor
 ): ViewModel() {
-    init {
 
-    }
-    private var mainThreadHandler: Handler? = Handler(Looper.getMainLooper())
+
+    private var timerJob: Job? = null
     private val screenStateLiveData = MutableLiveData<PlayerScreenState>(PlayerScreenState.Loading)
-
     fun getScreenStateLiveData(): LiveData<PlayerScreenState> = screenStateLiveData
+
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (!trackPlayer.playerState() ) {
+                delay(300L)
+                screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
+                    progress = getCurrentPlayerPosition(),isPlaying = true))
+            }
+            screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
+                progress = "00:00",isPlaying = false))
+        }
+    }
+
 
     fun onButtonClicked() {
         if (trackPlayer.playbackControl()) {
-            mainThreadHandler?.post(updateTimeRunnable)
+            startTimer()
         } else {
             onPause()
         }
     }
+
+
     fun onCreate(){
         trackPlayer.prepare()
         screenStateLiveData.value=
@@ -37,35 +53,19 @@ class PlayerViewModel(
     }
 
 
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            if (!trackPlayer.playerState()) {
-                val currentPosition = trackPlayer.getPosition()
-                screenStateLiveData.value =
-                    PlayerScreenState.PlayStatus(progress = currentPosition, isPlaying = true)
-                mainThreadHandler?.postDelayed(this, UPDATE_TIME)
-            }else{
-                screenStateLiveData.value =
-                    PlayerScreenState.PlayStatus(progress = 0, isPlaying = true)
-                onPause()
-            }
-        }
-    }
-
     private fun onPause() {
-        val currentPosition = if (trackPlayer.playerState()) 0 else trackPlayer.getPosition()
-        screenStateLiveData.value =
-            PlayerScreenState.PlayStatus(progress =  currentPosition, isPlaying = false)
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable)
+        screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
+            progress =  getCurrentPlayerPosition(), isPlaying = false))
         trackPlayer.pause()
+        timerJob?.cancel()
     }
 
     override fun onCleared() {
-        mainThreadHandler?.removeCallbacks(updateTimeRunnable)
+        super.onCleared()
         trackPlayer.release()
     }
 
-    companion object {
-        private const val UPDATE_TIME = 250L
+    private fun getCurrentPlayerPosition(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackPlayer.getPosition()) ?: "00:00"
     }
 }

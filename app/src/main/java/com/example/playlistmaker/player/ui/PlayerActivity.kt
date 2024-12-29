@@ -29,7 +29,6 @@ class PlayerActivity : AppCompatActivity() {
     private val track: Track? by lazy {IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)}
 
     private val viewModel: PlayerViewModel by viewModel {
-
         parametersOf(track?.previewUrl) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,16 +53,14 @@ class PlayerActivity : AppCompatActivity() {
             when (screenState) {
                 is PlayerScreenState.Content -> {
                     changeContentVisibility(Visible = true)
-
                     bind(track)
-
                 }
                 is PlayerScreenState.Loading -> {
                     changeContentVisibility(Visible = false)
                 }
                 is PlayerScreenState.PlayStatus ->{ screenState
                     changeButtonStyle(screenState.isPlaying)//Стиль кнопки проигрывания
-                    binding.songTime.text =  SimpleDateFormat("mm:ss", Locale.getDefault()).format(screenState.progress)
+                    binding.songTime.text =  screenState.progress
                 }
             }
         }
