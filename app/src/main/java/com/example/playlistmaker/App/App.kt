@@ -17,6 +17,7 @@ import org.koin.java.KoinJavaComponent.inject
 class App : Application() {
 
     override fun onCreate() {
+
         super.onCreate()
 
 
@@ -25,7 +26,6 @@ class App : Application() {
             modules(viewModelModule, repositoryModule, interactorModule, dataModule)
         }
         setInitialTheme()
-
 
     }
     private fun setInitialTheme() {

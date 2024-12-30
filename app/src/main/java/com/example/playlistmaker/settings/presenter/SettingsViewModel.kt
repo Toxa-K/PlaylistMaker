@@ -1,5 +1,6 @@
 package com.example.playlistmaker.settings.presenter
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,8 +26,10 @@ class SettingsViewModel(
     }
 
     fun toggleTheme(isEnabled: Boolean) {
-        settingsLiveData.value?.isThemeEnabled = isEnabled
-        switchTheme.execute(isEnabled)
+
+            switchTheme.execute(isEnabled)
+            settingsLiveData.value = SettingsModel(isEnabled)
+
     }
 
 
