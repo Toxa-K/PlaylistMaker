@@ -1,19 +1,17 @@
 package com.example.playlistmaker.search.presenter
 
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.usecase.ClearTrackHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.GetHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.SetHistoryUseCase
-
+import kotlinx.coroutines.launch
 
 
 class TrackSearchViewModel(
@@ -25,7 +23,6 @@ class TrackSearchViewModel(
 ): ViewModel(){
 
     private val tracksSearch = ArrayList<Track>()
-    private val handler = Handler(Looper.getMainLooper())
     init{
     }
 
@@ -60,48 +57,49 @@ class TrackSearchViewModel(
 
     fun searchRequest(newSearchText:String) {
         if (newSearchText.isNotEmpty()) {
-            renderState(SearchState.Loading)}
+            renderState(SearchState.Loading)
+        }
 
-        trackInteractor.searchTrack(newSearchText, object : TrackInteractor.TrackConsumer {
-            override fun consume(foundTrack: List<Track>?, errorMessage:String?) {
+        viewModelScope.launch {
+            trackInteractor
+                .searchTrack(newSearchText)
+                .collect { pair ->
+                    processResult(pair.first, pair.second)
+                }
 
-                if (!foundTrack.isNullOrEmpty()) {
-                    tracksSearch.clear()
-                    tracksSearch.addAll(foundTrack)
-                }
-                when{
-                    errorMessage != null ->{
-                        renderState(
-                            SearchState.Error(
-                                errorMessage = R.string.something_went_wrong
-                            )
-                        )
-                        showToast.postValue(errorMessage!!)
-                    }
-                    tracksSearch.isEmpty() ->{
-                        renderState(
-                            SearchState.Empty(
-                                message = R.string.nothing_found
-                            )
-                        )
-                    }
-                    else ->{
-                        renderState(
-                            SearchState.Content(
-                                track = tracksSearch
-                            )
-                        )
-                    }
-                }
+        }
+    }
+    private fun processResult(foundTrack: List<Track>?, errorMessage:String?){
+        if (!foundTrack.isNullOrEmpty()) {
+            tracksSearch.clear()
+            tracksSearch.addAll(foundTrack)
+        }
+        when {
+            errorMessage != null -> {
+                renderState(
+                    SearchState.Error(
+                        errorMessage = R.string.something_went_wrong
+                    )
+                )
+                showToast.postValue(errorMessage!!)
             }
 
-        })
+            tracksSearch.isEmpty() -> {
+                renderState(
+                    SearchState.Empty(
+                        message = R.string.nothing_found
+                    )
+                )
+            }
+
+            else -> {
+                renderState(
+                    SearchState.Content(
+                        track = tracksSearch
+                    )
+                )
+            }
+        }
     }
 
-
-
-    companion object {
-
-
-    }
 }
