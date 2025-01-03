@@ -21,6 +21,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
@@ -29,11 +31,13 @@ import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presenter.SearchState
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
+import com.example.playlistmaker.util.debounce
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
-
-
 
     private val viewModel by viewModel<TrackSearchViewModel>()
     private lateinit var searchInput: EditText
@@ -52,13 +56,13 @@ class SearchFragment : Fragment() {
 
 
     private lateinit var textWatcher: TextWatcher
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
     private val handler = Handler(Looper.getMainLooper())
 
 
-    //переменные: пустая строка для поля ввода, пдля clickDebounce
-    private var isClickAllowed = true
     private var searchText: String = ""
     private var latestSearchText: String? = null
+    private var searchJob: Job? = null
 
     private lateinit var binding: FragmentSearchBinding
 
@@ -81,6 +85,14 @@ class SearchFragment : Fragment() {
         progressBar = binding.progressBar
         clearButton = binding.clearButton
 
+        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
+                putExtra(KEY_TRACK, track)
+            }
+            startActivity(displayIntent)
+        }
+
+
 
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -91,18 +103,17 @@ class SearchFragment : Fragment() {
         }
 
         adapterSearch = TrackAdapter(listOf()) { track ->
-            if (clickDebounce()) {
-                viewModel.onTrackSearchClicked(track)
-                progressBar.isVisible = false
-                goToPlayer(track)
-            }
+            onTrackClickDebounce(track)
+            viewModel.onTrackSearchClicked(track)
+            progressBar.isVisible = false
+
+
         }
         adapterHistory = TrackAdapter(listOf()) { track ->
-            if (clickDebounce()) {
-                viewModel.onTrackHistoryClicked(track)
-                progressBar.isVisible =false
-                goToPlayer(track)
-            }
+            onTrackClickDebounce(track)
+            viewModel.onTrackHistoryClicked(track)
+            progressBar.isVisible =false
+
         }
 
         //Создание списка треков поиска
@@ -129,7 +140,6 @@ class SearchFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
-                    handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
                     viewModel.loadHistory()
 
                 } else {
@@ -285,33 +295,23 @@ class SearchFragment : Fragment() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
     }
-    //Разрешение пользователю нажимать на элементы списка не чаще одного раза в секунду
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
+
 
     //Автоматический поиск каждые 2000L
     fun searchDebounce(changedText: String) {
+        if (this.latestSearchText == changedText) {
+            return
+        }
+        latestSearchText = changedText
 
-        this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-
-        val searchRunnable = Runnable { viewModel.searchRequest(changedText) }
-
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            viewModel.searchRequest(changedText)
+        }
     }
     companion object {
-        const val CLICK_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 0L
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
         const val KEY_TRACK ="KEY_TRACK1"
         const val SEARCH_DEBOUNCE_DELAY = 2000L

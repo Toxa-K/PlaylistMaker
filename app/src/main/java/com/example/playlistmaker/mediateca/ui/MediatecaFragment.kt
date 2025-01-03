@@ -1,6 +1,7 @@
 package com.example.playlistmaker.mediateca.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MediatecaFragment:Fragment() {
     private lateinit var binding: FragmentMediatecaBinding
-    private lateinit var tabMediator: TabLayoutMediator
+    private var tabMediator: TabLayoutMediator?=null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMediatecaBinding.inflate(inflater, container, false)
@@ -31,11 +32,12 @@ class MediatecaFragment:Fragment() {
                 1 -> tab.text = "Плейлисты"
             }
         }
-        tabMediator.attach()
+        tabMediator?.attach()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        tabMediator.detach()
+        tabMediator?.detach()
+
     }
 }

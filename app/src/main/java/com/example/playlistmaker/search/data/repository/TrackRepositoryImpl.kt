@@ -8,30 +8,38 @@ import com.example.playlistmaker.search.data.dto.TrackResponse
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.repository.TrackRepository
 import com.example.playlistmaker.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
-    override fun searchTrack(expression: String): Resource<List<Track>> {
+    override fun searchTrack(expression: String): Flow<Resource<List<Track>>> = flow{
         val response = networkClient.doRequest(TrackRequest(expression))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error(R.string.check_internet_connection.toString())
+                emit(Resource.Error(R.string.check_internet_connection.toString()))
             }
-            200 -> {Resource.Success((response as TrackResponse).results.map {
-                    Track(
-                        it.previewUrl,
-                        it.trackId,
-                        it.trackName,
-                        it.artistName,
-                        it.trackTimeMillis,
-                        it.artworkUrl100,
-                        it.collectionName,
-                        it.releaseDate,
-                        it.primaryGenreName,
-                        it.country)
-            })
+            200 -> {
+                with(response as TrackResponse){
+                    val data = results.map {
+                         Track(
+                            it.previewUrl,
+                            it.trackId,
+                            it.trackName,
+                            it.artistName,
+                            it.trackTimeMillis,
+                            it.artworkUrl100,
+                            it.collectionName,
+                            it.releaseDate,
+                            it.primaryGenreName,
+                            it.country)
+                    }
+                    emit(Resource.Success(data))
+                }
             }
 
-            else -> {Resource.Error(R.string.network_error.toString())}
+            else -> {
+                emit(Resource.Error(R.string.network_error.toString()))
+            }
         }
     }
 }
