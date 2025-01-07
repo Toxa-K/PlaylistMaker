@@ -17,6 +17,7 @@ class TrackDbConvertor {
             track.country
         )
     }
+
     fun map(track: Track): TrackEntity {
         return TrackEntity(
             track.previewUrl,
@@ -28,7 +29,8 @@ class TrackDbConvertor {
             track.collectionName,
             track.releaseDate,
             track.primaryGenreName,
-            track.country
+            track.country,
+            addetAt = System.currentTimeMillis()
         )
     }
 }

@@ -21,7 +21,7 @@ import java.util.Locale
 class PlayerViewModel(
     private val trackPlayer: PlayerInteractor,
     private val likeInteractor: LikeInteractor
-): ViewModel() {
+) : ViewModel() {
 
 
     private var timerJob: Job? = null
@@ -31,21 +31,27 @@ class PlayerViewModel(
     fun getScreenStateLiveData(): LiveData<PlayerScreenState> = screenStateLiveData
 
     private val stateLikeLiveData = MutableLiveData<PlayerLikeState>()
-    fun getStateLikeLiveData():LiveData<PlayerLikeState> = stateLikeLiveData
+    fun getStateLikeLiveData(): LiveData<PlayerLikeState> = stateLikeLiveData
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
-            while (!trackPlayer.playerState() ) {
-                delay(800L)
-                screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
-                    progress = getCurrentPlayerPosition(),isPlaying = true))
+            while (!trackPlayer.playerState()) {
+                delay(CHECK_LISTEN_TIME)
+                screenStateLiveData.postValue(
+                    PlayerScreenState.PlayStatus(
+                        progress = getCurrentPlayerPosition(), isPlaying = true
+                    )
+                )
             }
-            screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
-                progress = "00:00",isPlaying = false))
+            screenStateLiveData.postValue(
+                PlayerScreenState.PlayStatus(
+                    progress = "00:00", isPlaying = false
+                )
+            )
         }
     }
 
-    fun onFavoriteClicked(track: Track){
+    fun onFavoriteClicked(track: Track) {
         track.let {
             viewModelScope.launch {
                 if (isTrackLiked) {
@@ -53,7 +59,7 @@ class PlayerViewModel(
                 } else {
                     likeInteractor.likeTrack(it)
                 }
-                isTrackLiked= !isTrackLiked
+                isTrackLiked = !isTrackLiked
                 updateLikeState()
             }
         }
@@ -69,7 +75,7 @@ class PlayerViewModel(
     }
 
 
-    fun onCreate(track: Track){
+    fun onCreate(track: Track) {
         viewModelScope.launch {
             isTrackLiked = checkLike(track) // Ждём завершения проверки лайков
             updateLikeState() // Обновляем состояние лайков только после проверки
@@ -78,13 +84,14 @@ class PlayerViewModel(
         trackPlayer.prepare()
 
         updateLikeState()
-        screenStateLiveData.value=
+        screenStateLiveData.value =
             PlayerScreenState.Content
     }
 
-    private suspend fun checkLike(track: Track):Boolean {
+    private suspend fun checkLike(track: Track): Boolean {
         return likeInteractor.getLikeTracks().first().contains(track.trackId)
     }
+
     private fun updateLikeState() {
         stateLikeLiveData.value = if (isTrackLiked) {
             PlayerLikeState.Liked
@@ -95,10 +102,13 @@ class PlayerViewModel(
 
 
     private fun onPause() {
-        screenStateLiveData.postValue(PlayerScreenState.PlayStatus(
-            progress =  getCurrentPlayerPosition(), isPlaying = false))
         trackPlayer.pause()
         timerJob?.cancel()
+        screenStateLiveData.postValue(
+            PlayerScreenState.PlayStatus(
+                progress = getCurrentPlayerPosition(), isPlaying = false
+            )
+        )
     }
 
     override fun onCleared() {
@@ -107,6 +117,11 @@ class PlayerViewModel(
     }
 
     private fun getCurrentPlayerPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackPlayer.getPosition()) ?: "00:00"
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackPlayer.getPosition())
+            ?: "00:00"
+    }
+
+    companion object {
+        const val CHECK_LISTEN_TIME = 300L
     }
 }

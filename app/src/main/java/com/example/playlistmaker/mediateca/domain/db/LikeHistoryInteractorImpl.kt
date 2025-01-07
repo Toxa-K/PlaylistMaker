@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 class LikeHistoryInteractorImpl(
     private val repository: LikeRepository
-):LikeHistoryInteractor {
+) : LikeHistoryInteractor {
     override fun getLikeHistoryTrack(): Flow<List<Track>> {
         return repository.getAllTrack()
     }

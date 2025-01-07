@@ -18,7 +18,7 @@ class LikeRepositoryImpl(
         appDatabase.trackDao().insertTrack(trackEntity)
     }
 
-    override suspend fun deleteTrack(track: Track){
+    override suspend fun deleteTrack(track: Track) {
         val trackEntity = trackDbConvertor.map(track)
         appDatabase.trackDao().deleteTrack(trackEntity)
     }
@@ -33,8 +33,8 @@ class LikeRepositoryImpl(
         return appDatabase.trackDao().getLikedId()
     }
 
-    private fun convertFromTracksEntity(tracks:List<TrackEntity>):List<Track>{
-        return tracks.map{track -> trackDbConvertor.map(track)}
+    private fun convertFromTracksEntity(tracks: List<TrackEntity>): List<Track> {
+        return tracks.map { track -> trackDbConvertor.map(track) }
 
     }
 }

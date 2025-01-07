@@ -20,31 +20,31 @@ import org.koin.dsl.module
 
 val interactorModule = module {
 
-    single<SharingInteractor>{
+    single<SharingInteractor> {
         SharingInteractorImpl(get())
     }
 
-    factory <PlayerInteractor>{(url:String)->
-        PlayerInteractorImpl(get{ parametersOf(url) })
+    factory<PlayerInteractor> { (url: String) ->
+        PlayerInteractorImpl(get { parametersOf(url) })
     }
 
-    single<ClearTrackHistoryUseCase>{
+    single<ClearTrackHistoryUseCase> {
         ClearTrackHistoryUseCase(get())
     }
 
-    single<GetHistoryUseCase>{
+    single<GetHistoryUseCase> {
         GetHistoryUseCase(get())
     }
 
-    single<SwitchThemeUseCase>{
+    single<SwitchThemeUseCase> {
         SwitchThemeUseCase(get())
     }
 
-    single<SetHistoryUseCase>{
+    single<SetHistoryUseCase> {
         SetHistoryUseCase(get())
     }
 
-    single<TrackInteractor>{
+    single<TrackInteractor> {
         TrackInteractorImpl(get())
     }
 
@@ -55,7 +55,7 @@ val interactorModule = module {
     single<LikeHistoryInteractor> {
         LikeHistoryInteractorImpl(get())
     }
-    single<LikeInteractor>{
+    single<LikeInteractor> {
         LikeInteractorImpl(get())
     }
 }

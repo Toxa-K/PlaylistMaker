@@ -10,9 +10,9 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val dataModule = module{
+val dataModule = module {
 
-    single<iTunesAPI>{
+    single<iTunesAPI> {
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com")
             .addConverterFactory(GsonConverterFactory.create())

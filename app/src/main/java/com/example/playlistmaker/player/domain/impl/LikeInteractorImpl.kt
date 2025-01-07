@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class LikeInteractorImpl(
     private val repository: LikeRepository
-) : LikeInteractor{
+) : LikeInteractor {
     override fun likeTrack(track: Track) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.insertTrack(track)

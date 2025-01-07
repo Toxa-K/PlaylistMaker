@@ -14,7 +14,7 @@ data class Track(
         val releaseDate: String?, //Год релиза трека
         val primaryGenreName: String?, //Жанр трека
         val country: String?, //Страна исполнителя
-        var isFavorite: Boolean = false
+        /*var isFavorite: Boolean = false*/
 ): Serializable {
         fun getCoverArtwork() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
 }

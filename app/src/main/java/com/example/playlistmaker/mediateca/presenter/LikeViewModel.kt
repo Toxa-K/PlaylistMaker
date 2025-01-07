@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class LikeViewModel(
     private val likeHistoryInteractor: LikeHistoryInteractor
-): ViewModel() {
+) : ViewModel() {
     private val stateLiveData = MutableLiveData<LikeState>()
 
     fun observeState(): LiveData<LikeState> = stateLiveData
@@ -21,14 +21,14 @@ class LikeViewModel(
         viewModelScope.launch {
             likeHistoryInteractor
                 .getLikeHistoryTrack()
-                .collect{ tracks->
+                .collect { tracks ->
                     processResult(tracks)
                 }
         }
     }
 
     private fun processResult(track: List<Track>) {
-        if(track.isEmpty()){
+        if (track.isEmpty()) {
             renderState(LikeState.Empty(R.string.like_is_null))
         } else {
             renderState(LikeState.Content(track))

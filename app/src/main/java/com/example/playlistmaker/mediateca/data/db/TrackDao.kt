@@ -16,7 +16,7 @@ interface TrackDao {
     @Delete
     suspend fun deleteTrack(track: TrackEntity)  // Возвращает количество удаленных треков
 
-    @Query("SELECT * FROM liked_table")
+    @Query("SELECT * FROM liked_table ORDER BY addetAt DESC")
     fun getTrack(): Flow<List<TrackEntity>>  // Возвращает список треков
 
     @Query("SELECT trackId FROM liked_table")

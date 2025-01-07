@@ -26,7 +26,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LikeTrackFragment : Fragment() {
 
-    private val likeViewModel: LikeViewModel by viewModel ()
+    private val likeViewModel: LikeViewModel by viewModel()
     private lateinit var adapterLike: TrackAdapter
     private lateinit var likeView: RecyclerView
     private lateinit var placeholderMessage: TextView
@@ -42,7 +42,7 @@ class LikeTrackFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = MediatecaLikeBinding.inflate(inflater,container,false)
+        binding = MediatecaLikeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,7 +54,11 @@ class LikeTrackFragment : Fragment() {
         likeView = binding.likeView
         progressBar = binding.progressBar
 
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
             val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
                 putExtra(KEY_TRACK, track)
             }
@@ -65,7 +69,8 @@ class LikeTrackFragment : Fragment() {
             onTrackClickDebounce(track)
         }
 
-        likeView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        likeView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         likeView.adapter = adapterLike
 
         likeViewModel.fillData()
@@ -84,7 +89,7 @@ class LikeTrackFragment : Fragment() {
         }
     }
 
-    private fun showContent(track: List<Track>){
+    private fun showContent(track: List<Track>) {
         progressBar.isVisible = false
         showPlaceholder(isVisible = false)
         adapterLike.updateTracks(track)
@@ -97,17 +102,17 @@ class LikeTrackFragment : Fragment() {
         likeView.isVisible = false
     }
 
-    private fun showEmpty(emptyMessage: String){
+    private fun showEmpty(emptyMessage: String) {
         progressBar.isVisible = false
         placeholderMessage.text = emptyMessage
         showPlaceholder(isVisible = true)
         likeView.isVisible = false
     }
+
     private fun showPlaceholder(isVisible: Boolean) {
         placeholderIcon.isVisible = isVisible
         placeholderMessage.isVisible = isVisible
     }
-
 
 
     companion object {

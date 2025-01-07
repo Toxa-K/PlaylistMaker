@@ -27,10 +27,17 @@ import java.util.Locale
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
-    private val track: Track? by lazy {IntentCompat.getSerializableExtra(intent, KEY_TRACK, Track::class.java)}
+    private val track: Track? by lazy {
+        IntentCompat.getSerializableExtra(
+            intent,
+            KEY_TRACK,
+            Track::class.java
+        )
+    }
 
     private val viewModel: PlayerViewModel by viewModel {
-        parametersOf(track?.previewUrl) }
+        parametersOf(track?.previewUrl)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,17 +55,18 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.playButton.isEnabled = false
 
-        binding.favoriteButton.setOnClickListener{
+        binding.favoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked(track!!)
         }
 
 
         viewModel.getStateLikeLiveData().observe(this) { likeState ->
             when (likeState) {
-                is PlayerLikeState.Liked ->{
+                is PlayerLikeState.Liked -> {
                     binding.favoriteButton.setImageResource(R.drawable.button_islike)
                 }
-                is PlayerLikeState.Disliked->{
+
+                is PlayerLikeState.Disliked -> {
                     binding.favoriteButton.setImageResource(R.drawable.ic_favorite)
                 }
             }
@@ -70,12 +78,19 @@ class PlayerActivity : AppCompatActivity() {
                     changeContentVisibility(Visible = true)
                     bind(track)
                 }
+
                 is PlayerScreenState.Loading -> {
                     changeContentVisibility(Visible = false)
                 }
-                is PlayerScreenState.PlayStatus ->{ screenState
-                    changeButtonStyle(screenState.isPlaying)//Стиль кнопки проигрывания
-                    binding.songTime.text =  screenState.progress
+
+                is PlayerScreenState.PlayStatus -> {
+                    /*changeButtonStyle(screenState.isPlaying)//Стиль кнопки проигрывания*/
+                    if (screenState.isPlaying) {
+                        binding.playButton.setImageResource(R.drawable.ic_pause)
+                    } else {
+                        binding.playButton.setImageResource(R.drawable.ic_play)
+                    }
+                    binding.songTime.text = screenState.progress
                 }
             }
         }
@@ -84,21 +99,21 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onButtonClicked()
         }
     }
+
     override fun onBackPressed() {
         super.onBackPressed()
         finish() // Завершение активности при нажатии аппаратной кнопки "Назад"
     }
 
 
-
-    private fun bind(track: Track?)  {
+    private fun bind(track: Track?) {
         if (track == null) return //По логике, учитывая что Track передается из прошлого экрана, он 100% не null, получается эта проверка для IDE?
         binding.songTitle.text = track.trackName
         binding.artistName.text = track.artistName
         if (track.collectionName.isNullOrEmpty()) {
             binding.albumInfo.isVisible = false
             binding.albumInfo1.isVisible = false// Скрываем метку "Альбом:"
-        }else {
+        } else {
             binding.albumInfo1.text = track.collectionName
             binding.albumInfo.isVisible = true
             binding.albumInfo1.isVisible = true
@@ -137,13 +152,13 @@ class PlayerActivity : AppCompatActivity() {
         binding.playButton.isEnabled = Visible
     }
 
-    private fun changeButtonStyle(playStatus: Boolean) {
-        if(playStatus){
+    /*private fun changeButtonStyle(playStatus: Boolean) {
+        if (playStatus) {
             binding.playButton.setImageResource(R.drawable.ic_pause)
-        }else{
+        } else {
             binding.playButton.setImageResource(R.drawable.ic_play)
         }
-    }
+    }*/
 
     companion object {
         private const val KEY_TRACK = "KEY_TRACK1"

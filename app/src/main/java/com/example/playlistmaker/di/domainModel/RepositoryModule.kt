@@ -16,11 +16,11 @@ import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.domain.repository.ExternalNavigator
 import org.koin.dsl.module
 
-val repositoryModule = module{
+val repositoryModule = module {
     factory { MediaPlayer() }
 
-    factory <PlayerRepository>{(url:String)->
-        PlayerRepositoryImpl(url,get())
+    factory<PlayerRepository> { (url: String) ->
+        PlayerRepositoryImpl(url, get())
     }
     factory { TrackDbConvertor() }
 
@@ -28,11 +28,11 @@ val repositoryModule = module{
         ExternalNavigatorImpl(get())
     }
 
-    single<HistoryRepository>{
+    single<HistoryRepository> {
         HistoryRepositoryImpl(get())
     }
 
-    single<TrackRepository>{
+    single<TrackRepository> {
         TrackRepositoryImpl(get())
     }
 
