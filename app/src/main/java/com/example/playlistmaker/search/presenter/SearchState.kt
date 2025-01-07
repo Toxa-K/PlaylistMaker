@@ -2,7 +2,6 @@ package com.example.playlistmaker.search.presenter
 
 
 import androidx.annotation.StringRes
-import androidx.annotation.StyleRes
 import com.example.playlistmaker.search.domain.model.Track
 
 sealed interface SearchState {

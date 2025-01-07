@@ -1,6 +1,10 @@
 package com.example.playlistmaker.di.domainModel
 
+import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractor
+import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractorImpl
+import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.domain.impl.LikeInteractorImpl
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
@@ -46,5 +50,12 @@ val interactorModule = module {
 
     single<GetThemeUseCase> {
         GetThemeUseCase(get())
+    }
+
+    single<LikeHistoryInteractor> {
+        LikeHistoryInteractorImpl(get())
+    }
+    single<LikeInteractor>{
+        LikeInteractorImpl(get())
     }
 }

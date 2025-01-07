@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.player.presenter.PlayerLikeState
 import com.example.playlistmaker.player.presenter.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,15 +40,29 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel.onCreate(track!!)
+
         binding.backButton.setOnClickListener {
             finish()
         }
 
         binding.playButton.isEnabled = false
 
+        binding.favoriteButton.setOnClickListener{
+            viewModel.onFavoriteClicked(track!!)
+        }
 
 
-        viewModel.onCreate()
+        viewModel.getStateLikeLiveData().observe(this) { likeState ->
+            when (likeState) {
+                is PlayerLikeState.Liked ->{
+                    binding.favoriteButton.setImageResource(R.drawable.button_islike)
+                }
+                is PlayerLikeState.Disliked->{
+                    binding.favoriteButton.setImageResource(R.drawable.ic_favorite)
+                }
+            }
+        }
 
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
             when (screenState) {
