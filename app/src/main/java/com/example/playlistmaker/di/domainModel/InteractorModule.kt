@@ -1,6 +1,10 @@
 package com.example.playlistmaker.di.domainModel
 
+import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractor
+import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractorImpl
+import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.domain.impl.LikeInteractorImpl
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.domain.api.TrackInteractor
 import com.example.playlistmaker.search.domain.impl.TrackInteractorImpl
@@ -16,35 +20,42 @@ import org.koin.dsl.module
 
 val interactorModule = module {
 
-    single<SharingInteractor>{
+    single<SharingInteractor> {
         SharingInteractorImpl(get())
     }
 
-    factory <PlayerInteractor>{(url:String)->
-        PlayerInteractorImpl(get{ parametersOf(url) })
+    factory<PlayerInteractor> { (url: String) ->
+        PlayerInteractorImpl(get { parametersOf(url) })
     }
 
-    single<ClearTrackHistoryUseCase>{
+    single<ClearTrackHistoryUseCase> {
         ClearTrackHistoryUseCase(get())
     }
 
-    single<GetHistoryUseCase>{
+    single<GetHistoryUseCase> {
         GetHistoryUseCase(get())
     }
 
-    single<SwitchThemeUseCase>{
+    single<SwitchThemeUseCase> {
         SwitchThemeUseCase(get())
     }
 
-    single<SetHistoryUseCase>{
+    single<SetHistoryUseCase> {
         SetHistoryUseCase(get())
     }
 
-    single<TrackInteractor>{
+    single<TrackInteractor> {
         TrackInteractorImpl(get())
     }
 
     single<GetThemeUseCase> {
         GetThemeUseCase(get())
+    }
+
+    single<LikeHistoryInteractor> {
+        LikeHistoryInteractorImpl(get())
+    }
+    single<LikeInteractor> {
+        LikeInteractorImpl(get())
     }
 }

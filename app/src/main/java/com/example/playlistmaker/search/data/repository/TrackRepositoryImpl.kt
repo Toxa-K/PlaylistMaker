@@ -11,13 +11,17 @@ import com.example.playlistmaker.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
+class TrackRepositoryImpl(
+    private val networkClient: NetworkClient
+) : TrackRepository {
+
     override fun searchTrack(expression: String): Flow<Resource<List<Track>>> = flow{
         val response = networkClient.doRequest(TrackRequest(expression))
         when (response.resultCode) {
             -1 -> {
                 emit(Resource.Error(R.string.check_internet_connection.toString()))
             }
+
             200 -> {
                 with(response as TrackResponse){
                     val data = results.map {
@@ -42,4 +46,8 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
             }
         }
     }
+
+
+
+
 }
