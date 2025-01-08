@@ -1,11 +1,11 @@
-package com.example.playlistmaker.mediateca.presenter
+package com.example.playlistmaker.mediateca.presenter.likeList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractor
+import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.launch
 

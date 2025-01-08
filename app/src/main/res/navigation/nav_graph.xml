@@ -16,11 +16,18 @@
         android:name="com.example.playlistmaker.mediateca.ui.MediatecaFragment"
         android:label="fragment_mediateca"
         tools:layout="@layout/fragment_mediateca" >
-
+        <action
+            android:id="@+id/action_mediatecaFragment_to_createPlayListFragment2"
+            app:destination="@id/createPlayListFragment2" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/createPlayListFragment2"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.CreatePlayListFragment"
+        android:label="fragment_creatplaylist"
+        tools:layout="@layout/fragment_creatplaylist" />
 </navigation>

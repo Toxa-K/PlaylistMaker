@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di.domainModel
 
-import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractor
-import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractorImpl
+import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractor
+import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractorImpl
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.LikeInteractorImpl

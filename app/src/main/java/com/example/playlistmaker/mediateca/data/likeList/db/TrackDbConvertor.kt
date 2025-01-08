@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca.data.db
+package com.example.playlistmaker.mediateca.data.likeList.db
 
 import com.example.playlistmaker.search.domain.model.Track
 

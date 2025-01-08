@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca.presenter
+package com.example.playlistmaker.mediateca.presenter.playList
 
 import androidx.lifecycle.ViewModel
 

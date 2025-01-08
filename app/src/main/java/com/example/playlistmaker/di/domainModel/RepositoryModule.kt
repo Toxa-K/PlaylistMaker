@@ -1,11 +1,11 @@
 package com.example.playlistmaker.di.domainModel
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.mediateca.data.db.LikeRepositoryImpl
+import com.example.playlistmaker.mediateca.data.likeList.db.LikeRepositoryImpl
 import com.example.playlistmaker.player.data.repository.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
-import com.example.playlistmaker.mediateca.data.db.TrackDbConvertor
-import com.example.playlistmaker.mediateca.domain.db.LikeRepository
+import com.example.playlistmaker.mediateca.data.likeList.db.TrackDbConvertor
+import com.example.playlistmaker.mediateca.domain.likeList.LikeRepository
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.HistoryRepository

@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.MediatecaLikeBinding
-import com.example.playlistmaker.mediateca.presenter.LikeState
-import com.example.playlistmaker.mediateca.presenter.LikeViewModel
+import com.example.playlistmaker.mediateca.presenter.likeList.LikeState
+import com.example.playlistmaker.mediateca.presenter.likeList.LikeViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY

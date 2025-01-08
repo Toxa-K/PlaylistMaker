@@ -30,6 +30,8 @@
     <string name="network_error" translatable="false">Ошибка сервера</string>
     <string name="track_unavailable" translatable="false">трек не доступен</string>
     <string name="like_is_null" translatable="false">Ваша медиатека пуста</string>
+    <string name="new_playlist" translatable="false">Новый плейлист</string>
+    <string name="creat" translatable="false">Создать</string>
 
 
 </resources>
