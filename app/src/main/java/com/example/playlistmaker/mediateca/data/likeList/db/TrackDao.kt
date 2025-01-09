@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.Flow
 interface TrackDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTrack(track: TrackEntity)  // Возвращает ID добавленного трека
+    suspend fun insertTrack(track: TrackEntity)
 
     @Delete
-    suspend fun deleteTrack(track: TrackEntity)  // Возвращает количество удаленных треков
+    suspend fun deleteTrack(track: TrackEntity)
 
     @Query("SELECT * FROM liked_table ORDER BY addetAt DESC")
-    fun getTrack(): Flow<List<TrackEntity>>  // Возвращает список треков
+    fun getTrack(): Flow<List<TrackEntity>>
 
     @Query("SELECT trackId FROM liked_table")
-    fun getLikedId(): Flow<List<Int>>  // Возвращает список идентификаторов треков
+    fun getLikedId(): Flow<List<Int>>
 }

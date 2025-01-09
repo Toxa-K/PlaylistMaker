@@ -74,41 +74,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarSettings" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:background="@drawable/rounded_rectangle"
-        android:fontFamily="@font/ys_display_regular"
-        android:paddingHorizontal="@dimen/marg_16"
-        android:paddingTop="18dp"
-        android:paddingBottom="16dp"
-        android:textFontWeight="400"
-        android:textSize="16sp"
+        android:hint="@string/title"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        tools:text="Название*" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/ys_display_regular"
+            android:paddingHorizontal="@dimen/marg_16"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            android:textColor="@color/black_white"
+            android:inputType="text"
+            tools:text="@string/title"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/marg_16"
-        android:background="@drawable/rounded_rectangle"
-        android:fontFamily="@font/ys_display_regular"
-        android:paddingHorizontal="@dimen/marg_16"
-        android:paddingTop="18dp"
-        android:paddingBottom="19dp"
-        android:textFontWeight="400"
-        android:textSize="16sp"
+        android:hint="@string/description"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@id/EditTextBarrier"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:text="Описание" />
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/ys_display_regular"
+            android:paddingHorizontal="@dimen/marg_16"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            android:textColor="@color/black_white"
+            android:inputType="text"
+            tools:text="@string/description"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/button"
@@ -121,7 +135,7 @@
         android:fontFamily="@font/ys_display_medium"
         android:text="@string/creat"
         android:textFontWeight="500"
-
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/rightBorder2"

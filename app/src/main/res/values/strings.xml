@@ -32,6 +32,10 @@
     <string name="like_is_null" translatable="false">Ваша медиатека пуста</string>
     <string name="new_playlist" translatable="false">Новый плейлист</string>
     <string name="creat" translatable="false">Создать</string>
+    <string name="title" translatable="false">Название*</string>
+    <string name="description" translatable="false">Описание</string>
+
+
 
 
 </resources>

@@ -16,5 +16,5 @@ data class TrackEntity(
     val releaseDate: String?, //Год релиза трека
     val primaryGenreName: String?, //Жанр трека
     val country: String?, //Страна исполнителя
-    val addetAt: Long? //Время добавления трека для сортировки
+    val addetAt: Long //Время добавления трека для сортировки
 )

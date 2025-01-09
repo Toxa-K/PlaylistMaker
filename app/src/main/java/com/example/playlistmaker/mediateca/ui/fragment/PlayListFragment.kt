@@ -36,9 +36,7 @@ class PlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*binding.placeholderButton.setOnClickListener{
-            CreatePlayListFragment.newInstance()
-        }*/
+
         binding.placeholderButton.setOnClickListener {
             // Скрываем нижнюю панель
             (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility = View.GONE
