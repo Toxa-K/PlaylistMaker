@@ -91,4 +91,11 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">#AEAFB4</item>
     </style>
+    <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxBackgroundColor">@null</item>
+        <item name="boxStrokeColor">@color/color_input_create_pl</item> <!-- Цвет обводки -->
+        <item name="hintTextColor">@color/blue</item> <!-- Цвет подсказки -->
+    </style>
+
 </resources>

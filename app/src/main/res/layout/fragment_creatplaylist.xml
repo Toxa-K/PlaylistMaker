@@ -59,15 +59,15 @@
         app:constraint_referenced_ids="textView2" />
 
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/marg_16"
+        android:layout_marginHorizontal="@dimen/size_24"
         android:layout_marginTop="26dp"
-        android:background="@drawable/dotted_rounded_rectangle"
-        android:scaleType="centerInside"
-        android:src="@drawable/add_photo"
+        android:scaleType="centerCrop"
+        android:src="@drawable/add_image_playlist"
         app:layout_constraintBottom_toTopOf="@id/textView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,11 +76,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textView"
+        style="@style/CustomTextInputLayout"
+        app:cursorColor="@color/blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="26dp"
+
         android:hint="@string/title"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:textColorHint="@color/black_white"
         app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -90,22 +93,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/ys_display_regular"
-            android:paddingHorizontal="@dimen/marg_16"
             android:textFontWeight="400"
             android:textSize="16sp"
             android:textColor="@color/black_white"
-            android:inputType="text"
-            tools:text="@string/title"/>
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textView2"
+        style="@style/CustomTextInputLayout"
+        app:cursorColor="@color/blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/marg_16"
+        android:layout_marginTop="10dp"
         android:hint="@string/description"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:textColorHint="@color/black_white"
         app:boxBackgroundMode="outline"
         app:layout_constraintBottom_toTopOf="@id/EditTextBarrier"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -115,12 +118,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/ys_display_regular"
-            android:paddingHorizontal="@dimen/marg_16"
             android:textFontWeight="400"
             android:textSize="16sp"
             android:textColor="@color/black_white"
-            android:inputType="text"
-            tools:text="@string/description"/>
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 

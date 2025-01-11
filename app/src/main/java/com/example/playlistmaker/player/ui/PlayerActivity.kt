@@ -144,13 +144,13 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.getAddTrackLiveData().observe(this){state ->
             when (state){
                 is addToPlaylistState.done -> {
-                    Toast.makeText(this,"done",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Добавлено в плейлист [название плейлиста]",Toast.LENGTH_SHORT).show()
                 }
                 is addToPlaylistState.alreadyHave -> {
-                    Toast.makeText(this,"alreadyHave",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Трек уже добавлен в плейлист [название плейлиста]",Toast.LENGTH_SHORT).show()
                 }
                 is addToPlaylistState.problem ->{
-                    Toast.makeText(this,"problem",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Произошла ошибка, попробуйте переустановить приложение )))",Toast.LENGTH_SHORT).show()
                 }
             }
         }
