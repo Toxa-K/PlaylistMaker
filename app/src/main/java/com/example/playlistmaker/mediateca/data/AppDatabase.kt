@@ -8,7 +8,7 @@ import com.example.playlistmaker.mediateca.data.playList.PlaylistDao
 import com.example.playlistmaker.mediateca.data.playList.PlaylistEntity
 
 @Database(
-    version = 2,
+    version = 4,
     entities = [
         TrackEntity::class,
         PlaylistEntity::class

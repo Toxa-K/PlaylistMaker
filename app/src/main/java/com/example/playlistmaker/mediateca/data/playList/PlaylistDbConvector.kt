@@ -4,8 +4,8 @@ import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.google.gson.Gson
 
 class PlaylistDbConvector {
-    private val gson = Gson()
 
+    private val gson = Gson()
 
     // Функция для преобразования списка треков в JSON-строку
     fun fromTrackIdsList(trackIdsList: List<String>?): String {

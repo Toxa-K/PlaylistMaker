@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di.presentationModel
 
+import com.example.playlistmaker.mediateca.presenter.createPlaylist.CreatePlaylistViewModel
 import com.example.playlistmaker.mediateca.presenter.likeList.LikeViewModel
 import com.example.playlistmaker.mediateca.presenter.MediatecaViewModel
 import com.example.playlistmaker.mediateca.presenter.playList.PlaylistViewModel
@@ -34,4 +35,8 @@ val viewModelModule = module {
     viewModel {
         MediatecaViewModel()
     }
+    viewModel {
+        CreatePlaylistViewModel(get(),get())
+    }
+
 }

@@ -1,13 +1,11 @@
 package com.example.playlistmaker.player.presenter
 
 import android.icu.text.SimpleDateFormat
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.model.Track
@@ -32,6 +30,10 @@ class PlayerViewModel(
 
     private val stateLikeLiveData = MutableLiveData<PlayerLikeState>()
     fun getStateLikeLiveData(): LiveData<PlayerLikeState> = stateLikeLiveData
+
+    private val statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
+    fun getStatePlaylistLiveData(): LiveData<ListPlaylistState> = statePlaylistLiveData
+
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -120,6 +122,17 @@ class PlayerViewModel(
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackPlayer.getPosition())
             ?: "00:00"
     }
+
+
+
+    fun addToPlaylist(playlist: Playlist, track: Track) {
+        TODO("Not yet implemented")
+    }
+
+    fun buildListPlaylist() {
+        TODO("Not yet implemented")
+    }
+
 
     companion object {
         const val CHECK_LISTEN_TIME = 300L

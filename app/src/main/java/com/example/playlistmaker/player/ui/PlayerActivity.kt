@@ -3,20 +3,24 @@ package com.example.playlistmaker.player.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.player.presenter.ListPlaylistState
 import com.example.playlistmaker.player.presenter.PlayerLikeState
+import com.example.playlistmaker.player.presenter.PlayerPlaylistAdapter
 import com.example.playlistmaker.player.presenter.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -27,6 +31,8 @@ import java.util.Locale
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
+    private lateinit var onTrackClickDebounce: (Playlist) -> Unit
+
     private val track: Track? by lazy {
         IntentCompat.getSerializableExtra(
             intent,
@@ -41,24 +47,43 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (track == null) {
             return finish()
         }
+
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.onCreate(track!!)
+        val bottomSheetContainer = binding.standardBottomSheet
 
-        binding.backButton.setOnClickListener {
-            finish()
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        binding.playButton.isEnabled = false
-
-        binding.favoriteButton.setOnClickListener {
-            viewModel.onFavoriteClicked(track!!)
+        val adapter = PlayerPlaylistAdapter(listOf()) { playlist ->
+            onTrackClickDebounce(playlist)
+            viewModel.addToPlaylist(playlist, track!!)
         }
 
+        binding.listPlaylist.adapter = adapter
+        binding.listPlaylist.layoutManager = GridLayoutManager(this, 1)
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
         viewModel.getStateLikeLiveData().observe(this) { likeState ->
             when (likeState) {
@@ -84,7 +109,6 @@ class PlayerActivity : AppCompatActivity() {
                 }
 
                 is PlayerScreenState.PlayStatus -> {
-                    /*changeButtonStyle(screenState.isPlaying)//Стиль кнопки проигрывания*/
                     if (screenState.isPlaying) {
                         binding.playButton.setImageResource(R.drawable.ic_pause)
                     } else {
@@ -93,6 +117,34 @@ class PlayerActivity : AppCompatActivity() {
                     binding.songTime.text = screenState.progress
                 }
             }
+        }
+
+        viewModel.getStatePlaylistLiveData().observe(this){ state ->
+            when(state){
+                is ListPlaylistState.notEmptyList ->{
+                    adapter.updateTracks(state.playList)
+                }
+                is ListPlaylistState.emptyList ->{
+                    TODO("Not yet implemented")
+                }
+            }
+        }
+
+        viewModel.onCreate(track!!)
+
+        binding.addToPlaylist.setOnClickListener {
+            viewModel.buildListPlaylist()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.backButton.setOnClickListener {
+            finish()
+        }
+
+        binding.playButton.isEnabled = false
+
+        binding.favoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked(track!!)
         }
 
         binding.playButton.setOnClickListener {
@@ -152,13 +204,6 @@ class PlayerActivity : AppCompatActivity() {
         binding.playButton.isEnabled = Visible
     }
 
-    /*private fun changeButtonStyle(playStatus: Boolean) {
-        if (playStatus) {
-            binding.playButton.setImageResource(R.drawable.ic_pause)
-        } else {
-            binding.playButton.setImageResource(R.drawable.ic_play)
-        }
-    }*/
 
     companion object {
         private const val KEY_TRACK = "KEY_TRACK1"

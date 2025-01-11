@@ -12,7 +12,7 @@ data class PlaylistEntity(
     val description: String?,
     val directory: String?,
     val trackIds: String?,
-    val count: Int?,
+    val count: Int,
     val addetAt: Long
 
 )
