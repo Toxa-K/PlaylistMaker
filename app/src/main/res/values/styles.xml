@@ -97,5 +97,9 @@
         <item name="boxStrokeColor">@color/color_input_create_pl</item> <!-- Цвет обводки -->
         <item name="hintTextColor">@color/blue</item> <!-- Цвет подсказки -->
     </style>
+    <style name="RoundedCorners" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item> <!-- Размер закругления -->
+    </style>
 
 </resources>
