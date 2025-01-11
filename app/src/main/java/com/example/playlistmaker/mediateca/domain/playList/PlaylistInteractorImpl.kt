@@ -1,6 +1,7 @@
 package com.example.playlistmaker.mediateca.domain.playList
 
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -9,6 +10,10 @@ class PlaylistInteractorImpl(
 
     override fun getAllPlaylist(): Flow<List<Playlist>> {
         return repository.getAllPlaylists()
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist): Boolean {
+        return repository.updatePlaylist(playlist)
     }
 
     override fun getPlaylistById(id: Int): Flow<Playlist?> {
@@ -22,5 +27,7 @@ class PlaylistInteractorImpl(
     override suspend fun deletePlaylist(playlist: Playlist) {
         repository.deletePlaylist(playlist)
     }
-
+    override suspend fun addTrack(track: Track): Boolean {
+        return repository.insertPlaylistTrack(track)
+    }
 }

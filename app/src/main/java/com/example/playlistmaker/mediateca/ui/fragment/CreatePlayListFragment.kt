@@ -80,8 +80,8 @@ class CreatePlayListFragment : Fragment() {
 
         binding.button.setOnClickListener {
             viewModel.savePlaylist(
-                binding.textView.toString(),
-                binding.textView2.toString(),
+                binding.textView.editText?.text.toString(),
+                binding.textView2.editText?.text.toString(),
                 imageUri
             )
         }

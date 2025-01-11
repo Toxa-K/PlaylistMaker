@@ -2,12 +2,15 @@ package com.example.playlistmaker.player.ui
 
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -15,11 +18,16 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import com.example.playlistmaker.player.presenter.ListPlaylistState
-import com.example.playlistmaker.player.presenter.PlayerLikeState
+import com.example.playlistmaker.player.presenter.state.ListPlaylistState
+import com.example.playlistmaker.player.presenter.state.PlayerLikeState
 import com.example.playlistmaker.player.presenter.PlayerPlaylistAdapter
-import com.example.playlistmaker.player.presenter.PlayerScreenState
+import com.example.playlistmaker.player.presenter.state.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
+import com.example.playlistmaker.player.presenter.state.addToPlaylistState
+import com.example.playlistmaker.search.ui.SearchFragment
+import com.example.playlistmaker.search.ui.SearchFragment.Companion
+import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
+import com.example.playlistmaker.util.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -61,9 +69,12 @@ class PlayerActivity : AppCompatActivity() {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
+        onTrackClickDebounce = debounce<Playlist>(CLICK_DEBOUNCE_DELAY, lifecycleScope, false) { playlist ->
+            viewModel.addToPlaylist(playlist, track!!)
+        }
+
         val adapter = PlayerPlaylistAdapter(listOf()) { playlist ->
             onTrackClickDebounce(playlist)
-            viewModel.addToPlaylist(playlist, track!!)
         }
 
         binding.listPlaylist.adapter = adapter
@@ -125,7 +136,21 @@ class PlayerActivity : AppCompatActivity() {
                     adapter.updateTracks(state.playList)
                 }
                 is ListPlaylistState.emptyList ->{
-                    TODO("Not yet implemented")
+                    //TODO("Not yet implemented")
+                }
+            }
+        }
+
+        viewModel.getAddTrackLiveData().observe(this){state ->
+            when (state){
+                is addToPlaylistState.done -> {
+                    Toast.makeText(this,"done",Toast.LENGTH_SHORT).show()
+                }
+                is addToPlaylistState.alreadyHave -> {
+                    Toast.makeText(this,"alreadyHave",Toast.LENGTH_SHORT).show()
+                }
+                is addToPlaylistState.problem ->{
+                    Toast.makeText(this,"problem",Toast.LENGTH_SHORT).show()
                 }
             }
         }

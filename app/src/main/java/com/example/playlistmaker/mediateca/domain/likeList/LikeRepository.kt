@@ -8,4 +8,6 @@ interface LikeRepository {
     suspend fun deleteTrack(track: Track)
     fun getAllTrack(): Flow<List<Track>>
     suspend fun getLikedTrackId(): Flow<List<Int>>
+
+
 }

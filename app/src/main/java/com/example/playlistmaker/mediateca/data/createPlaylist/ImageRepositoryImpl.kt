@@ -41,12 +41,4 @@ class ImageRepositoryImpl (
         return file.absolutePath
     }
 
-    override fun getImage(location: String): Uri {
-        if (location.isNullOrEmpty()) return placeholder
-        val file = File(location)
-        return   Uri.fromFile(file)
-    }
-
-
-
 }

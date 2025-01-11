@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.presenter
+package com.example.playlistmaker.player.presenter.state
 
 
 sealed class PlayerScreenState {

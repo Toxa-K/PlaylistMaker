@@ -1,9 +1,10 @@
 package com.example.playlistmaker.mediateca.data.likeList.db
 
+import com.example.playlistmaker.player.data.repository.TracksInPlaylistsEntity
 import com.example.playlistmaker.search.domain.model.Track
 
 class TrackDbConvertor {
-    fun map(track: TrackEntity): Track {
+    fun mapLike(track: TrackEntity): Track {
         return Track(
             track.previewUrl,
             track.trackId,
@@ -18,7 +19,7 @@ class TrackDbConvertor {
         )
     }
 
-    fun map(track: Track): TrackEntity {
+    fun mapLike(track: Track): TrackEntity {
         return TrackEntity(
             track.previewUrl,
             track.trackId,
@@ -33,4 +34,5 @@ class TrackDbConvertor {
             addetAt = System.currentTimeMillis()
         )
     }
+
 }

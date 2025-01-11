@@ -6,8 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.presenter.state.ListPlaylistState
+import com.example.playlistmaker.player.presenter.state.PlayerLikeState
+import com.example.playlistmaker.player.presenter.state.PlayerScreenState
+import com.example.playlistmaker.player.presenter.state.addToPlaylistState
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,7 +23,8 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val trackPlayer: PlayerInteractor,
-    private val likeInteractor: LikeInteractor
+    private val likeInteractor: LikeInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
 
@@ -34,6 +40,8 @@ class PlayerViewModel(
     private val statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
     fun getStatePlaylistLiveData(): LiveData<ListPlaylistState> = statePlaylistLiveData
 
+    private val addTrackLiveData = MutableLiveData<addToPlaylistState>()
+    fun getAddTrackLiveData(): LiveData<addToPlaylistState> = addTrackLiveData
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -76,7 +84,6 @@ class PlayerViewModel(
         }
     }
 
-
     fun onCreate(track: Track) {
         viewModelScope.launch {
             isTrackLiked = checkLike(track) // Ждём завершения проверки лайков
@@ -84,7 +91,6 @@ class PlayerViewModel(
         }
 
         trackPlayer.prepare()
-
         updateLikeState()
         screenStateLiveData.value =
             PlayerScreenState.Content
@@ -101,7 +107,6 @@ class PlayerViewModel(
             PlayerLikeState.Disliked
         }
     }
-
 
     private fun onPause() {
         trackPlayer.pause()
@@ -123,16 +128,65 @@ class PlayerViewModel(
             ?: "00:00"
     }
 
+    fun buildListPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor
+                .getAllPlaylist()
+                .collect { playlists ->
+                    processResult(playlists)
+                }
+        }
+    }
 
+    private fun processResult(playlist: List<Playlist?>) {
+        if (playlist.isEmpty()) {
+            renderState(ListPlaylistState.emptyList)
+        } else {
+            renderState(ListPlaylistState.notEmptyList(playlist as List<Playlist>))
+        }
+    }
+
+    private fun renderState(state: ListPlaylistState) {
+        statePlaylistLiveData.postValue(state)
+    }
 
     fun addToPlaylist(playlist: Playlist, track: Track) {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            when (checkInPlaylist(playlist, track)) {
+                true ->{
+                    renderState(addToPlaylistState.alreadyHave)
+                    /*показать сообщение Трек уже добавлен в плейлист [название плейлиста] Toast*/
+                }
+                false ->{
+                    if(addTrack(track) && addTrackInPlaylist(playlist,track) == true){
+                        renderState(addToPlaylistState.done)
+                    } else{
+                        renderState(addToPlaylistState.problem)
+                    }
+                }
+            }
+        }
     }
 
-    fun buildListPlaylist() {
-        TODO("Not yet implemented")
+    private suspend fun addTrack(track: Track): Boolean {
+        return playlistInteractor.addTrack(track)
+
     }
 
+    private suspend fun addTrackInPlaylist(playlist: Playlist,track: Track): Boolean {
+        val updatedTrackIds = playlist.trackIds?.toMutableList() ?: mutableListOf()
+        updatedTrackIds.add(track.trackId.toString())
+        val updatedPlaylist = playlist.copy(trackIds = updatedTrackIds)
+        return playlistInteractor.updatePlaylist(updatedPlaylist)
+    }
+
+    private fun checkInPlaylist(playlist: Playlist, track: Track): Boolean {
+        return playlist.trackIds?.contains(track.trackId.toString()) == true
+    }
+
+    private fun renderState(state: addToPlaylistState) {
+        addTrackLiveData.postValue(state)
+    }
 
     companion object {
         const val CHECK_LISTEN_TIME = 300L

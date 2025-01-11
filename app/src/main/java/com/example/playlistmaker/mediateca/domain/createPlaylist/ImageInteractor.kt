@@ -6,6 +6,6 @@ interface ImageInteractor {
 
     fun saveImage(uri: Uri?): String
 
-    fun getImage(location: String): Uri
+
 
 }
