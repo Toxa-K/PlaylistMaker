@@ -36,7 +36,12 @@ class CreatePlaylistViewModel(
 
 
     fun savePlaylist(title: String, description: String?, imageUri: Uri?) {
-        addPlaylistToData(title,description,imageInteractor.saveImage(imageUri))
+        addPlaylistToData(title, description, imageInteractor.saveImage(imageUri))
+        try {
+            isPlaylistCreatedLiveData.postValue(true)
+        } catch (e: Exception) {
+            isPlaylistCreatedLiveData.postValue(false)
+        }
     }
 
 

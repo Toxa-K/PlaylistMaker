@@ -8,7 +8,7 @@ import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.Track
 
 class PlaylistAdapter(
-    private val playlistItems: List<Playlist>,
+    var playlistItems: List<Playlist>,
     private val onItemClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
@@ -25,4 +25,11 @@ class PlaylistAdapter(
     }
 
     override fun getItemCount(): Int = playlistItems.size
+
+
+    fun updatePlaylist(newPlaylist: List<Playlist>) {
+        playlistItems = newPlaylist
+        notifyDataSetChanged()
+
+    }
 }

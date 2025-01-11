@@ -18,7 +18,6 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(item: Playlist) {
         title.text = item.title // Название плейлиста
         trackCount.text = "${item.count} tracks" // Количество треков
-        val artwork = item.directory
-
+        image.setImageResource(R.drawable.placeholder2)
     }
 }

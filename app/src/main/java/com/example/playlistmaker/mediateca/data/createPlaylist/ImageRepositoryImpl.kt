@@ -12,11 +12,11 @@ import java.io.FileOutputStream
 class ImageRepositoryImpl (
     private val context: Context
 ): ImageRepository {
-    private val placeholderUri = Uri.parse("android.resource://${context.packageName}/drawable/placeholder2")
+    private val placeholder = Uri.parse("android.resource://${context.packageName}/drawable/placeholder2")
 
 
     override fun saveImage(uri: Uri?): String {
-        val actualUri = uri ?: placeholderUri
+        if (uri  == null) return ""
 
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
@@ -31,7 +31,7 @@ class ImageRepositoryImpl (
         //создаём экземпляр класса File, который указывает на файл внутри каталога
         val file = File(filePath, "cover_${System.currentTimeMillis()}.jpg")
         // создаём входящий поток байтов из выбранной картинки
-        val inputStream = context.contentResolver.openInputStream(actualUri)
+        val inputStream = context.contentResolver.openInputStream(uri)
         // создаём исходящий поток байтов в созданный выше файл
         val outputStream = FileOutputStream(file)
         // записываем картинку с помощью BitmapFactory
@@ -42,6 +42,7 @@ class ImageRepositoryImpl (
     }
 
     override fun getImage(location: String): Uri {
+        if (location.isNullOrEmpty()) return placeholder
         val file = File(location)
         return   Uri.fromFile(file)
     }
