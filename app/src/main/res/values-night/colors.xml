@@ -7,5 +7,6 @@
     <color name="search_text">@color/black</color>
     <color name="white_black">@color/black</color>
     <color name="black_white">@color/white</color>
+    <color name="slipper">@color/white</color>
 
 </resources>

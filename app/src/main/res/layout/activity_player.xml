@@ -325,7 +325,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:backgroundTint="@color/black_white"
+            android:backgroundTint="@color/slipper"
             android:background="@drawable/rounded_rectangle" /> <!--Добавить цвет-->
 
         <TextView
@@ -333,8 +333,10 @@
             android:layout_height="52dp"
             android:gravity="center"
             android:text="Добавить в плейлист"
+            android:fontFamily="@font/ys_display_medium"
             android:textColor="@color/black_white"
-            android:textSize="16sp"
+            android:textSize="19sp"
+            android:textFontWeight="500"
             android:textStyle="bold" />
 
         <Button
@@ -343,9 +345,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/marg_16"
+            android:layout_gravity="center"
             android:backgroundTint="@color/black_white"
             android:text="@string/new_playlist"
             android:textColor="@color/white_black"
+            android:textFontWeight="500"
             android:textSize="14sp"
             app:cornerRadius="54dp"/>
 
