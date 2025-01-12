@@ -18,14 +18,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presenter.SearchState
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
@@ -45,6 +48,7 @@ class SearchFragment : Fragment() {
     private lateinit var placeholderButton: Button
     private lateinit var placeholderIcon: ImageView
     private lateinit var progressBar: LinearLayout
+
     //создание списков
     private lateinit var adapterSearch: TrackAdapter
     private lateinit var adapterHistory: TrackAdapter
@@ -64,7 +68,11 @@ class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -83,12 +91,17 @@ class SearchFragment : Fragment() {
         progressBar = binding.progressBar
         clearButton = binding.clearButton
 
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
-            val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-                putExtra(KEY_TRACK, track)
-            }
-            startActivity(displayIntent)
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+                View.GONE
+            val bundle = bundleOf(KEY_TRACK to track)
+            findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
         }
+
 
 
 
@@ -110,15 +123,17 @@ class SearchFragment : Fragment() {
         adapterHistory = TrackAdapter(listOf()) { track ->
             onTrackClickDebounce(track)
             viewModel.onTrackHistoryClicked(track)
-            progressBar.isVisible =false
+            progressBar.isVisible = false
 
         }
 
         //Создание списка треков поиска
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapterSearch
         //Создание списка треков ичтории
-        storyView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        storyView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         storyView.adapter = adapterHistory
 
         //условие для отображения Истории поиска
@@ -135,6 +150,7 @@ class SearchFragment : Fragment() {
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (searchInput.hasFocus() && s?.isEmpty() == true) {
                     View.VISIBLE
@@ -146,10 +162,11 @@ class SearchFragment : Fragment() {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 searchText = s.toString()
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         }
-        textWatcher?.let{searchInput.addTextChangedListener(it)}
+        textWatcher?.let { searchInput.addTextChangedListener(it) }
 
 
 
@@ -181,6 +198,7 @@ class SearchFragment : Fragment() {
             historyUiIs(false)
         }
     }
+
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showLoading()
@@ -194,19 +212,20 @@ class SearchFragment : Fragment() {
 
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     //скрытие всех сообщений об ошибке
-    private fun hidePlaceholderMessageUi(){
+    private fun hidePlaceholderMessageUi() {
         placeholderMessage.isVisible = false
         placeholderButton.isVisible = false
         placeholderIcon.isVisible = false
     }
 
     //Отображение истории поиска
-    private fun historyUiIs( isVisible :Boolean) {
+    private fun historyUiIs(isVisible: Boolean) {
         storyView.isVisible = isVisible
         textSearch.isVisible = isVisible
         clearHistoryButton.isVisible = isVisible
@@ -214,19 +233,20 @@ class SearchFragment : Fragment() {
 
     //Реализация View
     private fun showLoading() {
-        if (searchInput.text.toString() == ""){
+        if (searchInput.text.toString() == "") {
             progressBar.isVisible = false
-        }else {
+        } else {
             progressBar.isVisible = true
             historyUiIs(false)
             hidePlaceholderMessageUi()
             recyclerView.isVisible = false
         }
     }
+
     private fun showError(errorMessage: String) {
-        if (searchInput.text.toString() == ""){
+        if (searchInput.text.toString() == "") {
             return
-        }else {
+        } else {
             placeholderIcon.setImageResource(R.drawable.off_ethernet_search)
             placeholderIcon.isVisible = true
             placeholderButton.isVisible = true
@@ -237,10 +257,11 @@ class SearchFragment : Fragment() {
             recyclerView.isVisible = false
         }
     }
+
     private fun showEmpty(emptyMessage: String) {
-        if (searchInput.text.toString() == ""){
+        if (searchInput.text.toString() == "") {
             return
-        }else {
+        } else {
             historyUiIs(false)
             placeholderIcon.setImageResource(R.drawable.none_search)
             placeholderMessage.text = emptyMessage
@@ -251,10 +272,11 @@ class SearchFragment : Fragment() {
             recyclerView.isVisible = false
         }
     }
+
     private fun showContent(track: List<Track>) {
-        if (searchInput.text.toString() == ""){
+        if (searchInput.text.toString() == "") {
             return
-        }else {
+        } else {
             adapterSearch.updateTracks(track)
             progressBar.isVisible = false
             recyclerView.isVisible = true
@@ -262,36 +284,42 @@ class SearchFragment : Fragment() {
             historyUiIs(false)
         }
     }
+
     private fun showToast(additionalMessage: String) {
-        Toast.makeText(requireContext(), "Вероятно, чтото пошло не так\n${additionalMessage}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Вероятно, чтото пошло не так\n${additionalMessage}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun updateHistoryUI(history: List<Track>) {
-        if(history.isNotEmpty()){
-            (storyView.adapter as TrackAdapter).apply {updateTracks(history)}
+        if (history.isNotEmpty()) {
+            (storyView.adapter as TrackAdapter).apply { updateTracks(history) }
             historyUiIs(true)
         } else {
             historyUiIs(false)
         }
     }
+
     private fun showHistory(history: List<Track>) {
         updateHistoryUI(history)
         recyclerView.isVisible = false
         hidePlaceholderMessageUi()
     }
 
-    private fun goToPlayer(track: Track) {
-        val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-            putExtra(KEY_TRACK, track)
-        }
-        startActivity(displayIntent)
-    }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        textWatcher?.let{searchInput.removeTextChangedListener(it)}
+        textWatcher?.let { searchInput.removeTextChangedListener(it) }
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
+    }
+    override fun onResume() {
+        super.onResume()
+        (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.VISIBLE
     }
 
 
@@ -308,10 +336,11 @@ class SearchFragment : Fragment() {
             viewModel.searchRequest(changedText)
         }
     }
+
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 0L
         const val SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY"
-        const val KEY_TRACK ="KEY_TRACK1"
+        const val KEY_TRACK = "KEY_TRACK1"
         const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
     }

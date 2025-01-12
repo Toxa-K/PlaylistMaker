@@ -2,30 +2,33 @@ package com.example.playlistmaker.player.ui
 
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.mediateca.ui.fragment.PlayListFragment
 import com.example.playlistmaker.player.presenter.state.ListPlaylistState
 import com.example.playlistmaker.player.presenter.state.PlayerLikeState
 import com.example.playlistmaker.player.presenter.PlayerPlaylistAdapter
 import com.example.playlistmaker.player.presenter.state.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
 import com.example.playlistmaker.player.presenter.state.addToPlaylistState
-import com.example.playlistmaker.search.ui.SearchFragment
-import com.example.playlistmaker.search.ui.SearchFragment.Companion
+import com.example.playlistmaker.search.presenter.TrackSearchViewModel
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -36,40 +39,41 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
 
-    private lateinit var binding: ActivityPlayerBinding
-    private lateinit var onTrackClickDebounce: (Playlist) -> Unit
-
-    private val track: Track? by lazy {
-        IntentCompat.getSerializableExtra(
-            intent,
-            KEY_TRACK,
-            Track::class.java
-        )
-    }
+    private lateinit var binding: FragmentPlayerBinding
+    var track: Track? = null
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track?.previewUrl)
     }
+    private lateinit var onTrackClickDebounce: (Playlist) -> Unit
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        if (track == null) {
-            return finish()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        track = arguments?.getSerializable(KEY_TRACK) as? Track
 
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        return binding.root
+    }
 
-        val bottomSheetContainer = binding.standardBottomSheet
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        onTrackClickDebounce = debounce<Playlist>(CLICK_DEBOUNCE_DELAY, lifecycleScope, false) { playlist ->
+        onTrackClickDebounce = debounce<Playlist>(
+            CLICK_DEBOUNCE_DELAY,
+            lifecycleScope,
+            false
+        ) { playlist ->
             viewModel.addToPlaylist(playlist, track!!)
         }
 
@@ -78,7 +82,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.listPlaylist.adapter = adapter
-        binding.listPlaylist.layoutManager = GridLayoutManager(this, 1)
+        binding.listPlaylist.layoutManager = GridLayoutManager(requireContext(), 1)
 
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -87,6 +91,7 @@ class PlayerActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.visibility = View.GONE
                     }
+
                     else -> {
                         binding.overlay.visibility = View.VISIBLE
                     }
@@ -96,7 +101,8 @@ class PlayerActivity : AppCompatActivity() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
-        viewModel.getStateLikeLiveData().observe(this) { likeState ->
+
+        viewModel.getStateLikeLiveData().observe(viewLifecycleOwner) { likeState ->
             when (likeState) {
                 is PlayerLikeState.Liked -> {
                     binding.favoriteButton.setImageResource(R.drawable.button_islike)
@@ -108,15 +114,16 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
-                    changeContentVisibility(Visible = true)
-                    bind(track)
+                    changeContentVisibility(true)
+                    bind(track!!)
                 }
 
                 is PlayerScreenState.Loading -> {
-                    changeContentVisibility(Visible = false)
+                    changeContentVisibility(false)
                 }
 
                 is PlayerScreenState.PlayStatus -> {
@@ -130,66 +137,63 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.getStatePlaylistLiveData().observe(this){ state ->
-            when(state){
-                is ListPlaylistState.notEmptyList ->{
-                    adapter.updateTracks(state.playList)
-                }
-                is ListPlaylistState.emptyList ->{
-                    //TODO("Not yet implemented")
+        viewModel.getStatePlaylistLiveData().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ListPlaylistState.notEmptyList -> adapter.updateTracks(state.playList)
+                is ListPlaylistState.emptyList -> {
+                    // TODO: Handle empty list
                 }
             }
         }
 
-        viewModel.getAddTrackLiveData().observe(this){state ->
-            when (state){
-                is addToPlaylistState.done -> {
-                    Toast.makeText(this,"Добавлено в плейлист [название плейлиста]",Toast.LENGTH_SHORT).show()
-                }
-                is addToPlaylistState.alreadyHave -> {
-                    Toast.makeText(this,"Трек уже добавлен в плейлист [название плейлиста]",Toast.LENGTH_SHORT).show()
-                }
-                is addToPlaylistState.problem ->{
-                    Toast.makeText(this,"Произошла ошибка, попробуйте переустановить приложение )))",Toast.LENGTH_SHORT).show()
-                }
+        viewModel.getAddTrackLiveData().observe(viewLifecycleOwner) { state ->
+            val message = when (state) {
+                is addToPlaylistState.done -> "${getString(R.string.add_in_playlist__)} ${state.text}"
+                is addToPlaylistState.alreadyHave -> "${getString(R.string.track_in_playlist__)} ${state.text}"
+                is addToPlaylistState.problem -> getString(R.string.kek_error_message)
             }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
 
-        viewModel.onCreate(track!!)
 
         binding.addToPlaylist.setOnClickListener {
             viewModel.buildListPlaylist()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
-
         binding.backButton.setOnClickListener {
-            finish()
+            findNavController().popBackStack()
         }
-
         binding.playButton.isEnabled = false
 
         binding.favoriteButton.setOnClickListener {
             viewModel.onFavoriteClicked(track!!)
         }
-
         binding.playButton.setOnClickListener {
             viewModel.onButtonClicked()
         }
+        binding.newPlaylistButton.setOnClickListener {
+            binding.Constraint.visibility = View.GONE
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            findNavController().navigate(R.id.action_playerFragment_to_createPlayListFragment2)
+        }
+
+
+        viewModel.onCreate(track!!)
+
+
+
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish() // Завершение активности при нажатии аппаратной кнопки "Назад"
-    }
 
+    private fun bind(track: Track) {
 
-    private fun bind(track: Track?) {
-        if (track == null) return //По логике, учитывая что Track передается из прошлого экрана, он 100% не null, получается эта проверка для IDE?
         binding.songTitle.text = track.trackName
         binding.artistName.text = track.artistName
+
         if (track.collectionName.isNullOrEmpty()) {
             binding.albumInfo.isVisible = false
-            binding.albumInfo1.isVisible = false// Скрываем метку "Альбом:"
+            binding.albumInfo1.isVisible = false
         } else {
             binding.albumInfo1.text = track.collectionName
             binding.albumInfo.isVisible = true
@@ -199,14 +203,13 @@ class PlayerActivity : AppCompatActivity() {
         binding.countryInfo1.text = track.country
         binding.genreInfo1.text = track.primaryGenreName
         binding.songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
-        // Загрузка изображения с использованием Glide
+
         Glide.with(binding.albumCover.context)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.placeholder2)
-            .transform(RoundedCorners(dpToPx(8f, binding.albumCover.context))) // Скругленные углы
+            .transform(RoundedCorners(dpToPx(8f, binding.albumCover.context)))
             .into(binding.albumCover)
     }
-
 
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
@@ -220,36 +223,22 @@ class PlayerActivity : AppCompatActivity() {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
     }
 
-    private fun changeContentVisibility(Visible: Boolean) {
-        binding.songDuration1.isVisible = Visible
-        binding.albumInfo1.isVisible = Visible
-        binding.yearInfo1.isVisible = Visible
-        binding.countryInfo1.isVisible = Visible
-        binding.genreInfo1.isVisible = Visible
-        binding.playButton.isEnabled = Visible
+    private fun changeContentVisibility(visible: Boolean) {
+        binding.songDuration1.isVisible = visible
+        binding.albumInfo1.isVisible = visible
+        binding.yearInfo1.isVisible = visible
+        binding.countryInfo1.isVisible = visible
+        binding.genreInfo1.isVisible = visible
+        binding.playButton.isEnabled = visible
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.onPausePlayer()
+    }
 
     companion object {
         private const val KEY_TRACK = "KEY_TRACK1"
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

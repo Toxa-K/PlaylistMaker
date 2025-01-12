@@ -34,8 +34,19 @@
     <string name="creat" translatable="false">Создать</string>
     <string name="title" translatable="false">Название*</string>
     <string name="description" translatable="false">Описание</string>
-
-
+    <string name="end_create_pleylist" translatable="false">Завершить создание плейлиста?</string>
+    <string name="data_has_been_delete" translatable="false">Все несохраненные данные будут потеряны</string>
+    <string name="cancel" translatable="false">Отмена</string>
+    <string name="end" translatable="false">Завершить</string>
+    <string name="playlist_has_been_create" translatable="false">Плейлист создан!</string>
+    <string name="playlist" translatable="false">Плейлисты</string>
+    <string name="selected_track" translatable="false">Избранные треки</string>
+    <string name="kek_error_message" translatable="false">Произошла ошибка, попробуйте переустановить приложение )))</string>
+    <string name="add_in_playlist__" translatable="false">Добавлено в плейлист</string>
+    <string name="track_in_playlist__" translatable="false">Трек уже добавлен в плейлист</string>
+    <string name="playlist_is_null" translatable="false">Вы не создали \n ни одного плейлиста</string>
+    <string name="mediateca_is_null" translatable="false">Ваша медиатека пуста</string>
+    <string name="add_in_playlist" translatable="false">Добавить в плейлист</string>
 
 
 </resources>

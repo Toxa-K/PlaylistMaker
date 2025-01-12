@@ -1,6 +1,6 @@
 package com.example.playlistmaker.mediateca.ui.fragment
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +8,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.MediatecaLikeBinding
 import com.example.playlistmaker.mediateca.presenter.likeList.LikeState
 import com.example.playlistmaker.mediateca.presenter.likeList.LikeViewModel
-import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.KEY_TRACK
@@ -59,10 +61,10 @@ class LikeTrackFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) { track ->
-            val displayIntent = Intent(requireContext(), PlayerActivity::class.java).apply {
-                putExtra(KEY_TRACK, track)
-            }
-            startActivity(displayIntent)
+            (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+                View.GONE
+            val bundle = bundleOf(KEY_TRACK to track)
+            findNavController().navigate(R.id.action_mediatecaFragment_to_playerFragment, bundle)
         }
 
         adapterLike = TrackAdapter(listOf()) { track ->
@@ -114,8 +116,14 @@ class LikeTrackFragment : Fragment() {
         placeholderMessage.isVisible = isVisible
     }
 
+    override fun onResume() {
+        super.onResume()
+        (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.VISIBLE
+    }
 
     companion object {
+
         fun newInstance() = LikeTrackFragment()
     }
 }

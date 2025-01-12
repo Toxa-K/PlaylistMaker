@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatplaylistBinding
 import com.example.playlistmaker.mediateca.presenter.createPlaylist.CreatePlaylistViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -49,10 +50,10 @@ class CreatePlayListFragment : Fragment() {
             }
 
         confirmDialog = MaterialAlertDialogBuilder(requireActivity())
-            .setTitle("Завершить создание плейлиста?")
-            .setMessage("Все несохраненные данные будут потеряны")
-            .setNeutralButton("Отмена") { dialog, which ->
-            }.setPositiveButton("Завершить") { dialog, which ->
+            .setTitle(getString(R.string.end_create_pleylist))
+            .setMessage(getString(R.string.data_has_been_delete))
+            .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
+            }.setPositiveButton(getString(R.string.end)) { dialog, which ->
                 findNavController().navigateUp()
             }
 
@@ -72,7 +73,7 @@ class CreatePlayListFragment : Fragment() {
 
         viewModel.getIsPlaylistCreatedLiveData.observe(viewLifecycleOwner) { isCreated ->
             if (isCreated) {
-                Toast.makeText(requireContext(), "Плейлист создан!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.playlist_has_been_create), Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
             }
         }
@@ -92,6 +93,8 @@ class CreatePlayListFragment : Fragment() {
         super.onDestroyView()
         // Восстанавливаем видимость нижней панели навигации
         (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.VISIBLE
+        (requireActivity().findViewById<View>(R.id.Constraint) as? View)?.visibility =
             View.VISIBLE
     }
 

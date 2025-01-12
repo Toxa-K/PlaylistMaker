@@ -86,8 +86,8 @@ class PlayerViewModel(
 
     fun onCreate(track: Track) {
         viewModelScope.launch {
-            isTrackLiked = checkLike(track) // Ждём завершения проверки лайков
-            updateLikeState() // Обновляем состояние лайков только после проверки
+            isTrackLiked = checkLike(track)
+            updateLikeState()
         }
 
         trackPlayer.prepare()
@@ -116,6 +116,9 @@ class PlayerViewModel(
                 progress = getCurrentPlayerPosition(), isPlaying = false
             )
         )
+    }
+    fun onPausePlayer(){
+        onPause()
     }
 
     override fun onCleared() {
@@ -153,14 +156,15 @@ class PlayerViewModel(
     fun addToPlaylist(playlist: Playlist, track: Track) {
         viewModelScope.launch {
             when (checkInPlaylist(playlist, track)) {
-                true ->{
-                    renderState(addToPlaylistState.alreadyHave)
-                    /*показать сообщение Трек уже добавлен в плейлист [название плейлиста] Toast*/
+
+                true -> {
+                    renderState(addToPlaylistState.alreadyHave(playlist.title))
                 }
-                false ->{
-                    if(addTrack(track) && addTrackInPlaylist(playlist,track) == true){
-                        renderState(addToPlaylistState.done)
-                    } else{
+
+                false -> {
+                    if (addTrack(track) && addTrackInPlaylist(playlist, track) == true) {
+                        renderState(addToPlaylistState.done(playlist.title))
+                    } else {
                         renderState(addToPlaylistState.problem)
                     }
                 }
@@ -173,7 +177,7 @@ class PlayerViewModel(
 
     }
 
-    private suspend fun addTrackInPlaylist(playlist: Playlist,track: Track): Boolean {
+    private suspend fun addTrackInPlaylist(playlist: Playlist, track: Track): Boolean {
         val updatedTrackIds = playlist.trackIds?.toMutableList() ?: mutableListOf()
         updatedTrackIds.add(track.trackId.toString())
         val updatedPlaylist = playlist.copy(trackIds = updatedTrackIds)
