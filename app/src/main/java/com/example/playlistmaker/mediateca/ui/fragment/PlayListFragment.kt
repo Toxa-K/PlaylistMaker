@@ -61,6 +61,8 @@ class PlayListFragment : Fragment() {
         binding.placeholderButton.setOnClickListener {
             (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
                 View.GONE
+            (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
+                View.GONE
             findNavController().navigate(
                 R.id.action_mediatecaFragment_to_createPlayListFragment2
             )
@@ -70,6 +72,8 @@ class PlayListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.VISIBLE
+        (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
             View.VISIBLE
     }
 

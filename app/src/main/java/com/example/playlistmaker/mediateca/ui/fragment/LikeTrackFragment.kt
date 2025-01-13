@@ -63,6 +63,8 @@ class LikeTrackFragment : Fragment() {
         ) { track ->
             (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
                 View.GONE
+            (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
+                View.GONE
             val bundle = bundleOf(KEY_TRACK to track)
             findNavController().navigate(R.id.action_mediatecaFragment_to_playerFragment, bundle)
         }
@@ -119,6 +121,8 @@ class LikeTrackFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.VISIBLE
+        (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
             View.VISIBLE
     }
 
