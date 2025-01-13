@@ -8,13 +8,13 @@ import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.Track
 
 class PlaylistAdapter(
-    var playlistItems: List<Playlist>,
+    private var playlistItems: List<Playlist>,
     private val onItemClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.playlist_card, parent, false)
-        return PlaylistViewHolder(view)
+        return PlaylistViewHolder(view = view)
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {

@@ -147,12 +147,17 @@ class PlayerFragment : Fragment() {
         }
 
         viewModel.getAddTrackLiveData().observe(viewLifecycleOwner) { state ->
-            val message = when (state) {
-                is addToPlaylistState.done -> "${getString(R.string.add_in_playlist__)} ${state.text}"
-                is addToPlaylistState.alreadyHave -> "${getString(R.string.track_in_playlist__)} ${state.text}"
-                is addToPlaylistState.problem -> getString(R.string.kek_error_message)
+            state?.let {
+                val message = when (it) {
+                    is addToPlaylistState.done -> "${getString(R.string.add_in_playlist__)} ${it.text}"
+                    is addToPlaylistState.alreadyHave -> "${getString(R.string.track_in_playlist__)} ${it.text}"
+                    is addToPlaylistState.problem -> getString(R.string.kek_error_message)
+                }
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
+                // Сброс состояния после обработки
+                viewModel.clearAddTrackState()
             }
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
 
 

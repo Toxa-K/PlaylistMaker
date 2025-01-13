@@ -10,7 +10,6 @@ import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import kotlinx.coroutines.launch
 
 class PlaylistViewModel(
-    private val imageInteractor: ImageInteractor,
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel(){
 

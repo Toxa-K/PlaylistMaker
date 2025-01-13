@@ -38,7 +38,7 @@
     <string name="data_has_been_delete" translatable="false">Все несохраненные данные будут потеряны</string>
     <string name="cancel" translatable="false">Отмена</string>
     <string name="end" translatable="false">Завершить</string>
-    <string name="playlist_has_been_create" translatable="false">Плейлист создан!</string>
+    <string name="playlist_has_been_create" translatable="false">Плейлист создан</string>
     <string name="playlist" translatable="false">Плейлисты</string>
     <string name="selected_track" translatable="false">Избранные треки</string>
     <string name="kek_error_message" translatable="false">Произошла ошибка, попробуйте переустановить приложение )))</string>

@@ -16,8 +16,8 @@ class CreatePlaylistViewModel(
     private val imageInteractor: ImageInteractor
 ) : ViewModel() {
 
-    private val isPlaylistCreatedLiveData = MutableLiveData<Boolean>()
-    val getIsPlaylistCreatedLiveData: LiveData<Boolean> = isPlaylistCreatedLiveData
+    private val isPlaylistCreatedLiveData = MutableLiveData<String>()
+    val getIsPlaylistCreatedLiveData: LiveData<String> = isPlaylistCreatedLiveData
 
     private fun addPlaylistToData(title: String, description: String?, imagePath: String) {
         viewModelScope.launch {
@@ -38,9 +38,9 @@ class CreatePlaylistViewModel(
     fun savePlaylist(title: String, description: String?, imageUri: Uri?) {
         addPlaylistToData(title, description, imageInteractor.saveImage(imageUri))
         try {
-            isPlaylistCreatedLiveData.postValue(true)
+            isPlaylistCreatedLiveData.postValue("${title}")
         } catch (e: Exception) {
-            isPlaylistCreatedLiveData.postValue(false)
+            isPlaylistCreatedLiveData.postValue("Произошла ошибка")
         }
     }
 

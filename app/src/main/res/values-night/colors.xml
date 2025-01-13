@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="blue">#3772E7</color>
+
+
     <color name="trumb">#3772E7</color>
     <color name="track">#9FBBF3</color>
     <color name="gray_black">@color/black</color>

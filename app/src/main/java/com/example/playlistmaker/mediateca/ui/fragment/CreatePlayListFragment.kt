@@ -1,7 +1,10 @@
 package com.example.playlistmaker.mediateca.ui.fragment
 
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,6 +21,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatplaylistBinding
 import com.example.playlistmaker.mediateca.presenter.createPlaylist.CreatePlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.color.MaterialColors.getColor
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,6 +31,7 @@ class CreatePlayListFragment : Fragment() {
     private lateinit var binding: FragmentCreatplaylistBinding
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
     private var imageUri: Uri? = null
+    private var title: String? =null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +65,11 @@ class CreatePlayListFragment : Fragment() {
             }
 
         binding.toolbarSettings.setNavigationOnClickListener {
-            confirmDialog.show()
+            if (!title.isNullOrBlank()) {
+                confirmDialog.show()
+            }else{
+                findNavController().navigateUp()
+            }
         }
 
         binding.imageView.setOnClickListener {
@@ -68,14 +79,20 @@ class CreatePlayListFragment : Fragment() {
         val textViewEditText = binding.textView.editText
 
         textViewEditText?.addTextChangedListener { text ->
-            binding.button.isEnabled = !text.isNullOrBlank()
+            title=text.toString()
+            val bool = !text.isNullOrBlank()
+            binding.button.isEnabled = bool
         }
 
-        viewModel.getIsPlaylistCreatedLiveData.observe(viewLifecycleOwner) { isCreated ->
-            if (isCreated) {
-                Toast.makeText(requireContext(), getString(R.string.playlist_has_been_create), Toast.LENGTH_SHORT).show()
+
+
+        viewModel.getIsPlaylistCreatedLiveData.observe(viewLifecycleOwner) { message ->
+                Toast.makeText(
+                    requireContext(),
+                    "${getString(R.string.playlist_has_been_create)} ${message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 findNavController().navigateUp()
-            }
         }
 
 
@@ -89,18 +106,7 @@ class CreatePlayListFragment : Fragment() {
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // Восстанавливаем видимость нижней панели навигации
-        (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
-            View.VISIBLE
-        (requireActivity().findViewById<View>(R.id.Constraint) as? View)?.visibility =
-            View.VISIBLE
-    }
-
     companion object {
-        fun newInstance(): CreatePlayListFragment {
-            return CreatePlayListFragment()
-        }
+
     }
 }

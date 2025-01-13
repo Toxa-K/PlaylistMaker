@@ -10,23 +10,40 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.mediateca.presenter.FormatterText
 import java.io.File
 
-class PlaylistViewHolder(view: View,) : RecyclerView.ViewHolder(view) {
+class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val title: TextView = itemView.findViewById(R.id.playlistTitle)
     private val trackCount: TextView = itemView.findViewById(R.id.trackCount)
     private val image: ImageView = itemView.findViewById(R.id.playlistImage)
 
 
-
     fun bind(item: Playlist) {
         title.text = item.title // Название плейлиста
-        trackCount.text = "${item.count} tracks" // Количество треков
+        val tracksize = item.trackIds?.size ?: 0
 
-        if (item.directory.isNullOrEmpty()){
+        val trackcounttext = when (tracksize) {
+            1 -> {
+                "трек"
+            }
+
+            in 2..4 -> {
+                "трека"
+            }
+
+            else -> {
+                "треков"
+            }
+
+        }
+
+        trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
+
+        if (item.directory.isNullOrEmpty()) {
             image.setImageResource(R.drawable.placeholder2)
-        }else{
+        } else {
             val file = File(item.directory)
             image.setImageURI(Uri.fromFile(file))
         }

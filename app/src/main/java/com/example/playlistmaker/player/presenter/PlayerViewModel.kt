@@ -40,8 +40,8 @@ class PlayerViewModel(
     private val statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
     fun getStatePlaylistLiveData(): LiveData<ListPlaylistState> = statePlaylistLiveData
 
-    private val addTrackLiveData = MutableLiveData<addToPlaylistState>()
-    fun getAddTrackLiveData(): LiveData<addToPlaylistState> = addTrackLiveData
+    private val addTrackLiveData = MutableLiveData<addToPlaylistState?>()
+    fun getAddTrackLiveData(): LiveData<addToPlaylistState?> = addTrackLiveData
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -94,6 +94,9 @@ class PlayerViewModel(
         updateLikeState()
         screenStateLiveData.value =
             PlayerScreenState.Content
+    }
+    fun clearAddTrackState() {
+        addTrackLiveData.value = null
     }
 
     private suspend fun checkLike(track: Track): Boolean {

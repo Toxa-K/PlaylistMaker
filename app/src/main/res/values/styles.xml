@@ -94,8 +94,11 @@
     <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundMode">outline</item>
         <item name="boxBackgroundColor">@null</item>
-        <item name="boxStrokeColor">@color/color_input_create_pl</item> <!-- Цвет обводки -->
-        <item name="hintTextColor">@color/blue</item> <!-- Цвет подсказки -->
+
+        <item name="boxStrokeColor">@color/color_input_create_pl</item>
+
+        <!-- Цвет подсказки -->
+        <item name="hintTextColor">@color/color_input_hint</item>
     </style>
     <style name="RoundedCorners" parent="">
         <item name="cornerFamily">rounded</item>

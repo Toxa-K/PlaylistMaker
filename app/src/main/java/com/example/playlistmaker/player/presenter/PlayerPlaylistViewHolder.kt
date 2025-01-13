@@ -16,7 +16,22 @@ class PlayerPlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(item: Playlist) {
         title.text = item.title // Название плейлиста
-        trackCount.text = "${item.count} tracks" // Количество треков
+        val tracksize = item.trackIds?.size ?: 0
+        val trackcounttext = when (tracksize) {
+            1 -> {
+                "трек"
+            }
+
+            in 2..4 -> {
+                "трека"
+            }
+
+            else -> {
+                "треков"
+            }
+
+        }
+        trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
         if (item.directory.isNullOrEmpty()){
             image.setImageResource(R.drawable.placeholder2)
         }else{

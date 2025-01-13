@@ -30,7 +30,7 @@ val viewModelModule = module {
         LikeViewModel(get())
     }
     viewModel {
-        PlaylistViewModel(get(),get())
+        PlaylistViewModel(get())
     }
     viewModel {
         MediatecaViewModel()
