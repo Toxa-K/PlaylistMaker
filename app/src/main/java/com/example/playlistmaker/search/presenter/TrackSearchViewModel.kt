@@ -40,7 +40,12 @@ class TrackSearchViewModel(
 
     fun loadHistory() {
         val historyTracks = getHistory.execute()
-        renderState(SearchState.History(trackHistory = historyTracks))
+        if (historyTracks.isEmpty()){
+            renderState(SearchState.StartContent)
+        }else{
+            renderState(SearchState.History(trackHistory = historyTracks))
+        }
+
     }
 
     fun removeHistory(){

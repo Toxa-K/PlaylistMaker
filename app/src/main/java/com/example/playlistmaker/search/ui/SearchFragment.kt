@@ -184,13 +184,11 @@ class SearchFragment : Fragment() {
 
         // Установка слушателя для кнопки очистки поля ввода
         clearButton.setOnClickListener {
-
-
             handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
             progressBar.isVisible = false
             searchInput.setText("")
             hideKeyboard(searchInput)
-            historyUiIs(true)
+            viewModel.loadHistory()
         }
 
         // Установка слушателя для кнопки очистки истории
@@ -208,9 +206,16 @@ class SearchFragment : Fragment() {
             is SearchState.Error -> showError(getString(state.errorMessage))
             is SearchState.Empty -> showEmpty(getString(state.message))
             is SearchState.History -> showHistory(state.trackHistory)
+            is SearchState.StartContent -> startContent()
         }
     }
+    private fun startContent(){
+        hidePlaceholderMessageUi()
+        historyUiIs(false)
+        progressBar.isVisible = false
+        recyclerView.isVisible = false
 
+    }
 
     // Скрытие клавиатуры
     private fun hideKeyboard(view: View) {
@@ -286,6 +291,7 @@ class SearchFragment : Fragment() {
             historyUiIs(false)
         }
     }
+
 
     private fun showToast(additionalMessage: String) {
         Toast.makeText(

@@ -41,7 +41,7 @@
             tools:text="Best songs 2021" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|left"
             android:orientation="horizontal">
@@ -58,7 +58,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                tools:text="157 треков"/>
+                tools:text="157 трековв"/>
 
 
         </LinearLayout>
