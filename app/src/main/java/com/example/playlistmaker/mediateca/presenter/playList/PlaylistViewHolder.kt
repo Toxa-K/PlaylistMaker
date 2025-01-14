@@ -6,13 +6,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import java.io.File
 
-class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class PlaylistViewHolder(
+    view: View
+) : RecyclerView.ViewHolder(view) {
 
     private val title: TextView = itemView.findViewById(R.id.playlistTitle)
     private val trackCount: TextView = itemView.findViewById(R.id.trackCount)
@@ -37,14 +38,21 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
 
         }
+        Glide.with(image)
+            .load(item.directory)
+            .placeholder(R.drawable.placeholder2)
+            .into(image)
 
         trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
 
-        if (item.directory.isNullOrEmpty()) {
-            image.setImageResource(R.drawable.placeholder2)
+        /*val imageUri = imageInteractor.getImage(item.directory)
+        if (imageUri != null) {
+            Glide.with(image.context)
+                .load(imageUri)
+                .placeholder(R.drawable.placeholder2)
+                .into(image)
         } else {
-            val file = File(item.directory)
-            image.setImageURI(Uri.fromFile(file))
-        }
+            image.setImageResource(R.drawable.placeholder2)
+        }*/
     }
 }

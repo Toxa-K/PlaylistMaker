@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.MediatecaPlaylistBinding
+import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.presenter.playList.PlayliStstate
 import com.example.playlistmaker.mediateca.presenter.playList.PlaylistAdapter
 import com.example.playlistmaker.mediateca.presenter.playList.PlaylistViewModel
@@ -18,6 +19,7 @@ class PlayListFragment : Fragment() {
 
     private val viewModel: PlaylistViewModel by viewModel()
     private lateinit var binding: MediatecaPlaylistBinding
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

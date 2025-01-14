@@ -6,4 +6,6 @@ interface ImageRepository {
 
     fun saveImage(uri: Uri?): String
 
+    fun getImage(directory: String?): Uri?
+
 }

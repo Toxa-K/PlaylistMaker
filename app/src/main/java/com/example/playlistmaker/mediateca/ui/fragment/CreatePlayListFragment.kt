@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -71,6 +72,13 @@ class CreatePlayListFragment : Fragment() {
                 findNavController().navigateUp()
             }
         }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (!title.isNullOrBlank()) {
+                confirmDialog.show()
+            } else {
+                findNavController().navigateUp()
+            }
+        }
 
         binding.imageView.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -103,6 +111,10 @@ class CreatePlayListFragment : Fragment() {
                 imageUri
             )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 
 

@@ -12,7 +12,6 @@ import java.io.FileOutputStream
 class ImageRepositoryImpl (
     private val context: Context
 ): ImageRepository {
-    private val placeholder = Uri.parse("android.resource://${context.packageName}/drawable/placeholder2")
 
 
     override fun saveImage(uri: Uri?): String {
@@ -40,5 +39,19 @@ class ImageRepositoryImpl (
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return file.absolutePath
     }
+
+    override fun getImage(directory: String?): Uri? {
+        return if (!directory.isNullOrEmpty()) {
+            val file = File(directory)
+            if (file.exists()) {
+                Uri.fromFile(file)
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
+
 
 }

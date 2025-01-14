@@ -1,13 +1,14 @@
 package com.example.playlistmaker.player.presenter
 
-import android.net.Uri
+
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import java.io.File
+
 
 class PlayerPlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val title: TextView = itemView.findViewById(R.id.playlistName)
@@ -32,11 +33,9 @@ class PlayerPlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         }
         trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
-        if (item.directory.isNullOrEmpty()){
-            image.setImageResource(R.drawable.placeholder2)
-        }else{
-            val file = File(item.directory)
-            image.setImageURI(Uri.fromFile(file))
-        }
+        Glide.with(image)
+            .load(item.directory)
+            .placeholder(R.drawable.placeholder2)
+            .into(image)
     }
 }

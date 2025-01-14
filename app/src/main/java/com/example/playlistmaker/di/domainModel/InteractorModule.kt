@@ -62,7 +62,7 @@ val interactorModule = module {
     single<LikeInteractor> {
         LikeInteractorImpl(get())
     }
-    single <PlaylistInteractor>{
+    factory <PlaylistInteractor>{
         PlaylistInteractorImpl(get())
     }
     single <ImageInteractor>{

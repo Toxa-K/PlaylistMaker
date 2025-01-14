@@ -10,5 +10,9 @@ class ImageInteractorImpl(
         return repository.saveImage(uri)
     }
 
+    override fun getImage(directory: String?): Uri? {
+        return repository.getImage(directory)
+    }
+
 
 }

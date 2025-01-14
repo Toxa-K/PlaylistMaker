@@ -147,11 +147,15 @@ class PlayerFragment : Fragment() {
         }
 
         viewModel.getAddTrackLiveData().observe(viewLifecycleOwner) { state ->
+            var message= ""
             state?.let {
-                val message = when (it) {
-                    is addToPlaylistState.done -> "${getString(R.string.add_in_playlist__)} ${it.text}"
-                    is addToPlaylistState.alreadyHave -> "${getString(R.string.track_in_playlist__)} ${it.text}"
-                    is addToPlaylistState.problem -> getString(R.string.kek_error_message)
+                when (it) {
+                    is addToPlaylistState.done -> {
+                        message = "${getString(R.string.add_in_playlist__)} ${it.text}"
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }
+                    is addToPlaylistState.alreadyHave -> message = "${getString(R.string.track_in_playlist__)} ${it.text}"
+                    is addToPlaylistState.problem -> message = getString(R.string.kek_error_message)
                 }
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 
@@ -191,29 +195,29 @@ class PlayerFragment : Fragment() {
     }
 
 
-    private fun bind(track: Track) {
+    private fun bind(track: Track)= with(binding) {
 
-        binding.songTitle.text = track.trackName
-        binding.artistName.text = track.artistName
+        songTitle.text = track.trackName
+        artistName.text = track.artistName
 
         if (track.collectionName.isNullOrEmpty()) {
-            binding.albumInfo.isVisible = false
-            binding.albumInfo1.isVisible = false
+            albumInfo.isVisible = false
+            albumInfo1.isVisible = false
         } else {
-            binding.albumInfo1.text = track.collectionName
-            binding.albumInfo.isVisible = true
-            binding.albumInfo1.isVisible = true
+            albumInfo1.text = track.collectionName
+            albumInfo.isVisible = true
+            albumInfo1.isVisible = true
         }
-        binding.yearInfo1.text = track.releaseDate?.substring(0, 4)
-        binding.countryInfo1.text = track.country
-        binding.genreInfo1.text = track.primaryGenreName
-        binding.songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
+        yearInfo1.text = track.releaseDate?.substring(0, 4)
+        countryInfo1.text = track.country
+        genreInfo1.text = track.primaryGenreName
+       songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
 
-        Glide.with(binding.albumCover.context)
+        Glide.with(albumCover.context)
             .load(track.getCoverArtwork())
             .placeholder(R.drawable.placeholder2)
-            .transform(RoundedCorners(dpToPx(8f, binding.albumCover.context)))
-            .into(binding.albumCover)
+            .transform(RoundedCorners(dpToPx(8f, albumCover.context)))
+            .into(albumCover)
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
