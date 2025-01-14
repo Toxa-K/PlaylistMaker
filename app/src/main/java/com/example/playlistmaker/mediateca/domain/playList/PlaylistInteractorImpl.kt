@@ -30,4 +30,12 @@ class PlaylistInteractorImpl(
     override suspend fun addTrack(track: Track): Boolean {
         return repository.insertPlaylistTrack(track)
     }
+
+    override fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getDurationPlaylist(playlist: Playlist): String {
+        return repository.getDurationPlaylist(playlist)
+    }
 }

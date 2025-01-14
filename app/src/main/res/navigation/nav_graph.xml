@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_mediatecaFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_mediatecaFragment_to_showPlaylistFragment"
+            app:destination="@id/showPlaylistFragment" />
     </fragment>
 
     <fragment
@@ -48,4 +51,9 @@
             android:id="@+id/action_playerFragment_to_createPlayListFragment2"
             app:destination="@id/createPlayListFragment2" />
     </fragment>
+    <fragment
+        android:id="@+id/showPlaylistFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.showplaylist.ShowPlaylistFragment"
+        android:label="fragment_playlist"
+        tools:layout="@layout/fragment_playlist" />
 </navigation>

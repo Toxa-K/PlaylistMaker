@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -25,6 +27,8 @@ class PlaylistRepositoryImpl(
         val entity = playlistDbConvector.mapPlaylist(track)
         return withContext(Dispatchers.IO){ appDatabase.trackPlaylistDao().insertTrack(entity) > 0}
     }
+
+
 
     override suspend fun deletePlaylist(playlist: Playlist) {
         val playlistEntity = playlistDbConvector.map(playlist)
@@ -51,4 +55,23 @@ class PlaylistRepositoryImpl(
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvector.map(playlist) }
     }
+
+
+    override suspend fun getDurationPlaylist(playlist: Playlist): String {
+        val trackIds = playlist.trackIds?.map { it.toInt() } ?: return "00:00"
+
+        // Получаем треки одним запросом
+        val totalDurationMillis = withContext(Dispatchers.IO) {
+            appDatabase.trackPlaylistDao().getTracksByIds(trackIds)
+                .sumOf { it.trackTimeMillis.toLong() }
+        }
+
+        // Форматируем продолжительность
+        return formatTrackTime(totalDurationMillis)
+    }
+
+    private fun formatTrackTime(trackTimeMillis: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+    }
+
 }

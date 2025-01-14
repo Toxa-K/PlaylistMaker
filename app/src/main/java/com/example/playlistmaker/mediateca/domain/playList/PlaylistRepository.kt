@@ -20,4 +20,6 @@ interface PlaylistRepository {
 
     suspend fun insertPlaylistTrack(track: Track): Boolean
 
+    suspend fun getDurationPlaylist(playlist: Playlist) : String
+
 }
