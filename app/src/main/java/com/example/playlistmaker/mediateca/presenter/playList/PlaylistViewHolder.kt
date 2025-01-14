@@ -45,14 +45,6 @@ class PlaylistViewHolder(
 
         trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
 
-        /*val imageUri = imageInteractor.getImage(item.directory)
-        if (imageUri != null) {
-            Glide.with(image.context)
-                .load(imageUri)
-                .placeholder(R.drawable.placeholder2)
-                .into(image)
-        } else {
-            image.setImageResource(R.drawable.placeholder2)
-        }*/
+
     }
 }
