@@ -94,15 +94,18 @@
     <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundMode">outline</item>
         <item name="boxBackgroundColor">@null</item>
-
         <item name="boxStrokeColor">@color/color_input_create_pl</item>
-
-        <!-- Цвет подсказки -->
         <item name="hintTextColor">@color/color_input_hint</item>
     </style>
+    
+    
     <style name="RoundedCorners" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item> <!-- Размер закругления -->
+    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorAccent">@color/blue</item>
     </style>
 
 </resources>

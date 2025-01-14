@@ -91,7 +91,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/ys_display_regular"
-            android:textCursorDrawable="@drawable/cursor_color"
             android:textFontWeight="400"
             android:textSize="16sp"
             android:textColor="@color/black_white"
@@ -102,8 +101,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textView2"
         style="@style/CustomTextInputLayout"
-        app:cursorColor="@color/blue"
         android:textColorHint="@color/black_white"
+        app:cursorColor="@color/blue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -115,7 +114,6 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textCursorDrawable="@drawable/cursor_color"
             android:fontFamily="@font/ys_display_regular"
             android:textFontWeight="400"
             android:textSize="16sp"
@@ -123,6 +121,7 @@
             android:inputType="text"
             tools:text="aaaa"/>
     </com.google.android.material.textfield.TextInputLayout>
+
 
 
     <Button

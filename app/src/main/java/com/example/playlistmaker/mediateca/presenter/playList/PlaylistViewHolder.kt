@@ -10,7 +10,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import com.example.playlistmaker.mediateca.presenter.FormatterText
 import java.io.File
 
 class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
