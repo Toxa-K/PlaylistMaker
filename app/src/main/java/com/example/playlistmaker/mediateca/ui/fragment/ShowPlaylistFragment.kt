@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -31,8 +33,7 @@ class ShowPlaylistFragment : Fragment() {
 
 
     private lateinit var binding: FragmentPlaylistBinding
-    private lateinit var confirmDialog: MaterialAlertDialogBuilder
-    var playlist: Playlist? = null
+    private lateinit var playlist: Playlist
     private var durationTime: String = "0"
     private val viewModel: ShowPlaylistViewModel by viewModel()
     private lateinit var adapterTraks: TrackAdapter
@@ -47,7 +48,7 @@ class ShowPlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlaylistBinding.inflate(inflater, container, false)
-        playlist = arguments?.getSerializable(KEY_PLAYLIST) as? Playlist
+        playlist = requireArguments().getSerializable(KEY_PLAYLIST) as Playlist
         return binding.root
     }
 
@@ -64,7 +65,7 @@ class ShowPlaylistFragment : Fragment() {
             findNavController().navigate(R.id.action_showPlaylistFragment_to_playerFragment, bundle)
         }
 
-        bind(playlist!!)
+        bind(playlist)
 
 
         adapterTraks = TrackAdapter(
@@ -84,13 +85,15 @@ class ShowPlaylistFragment : Fragment() {
         binding.listPlaylist.adapter = adapterTraks
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet)
-        bottomSheetBehavior.peekHeight =
-            Resources.getSystem().getDisplayMetrics().heightPixels * 1 / 4
+        edit(bottomSheetBehavior)
 
         val paramBottomSheet = BottomSheetBehavior.from(binding.parametrsBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
-        paramBottomSheet.peekHeight = Resources.getSystem().getDisplayMetrics().heightPixels * 1 / 3
+        paramBottomSheet.peekHeight =
+            Resources.getSystem().getDisplayMetrics().heightPixels * 47 / 100
+
+
 
         paramBottomSheet.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -124,13 +127,13 @@ class ShowPlaylistFragment : Fragment() {
             when (state) {
                 is ShowPlaylistState.Content -> {
                     playlist = state.playlist
-                    bind(playlist!!)
+                    bind(playlist)
                     adapterTraks.updateTracks(state.track)
                 }
 
                 is ShowPlaylistState.Empty -> {
                     playlist = state.playlist
-                    bind(playlist!!)
+                    bind(playlist)
                     binding.listPlaylist.visibility = View.GONE
                     if (!isToastShown) {
                         isToastShown = true
@@ -150,11 +153,11 @@ class ShowPlaylistFragment : Fragment() {
         }
 
         binding.sharingImage.setOnClickListener {
-            viewModel.sharePlaylist(playlist!!)
+            viewModel.sharePlaylist(playlist)
         }
 
         binding.sharingParametrs.setOnClickListener {
-            viewModel.sharePlaylist(playlist!!)
+            viewModel.sharePlaylist(playlist)
         }
 
         binding.redactParametrs.setOnClickListener {
@@ -165,11 +168,18 @@ class ShowPlaylistFragment : Fragment() {
             )
         }
         binding.deleteParametrs.setOnClickListener {
-            showDeleteConfirmationDialog(playlist!!)
+            showDeleteConfirmationDialog(playlist)
         }
 
     }
 
+
+    private fun edit(bottomSheetBehavior: BottomSheetBehavior<LinearLayout>) {
+        val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+        val peekHeight = if(screenHeight < 1920) (screenHeight * 0.09).toInt() else (screenHeight * 0.25).toInt()
+
+        bottomSheetBehavior.peekHeight = peekHeight
+    }
 
     private fun showDeleteConfirmationDialog(item: Any) {
         val (title, message) = when (item) {
@@ -178,14 +188,17 @@ class ShowPlaylistFragment : Fragment() {
             else -> return
         }
 
-        MaterialAlertDialogBuilder(requireActivity(),R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
+        MaterialAlertDialogBuilder(
+            requireActivity(),
+            R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog
+        )
             .setTitle(title)
             .setMessage(message)
             .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
             }
             .setPositiveButton(getString(R.string.delete)) { dialog, which ->
                 when (item) {
-                    is Track -> viewModel.deleteTrack(playlist!!, item)
+                    is Track -> viewModel.deleteTrack(playlist, item)
                     is Playlist -> {
                         viewModel.deletePlaylist(item)
                         findNavController().navigateUp()
@@ -236,7 +249,7 @@ class ShowPlaylistFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         resetToastFlag()
-        viewModel.updateView(playlist!!.playlistId)
+        viewModel.updateView(playlist.playlistId)
 
     }
 

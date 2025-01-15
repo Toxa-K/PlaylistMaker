@@ -119,8 +119,7 @@ class SearchFragment : Fragment() {
                 progressBar.isVisible = false
             },
             onTrackLongClick = { track ->
-                // Обработчик долгого нажатия для adapterSearch
-                true // Указываем, что событие обработано
+                true
             }
         )
 
@@ -132,8 +131,6 @@ class SearchFragment : Fragment() {
                 progressBar.isVisible = false
             },
             onTrackLongClick = { track ->
-                // Обработчик долгого нажатия для adapterHistory
-                true // Указываем, что событие обработано
             }
         )
 
@@ -146,7 +143,6 @@ class SearchFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         storyView.adapter = adapterHistory
 
-        //условие для отображения Истории поиска
         searchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchInput.text.isEmpty()) {
                 viewModel.loadHistory()
@@ -156,7 +152,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        // логика по работе с введённым значением
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -190,7 +185,7 @@ class SearchFragment : Fragment() {
             searchInput.setText(searchText)
         }
 
-        // Установка слушателя для кнопки очистки поля ввода
+
         clearButton.setOnClickListener {
             handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
             progressBar.isVisible = false
@@ -199,7 +194,7 @@ class SearchFragment : Fragment() {
             viewModel.loadHistory()
         }
 
-        // Установка слушателя для кнопки очистки истории
+
         clearHistoryButton.setOnClickListener {
             viewModel.removeHistory()
             hidePlaceholderMessageUi()
