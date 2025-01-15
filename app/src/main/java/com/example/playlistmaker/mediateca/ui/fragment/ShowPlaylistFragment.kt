@@ -178,7 +178,7 @@ class ShowPlaylistFragment : Fragment() {
             else -> return
         }
 
-        MaterialAlertDialogBuilder(requireActivity())
+        MaterialAlertDialogBuilder(requireActivity(),R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
             .setTitle(title)
             .setMessage(message)
             .setNeutralButton(getString(R.string.cancel)) { dialog, which ->

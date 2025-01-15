@@ -57,7 +57,7 @@ class CreatePlayListFragment : Fragment() {
                 }
             }
 
-        confirmDialog = MaterialAlertDialogBuilder(requireActivity())
+        confirmDialog = MaterialAlertDialogBuilder(requireActivity(),R.style.MyThemeOverlay_MaterialComponents_MaterialAlertDialog)
             .setTitle(getString(R.string.end_create_pleylist))
             .setMessage(getString(R.string.data_has_been_delete))
             .setNeutralButton(getString(R.string.cancel)) { dialog, which ->
