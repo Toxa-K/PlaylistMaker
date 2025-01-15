@@ -69,9 +69,16 @@ class LikeTrackFragment : Fragment() {
             findNavController().navigate(R.id.action_mediatecaFragment_to_playerFragment, bundle)
         }
 
-        adapterLike = TrackAdapter(listOf()) { track ->
-            onTrackClickDebounce(track)
-        }
+        adapterLike = TrackAdapter(
+            listOf(),
+            onItemClick ={ track ->
+                onTrackClickDebounce(track)
+            },
+            onTrackLongClick = { track ->
+                // Обработчик долгого нажатия
+                true // Указываем, что событие обработано
+            }
+        )
 
         likeView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

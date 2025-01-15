@@ -70,8 +70,17 @@ class PlaylistRepositoryImpl(
         return formatTrackTime(totalDurationMillis)
     }
 
+    override fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>> {
+        val trackIds = playlist.trackIds?.map { it.toInt() } ?: return flow { emit(emptyList()) }
+        return flow {
+            val trackEntities = appDatabase.trackPlaylistDao().getTracksByIds(trackIds)
+            val tracks = trackEntities.map { playlistDbConvector.mapPlaylist(it) }
+            emit(tracks)
+        }.flowOn(Dispatchers.IO)
+    }
+
     private fun formatTrackTime(trackTimeMillis: Long): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+        return SimpleDateFormat("m", Locale.getDefault()).format(trackTimeMillis)
     }
 
 }

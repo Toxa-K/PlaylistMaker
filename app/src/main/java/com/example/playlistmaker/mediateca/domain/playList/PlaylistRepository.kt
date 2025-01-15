@@ -22,4 +22,6 @@ interface PlaylistRepository {
 
     suspend fun getDurationPlaylist(playlist: Playlist) : String
 
+    fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>>
+
 }

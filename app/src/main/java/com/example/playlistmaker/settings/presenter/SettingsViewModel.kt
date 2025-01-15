@@ -26,13 +26,9 @@ class SettingsViewModel(
     }
 
     fun toggleTheme(isEnabled: Boolean) {
-
             switchTheme.execute(isEnabled)
             settingsLiveData.value = SettingsModel(isEnabled)
-
     }
-
-
 
     fun shareApp() {
         val message =R.string.share_message

@@ -32,7 +32,7 @@ class PlaylistInteractorImpl(
     }
 
     override fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>> {
-        TODO("Not yet implemented")
+        return repository.getTraksInPlaylist(playlist)
     }
 
     override suspend fun getDurationPlaylist(playlist: Playlist): String {

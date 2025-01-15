@@ -104,10 +104,6 @@ class SearchFragment : Fragment() {
             findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
         }
 
-
-
-
-
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
@@ -115,19 +111,31 @@ class SearchFragment : Fragment() {
             showToast(toast)
         }
 
-        adapterSearch = TrackAdapter(listOf()) { track ->
-            onTrackClickDebounce(track)
-            viewModel.onTrackSearchClicked(track)
-            progressBar.isVisible = false
+        adapterSearch = TrackAdapter(
+            listOf(),
+            onItemClick = { track ->
+                onTrackClickDebounce(track)
+                viewModel.onTrackSearchClicked(track)
+                progressBar.isVisible = false
+            },
+            onTrackLongClick = { track ->
+                // Обработчик долгого нажатия для adapterSearch
+                true // Указываем, что событие обработано
+            }
+        )
 
-
-        }
-        adapterHistory = TrackAdapter(listOf()) { track ->
-            onTrackClickDebounce(track)
-            viewModel.onTrackHistoryClicked(track)
-            progressBar.isVisible = false
-
-        }
+        adapterHistory = TrackAdapter(
+            listOf(),
+            onItemClick = { track ->
+                onTrackClickDebounce(track)
+                viewModel.onTrackHistoryClicked(track)
+                progressBar.isVisible = false
+            },
+            onTrackLongClick = { track ->
+                // Обработчик долгого нажатия для adapterHistory
+                true // Указываем, что событие обработано
+            }
+        )
 
         //Создание списка треков поиска
         recyclerView.layoutManager =
@@ -209,7 +217,8 @@ class SearchFragment : Fragment() {
             is SearchState.StartContent -> startContent()
         }
     }
-    private fun startContent(){
+
+    private fun startContent() {
         hidePlaceholderMessageUi()
         historyUiIs(false)
         progressBar.isVisible = false
@@ -317,13 +326,13 @@ class SearchFragment : Fragment() {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let { searchInput.removeTextChangedListener(it) }
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
     }
+
     override fun onResume() {
         super.onResume()
         (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =

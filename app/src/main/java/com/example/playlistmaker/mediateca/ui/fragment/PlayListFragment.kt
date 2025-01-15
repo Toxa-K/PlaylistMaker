@@ -52,7 +52,7 @@ class PlayListFragment : Fragment() {
                 View.GONE
             (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
                 View.GONE
-            val bundle = bundleOf(KEY_PlAYLIST to playlist)
+            val bundle = bundleOf(KEY_PLAYLIST to playlist)
             Log.d("PlayListFragment", "Navigating with playlist: $playlist")
             findNavController().navigate(R.id.action_mediatecaFragment_to_showPlaylistFragment, bundle)
         }
@@ -102,6 +102,6 @@ class PlayListFragment : Fragment() {
 
     companion object {
         fun newInstance() = PlayListFragment()
-        const val KEY_PlAYLIST = "KEY_PlAYLIST"
+        const val KEY_PLAYLIST = "KEY_PLAYLIST"
     }
 }

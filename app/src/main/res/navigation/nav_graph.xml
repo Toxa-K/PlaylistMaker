@@ -53,7 +53,11 @@
     </fragment>
     <fragment
         android:id="@+id/showPlaylistFragment"
-        android:name="com.example.playlistmaker.mediateca.ui.fragment.showplaylist.ShowPlaylistFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.showPlaylist.ShowPlaylistFragment"
         android:label="fragment_playlist"
-        tools:layout="@layout/fragment_playlist" />
+        tools:layout="@layout/fragment_playlist" >
+        <action
+            android:id="@+id/action_showPlaylistFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
 </navigation>

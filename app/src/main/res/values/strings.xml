@@ -47,6 +47,12 @@
     <string name="playlist_is_null" translatable="false">Вы не создали \n ни одного плейлиста</string>
     <string name="mediateca_is_null" translatable="false">Ваша медиатека пуста</string>
     <string name="add_in_playlist" translatable="false">Добавить в плейлист</string>
+    <string name="delete" translatable="false">Удалить</string>
+    <string name="delete_track" translatable="false">Удалить трек</string>
+    <string name="delete_track_description" translatable="false">Вы уверены, что хотите удалить трек из пелйлиста?</string>
+    <string name="share_playlist" translatable="false">Поделиться плейлистом</string>
+    <string name="track_in_playlist_is_empty" translatable="false">В плейлисте нет треков</string>
+    <string name="share_playlist_null" translatable="false">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
 
 </resources>
