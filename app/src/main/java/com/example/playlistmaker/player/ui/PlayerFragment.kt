@@ -42,10 +42,10 @@ import java.util.Locale
 class PlayerFragment : Fragment() {
 
     private lateinit var binding: FragmentPlayerBinding
-    var track: Track? = null
+    private lateinit var track: Track
 
     private val viewModel: PlayerViewModel by viewModel {
-        parametersOf(track?.previewUrl)
+        parametersOf(track.previewUrl)
     }
     private lateinit var onTrackClickDebounce: (Playlist) -> Unit
 
@@ -56,25 +56,24 @@ class PlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlayerBinding.inflate(inflater, container, false)
-        track = arguments?.getSerializable(KEY_TRACK) as? Track
+        track = requireArguments().getSerializable(KEY_TRACK) as Track
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        track = savedInstanceState?.getSerializable(KEY_TRACK) as? Track ?: requireArguments().getSerializable(KEY_TRACK) as Track
 
-
+        if(track.previewUrl.isNullOrEmpty()){
+            Toast.makeText(requireContext(),"Мы пока не можем проиграть данный трек",Toast.LENGTH_SHORT).show()
+        }
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.standardBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        onTrackClickDebounce = debounce<Playlist>(
-            CLICK_DEBOUNCE_DELAY,
-            lifecycleScope,
-            false
-        ) { playlist ->
-            viewModel.addToPlaylist(playlist, track!!)
+        onTrackClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, lifecycleScope, false) { playlist ->
+            viewModel.addToPlaylist(playlist, track)
         }
 
         val adapter = PlayerPlaylistAdapter(listOf()) { playlist ->
@@ -119,7 +118,7 @@ class PlayerFragment : Fragment() {
             when (screenState) {
                 is PlayerScreenState.Content -> {
                     changeContentVisibility(true)
-                    bind(track!!)
+                    bind(track)
                 }
 
                 is PlayerScreenState.Loading -> {
@@ -167,32 +166,32 @@ class PlayerFragment : Fragment() {
             }
         }
 
-
         binding.addToPlaylist.setOnClickListener {
             viewModel.buildListPlaylist()
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
+
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.playButton.isEnabled = false
 
         binding.favoriteButton.setOnClickListener {
-            viewModel.onFavoriteClicked(track!!)
+            viewModel.onFavoriteClicked(track)
         }
+
         binding.playButton.setOnClickListener {
             viewModel.onButtonClicked()
         }
+
         binding.newPlaylistButton.setOnClickListener {
             binding.Constraint.visibility = View.GONE
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             findNavController().navigate(R.id.action_playerFragment_to_createPlayListFragment2)
         }
 
-
-        viewModel.onCreate(track!!)
-
-
+        viewModel.onCreate(track)
     }
 
 
@@ -245,6 +244,17 @@ class PlayerFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         viewModel.onPausePlayer()
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable(KEY_TRACK, track)
+    }
+    override fun onResume() {
+        super.onResume()
+        (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.GONE
+        (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
+            View.GONE
     }
 
     companion object {

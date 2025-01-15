@@ -176,7 +176,7 @@ class ShowPlaylistFragment : Fragment() {
 
     private fun edit(bottomSheetBehavior: BottomSheetBehavior<LinearLayout>) {
         val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-        val peekHeight = if(screenHeight < 1920) (screenHeight * 0.09).toInt() else (screenHeight * 0.25).toInt()
+        val peekHeight = if(screenHeight < 1921) (screenHeight * 0.09).toInt() else (screenHeight * 0.25).toInt()
 
         bottomSheetBehavior.peekHeight = peekHeight
     }
@@ -248,6 +248,10 @@ class ShowPlaylistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =
+            View.GONE
+        (requireActivity().findViewById<View>(R.id.image) as? View)?.visibility =
+            View.GONE
         resetToastFlag()
         viewModel.updateView(playlist.playlistId)
 
