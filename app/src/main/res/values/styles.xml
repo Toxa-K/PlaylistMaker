@@ -62,6 +62,7 @@
         <item name="android:textSize">@dimen/text_22</item>
         <item name="android:fontFamily">"@font/ys_display_medium"</item>
         <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="text_track_search">
         <item name="android:layout_width">wrap_content</item>
@@ -90,4 +91,21 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">#AEAFB4</item>
     </style>
+    <style name="CustomTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxBackgroundColor">@null</item>
+        <item name="boxStrokeColor">@color/color_input_create_pl</item>
+        <item name="hintTextColor">@color/color_input_hint</item>
+    </style>
+    
+    
+    <style name="RoundedCorners" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item> <!-- Размер закругления -->
+    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorAccent">@color/blue</item>
+    </style>
+
 </resources>

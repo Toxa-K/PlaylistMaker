@@ -1,11 +1,16 @@
 package com.example.playlistmaker.di.domainModel
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.mediateca.data.db.LikeRepositoryImpl
+import com.example.playlistmaker.mediateca.data.createPlaylist.ImageRepositoryImpl
+import com.example.playlistmaker.mediateca.data.likeList.db.LikeRepositoryImpl
 import com.example.playlistmaker.player.data.repository.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
-import com.example.playlistmaker.mediateca.data.db.TrackDbConvertor
-import com.example.playlistmaker.mediateca.domain.db.LikeRepository
+import com.example.playlistmaker.mediateca.data.likeList.db.TrackDbConvertor
+import com.example.playlistmaker.mediateca.data.playList.PlaylistDbConvector
+import com.example.playlistmaker.mediateca.data.playList.PlaylistRepositoryImpl
+import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageRepository
+import com.example.playlistmaker.mediateca.domain.likeList.LikeRepository
+import com.example.playlistmaker.mediateca.domain.playList.PlaylistRepository
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.HistoryRepository
@@ -24,6 +29,8 @@ val repositoryModule = module {
     }
     factory { TrackDbConvertor() }
 
+    factory { PlaylistDbConvector() }
+
     single<ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
@@ -41,6 +48,12 @@ val repositoryModule = module {
     }
     single<LikeRepository> {
         LikeRepositoryImpl(get(), get())
+    }
+    single<PlaylistRepository>{
+        PlaylistRepositoryImpl(get(),get())
+    }
+    single <ImageRepository>{
+        ImageRepositoryImpl(get())
     }
 
 }

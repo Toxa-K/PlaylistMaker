@@ -9,18 +9,43 @@
         android:name="com.example.playlistmaker.search.ui.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
-
+        <action
+            android:id="@+id/action_searchFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/mediatecaFragment"
         android:name="com.example.playlistmaker.mediateca.ui.MediatecaFragment"
         android:label="fragment_mediateca"
         tools:layout="@layout/fragment_mediateca" >
-
+        <action
+            android:id="@+id/action_mediatecaFragment_to_createPlayListFragment2"
+            app:destination="@id/createPlayListFragment2" />
+        <action
+            android:id="@+id/action_mediatecaFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/createPlayListFragment2"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.CreatePlayListFragment"
+        android:label="fragment_creatplaylist"
+        tools:layout="@layout/fragment_creatplaylist" />
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.playlistmaker.player.ui.PlayerFragment"
+        android:label="fragment_player"
+        tools:layout="@layout/fragment_player" >
+        <action
+            android:id="@+id/action_playerFragment_to_createPlayListFragment2"
+            app:destination="@id/createPlayListFragment2" />
+    </fragment>
 </navigation>

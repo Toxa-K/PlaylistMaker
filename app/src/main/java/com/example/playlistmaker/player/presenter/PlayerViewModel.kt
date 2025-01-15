@@ -1,15 +1,18 @@
 package com.example.playlistmaker.player.presenter
 
 import android.icu.text.SimpleDateFormat
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.presenter.state.ListPlaylistState
+import com.example.playlistmaker.player.presenter.state.PlayerLikeState
+import com.example.playlistmaker.player.presenter.state.PlayerScreenState
+import com.example.playlistmaker.player.presenter.state.addToPlaylistState
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -20,7 +23,8 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val trackPlayer: PlayerInteractor,
-    private val likeInteractor: LikeInteractor
+    private val likeInteractor: LikeInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
 
@@ -32,6 +36,12 @@ class PlayerViewModel(
 
     private val stateLikeLiveData = MutableLiveData<PlayerLikeState>()
     fun getStateLikeLiveData(): LiveData<PlayerLikeState> = stateLikeLiveData
+
+    private val statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
+    fun getStatePlaylistLiveData(): LiveData<ListPlaylistState> = statePlaylistLiveData
+
+    private val addTrackLiveData = MutableLiveData<addToPlaylistState?>()
+    fun getAddTrackLiveData(): LiveData<addToPlaylistState?> = addTrackLiveData
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
@@ -74,18 +84,19 @@ class PlayerViewModel(
         }
     }
 
-
     fun onCreate(track: Track) {
         viewModelScope.launch {
-            isTrackLiked = checkLike(track) // Ждём завершения проверки лайков
-            updateLikeState() // Обновляем состояние лайков только после проверки
+            isTrackLiked = checkLike(track)
+            updateLikeState()
         }
 
         trackPlayer.prepare()
-
         updateLikeState()
         screenStateLiveData.value =
             PlayerScreenState.Content
+    }
+    fun clearAddTrackState() {
+        addTrackLiveData.value = null
     }
 
     private suspend fun checkLike(track: Track): Boolean {
@@ -100,7 +111,6 @@ class PlayerViewModel(
         }
     }
 
-
     private fun onPause() {
         trackPlayer.pause()
         timerJob?.cancel()
@@ -109,6 +119,9 @@ class PlayerViewModel(
                 progress = getCurrentPlayerPosition(), isPlaying = false
             )
         )
+    }
+    fun onPausePlayer(){
+        onPause()
     }
 
     override fun onCleared() {
@@ -119,6 +132,67 @@ class PlayerViewModel(
     private fun getCurrentPlayerPosition(): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackPlayer.getPosition())
             ?: "00:00"
+    }
+
+    fun buildListPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor
+                .getAllPlaylist()
+                .collect { playlists ->
+                    processResult(playlists)
+                }
+        }
+    }
+
+    private fun processResult(playlist: List<Playlist?>) {
+        if (playlist.isEmpty()) {
+            renderState(ListPlaylistState.emptyList)
+        } else {
+            renderState(ListPlaylistState.notEmptyList(playlist as List<Playlist>))
+        }
+    }
+
+    private fun renderState(state: ListPlaylistState) {
+        statePlaylistLiveData.postValue(state)
+    }
+
+    fun addToPlaylist(playlist: Playlist, track: Track) {
+        viewModelScope.launch {
+            when (checkInPlaylist(playlist, track)) {
+
+                true -> {
+                    renderState(addToPlaylistState.alreadyHave(playlist.title))
+                }
+
+                false -> {
+                    if (addTrack(track) && addTrackInPlaylist(playlist, track) == true) {
+                        renderState(addToPlaylistState.done(playlist.title))
+                    } else {
+                        renderState(addToPlaylistState.problem)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun addTrack(track: Track): Boolean {
+        return playlistInteractor.addTrack(track)
+
+    }
+
+    private suspend fun addTrackInPlaylist(playlist: Playlist, track: Track): Boolean {
+        val updatedTrackIds = playlist.trackIds?.toMutableList() ?: mutableListOf()
+        updatedTrackIds.add(track.trackId.toString())
+        val updatedPlaylist = playlist.copy(trackIds = updatedTrackIds)
+        return playlistInteractor.updatePlaylist(updatedPlaylist)
+    }
+
+    private fun checkInPlaylist(playlist: Playlist, track: Track): Boolean {
+        return playlist.trackIds?.contains(track.trackId.toString()) == true
+    }
+
+    private fun renderState(state: addToPlaylistState) {
+        addTrackLiveData.postValue(state)
     }
 
     companion object {

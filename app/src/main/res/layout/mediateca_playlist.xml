@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white_black">
+    android:background="@color/white_black"
+    tools:context="com.example.playlistmaker.mediateca.ui.fragment.PlayListFragment">
 
     <Button
         android:id="@+id/placeholderButton"
@@ -14,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/black_white"
-        android:text="Новый плейлист"
+        android:text="@string/new_playlist"
         android:textColor="@color/white_black"
         android:textSize="14sp"
         android:visibility="visible"
@@ -23,12 +24,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/placeholderButton"
+        app:layout_constraintVertical_bias="0.0" />
+
     <ImageView
         android:id="@+id/placeholderIcon"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:src="@drawable/none_search"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_marginTop="46dp"
         app:layout_constraintBottom_toTopOf="@id/placeholderMessage"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,11 +53,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Вы не создали \n ни одного плейлиста"
+        android:text="@string/playlist_is_null"
         android:textAlignment="center"
         android:textColor="@color/black_white"
         android:textSize="19sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/placeholderIcon" />

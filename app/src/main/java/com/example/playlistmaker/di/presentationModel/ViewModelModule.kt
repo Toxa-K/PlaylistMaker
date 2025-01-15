@@ -1,13 +1,18 @@
 package com.example.playlistmaker.di.presentationModel
 
-import com.example.playlistmaker.mediateca.presenter.LikeViewModel
+import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
+import com.example.playlistmaker.mediateca.presenter.createPlaylist.CreatePlaylistViewModel
+import com.example.playlistmaker.mediateca.presenter.likeList.LikeViewModel
 import com.example.playlistmaker.mediateca.presenter.MediatecaViewModel
-import com.example.playlistmaker.mediateca.presenter.PlaylistViewModel
+import com.example.playlistmaker.mediateca.presenter.playList.PlaylistAdapter
+import com.example.playlistmaker.mediateca.presenter.playList.PlaylistViewHolder
+import com.example.playlistmaker.mediateca.presenter.playList.PlaylistViewModel
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.presenter.PlayerViewModel
 import com.example.playlistmaker.search.presenter.TrackSearchViewModel
 import com.example.playlistmaker.settings.presenter.SettingsViewModel
-import org.koin.android.ext.koin.androidContext
+import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
@@ -19,7 +24,7 @@ val viewModelModule = module {
     }
 
     viewModel { (url: String?) ->
-        PlayerViewModel(get<PlayerInteractor> { parametersOf(url) }, get())
+        PlayerViewModel(get<PlayerInteractor> { parametersOf(url) }, get(),get())
     }
 
     viewModel {
@@ -30,9 +35,14 @@ val viewModelModule = module {
         LikeViewModel(get())
     }
     viewModel {
-        PlaylistViewModel()
+        PlaylistViewModel(get())
     }
     viewModel {
         MediatecaViewModel()
     }
+    viewModel {
+        CreatePlaylistViewModel(get(),get())
+    }
+
+
 }

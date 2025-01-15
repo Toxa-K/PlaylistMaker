@@ -3,5 +3,8 @@
 
     <style name="Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar" >
         <item name="colorAccent">@color/blue</item>
+        <item name="colorControlActivated">@color/blue</item>
+
     </style>
+
 </resources>

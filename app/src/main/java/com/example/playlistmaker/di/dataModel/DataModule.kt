@@ -2,7 +2,7 @@ package com.example.playlistmaker.di.dataModel
 
 import androidx.room.Room
 import com.example.playlistmaker.search.data.NetworkClient
-import com.example.playlistmaker.mediateca.data.db.AppDatabase
+import com.example.playlistmaker.mediateca.data.AppDatabase
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.network.iTunesAPI
 import org.koin.android.ext.koin.androidContext
@@ -25,6 +25,7 @@ val dataModule = module {
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
             .build()
     }
 }

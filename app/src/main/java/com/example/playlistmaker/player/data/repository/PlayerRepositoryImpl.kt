@@ -13,6 +13,7 @@ class PlayerRepositoryImpl(
     private var playerState = STATE_DEFAULT
     override fun prepare(): Boolean {
         if (!url.isNullOrEmpty()) {
+            mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {

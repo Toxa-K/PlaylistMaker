@@ -58,7 +58,7 @@
         android:textColor="@color/black_white"
         android:textSize="19sp"
         android:visibility="gone"
-        android:text="Ваша медиатека пуста"
+        android:text="@string/mediateca_is_null"
         app:layout_constraintTop_toBottomOf="@id/placeholderIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

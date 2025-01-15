@@ -1,7 +1,11 @@
 package com.example.playlistmaker.di.domainModel
 
-import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractor
-import com.example.playlistmaker.mediateca.domain.db.LikeHistoryInteractorImpl
+import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
+import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractorImpl
+import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractor
+import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractorImpl
+import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
+import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractorImpl
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.LikeInteractorImpl
@@ -58,4 +62,11 @@ val interactorModule = module {
     single<LikeInteractor> {
         LikeInteractorImpl(get())
     }
+    factory <PlaylistInteractor>{
+        PlaylistInteractorImpl(get())
+    }
+    single <ImageInteractor>{
+        ImageInteractorImpl(get())
+    }
+
 }
