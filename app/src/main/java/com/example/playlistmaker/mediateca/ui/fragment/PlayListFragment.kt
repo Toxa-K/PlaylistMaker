@@ -54,7 +54,10 @@ class PlayListFragment : Fragment() {
                 View.GONE
             val bundle = bundleOf(KEY_PLAYLIST to playlist)
             Log.d("PlayListFragment", "Navigating with playlist: $playlist")
-            findNavController().navigate(R.id.action_mediatecaFragment_to_showPlaylistFragment, bundle)
+            findNavController().navigate(
+                R.id.action_mediatecaFragment_to_showPlaylistFragment,
+                bundle
+            )
         }
         val adapter = PlaylistAdapter(listOf()) { playlist ->
             onPlaylistClickDebounce(playlist)

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/search_background"
     android:orientation="vertical"
-    tools:context="com.example.playlistmaker.mediateca.ui.fragment.showPlaylist.ShowPlaylistFragment">
+    tools:context="com.example.playlistmaker.mediateca.ui.fragment.ShowPlaylistFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -37,7 +37,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/back" />
+            app:navigationIcon="@drawable/back_all_black"
+            />
 
         <TextView
             android:id="@+id/textTitle"
@@ -164,6 +165,123 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/size_24" />
+
+    </LinearLayout>
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/parametrs_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/size_24"
+        android:background="@drawable/rounded_bottomsheet"
+        android:orientation="vertical"
+        android:paddingHorizontal="13dp"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="50dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_rectangle"
+            android:backgroundTint="@color/slipper"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="32dp"
+            >
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/artParametrs"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/marg_8"
+                tools:src="@drawable/placeholder2"
+                android:scaleType="centerCrop"
+                app:cornerSize = "2dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+            <TextView
+                android:id="@+id/titleParametrs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginStart="8dp"
+                tools:text="Best songs 2021"
+                android:textColor="@color/black_white"
+                android:textSize="@dimen/text_16"
+                android:textFontWeight="400"
+                android:fontFamily="@font/ys_display_regular"
+                app:layout_constraintStart_toEndOf="@id/artParametrs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <TextView
+                android:id="@+id/descriptionParametrs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="98 tracks"
+                android:textColor="@color/gray_white"
+                android:textSize="@dimen/text_11"
+                android:textFontWeight="400"
+                android:fontFamily="@font/ys_display_regular"
+                app:layout_constraintStart_toEndOf="@id/artParametrs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleParametrs"/>
+            <TextView
+                android:id="@+id/sharingParametrs"
+                android:layout_width="match_parent"
+                android:layout_height="61dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="3dp"
+                android:gravity="center|left"
+                android:text="@string/sharing"
+                android:textColor="@color/black_white"
+                android:textSize="@dimen/text_16"
+                android:textFontWeight="400"
+                android:fontFamily="@font/ys_display_regular"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/artParametrs"/>
+            <TextView
+                android:id="@+id/redactParametrs"
+                android:layout_width="match_parent"
+                android:layout_height="61dp"
+                android:layout_marginStart="3dp"
+                android:gravity="center|left"
+                android:text="@string/redact_info"
+                android:textColor="@color/black_white"
+                android:textSize="@dimen/text_16"
+                android:textFontWeight="400"
+                android:fontFamily="@font/ys_display_regular"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sharingParametrs"/>
+            <TextView
+                android:id="@+id/deleteParametrs"
+                android:layout_width="match_parent"
+                android:layout_height="61dp"
+                android:layout_marginStart="3dp"
+                android:gravity="center|left"
+                android:text="@string/delete_playlist"
+                android:textColor="@color/black_white"
+                android:textSize="@dimen/text_16"
+                android:textFontWeight="400"
+                android:fontFamily="@font/ys_display_regular"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/redactParametrs"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

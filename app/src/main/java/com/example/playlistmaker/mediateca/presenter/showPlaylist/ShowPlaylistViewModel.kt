@@ -1,10 +1,12 @@
 package com.example.playlistmaker.mediateca.presenter.showPlaylist
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
+import com.example.playlistmaker.di.presentationModel.viewModelModule
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import com.example.playlistmaker.sharing.domain.impl.SharePlaylistUseCase
@@ -34,16 +36,16 @@ class ShowPlaylistViewModel(
     fun getTrackInPlaylist(playlist: Playlist) {
         viewModelScope.launch {
             val traksInPlaylist = playlistInteractor.getTraksInPlaylist(playlist).first()
-            showContent(playlist,traksInPlaylist)
+            showContent(playlist, traksInPlaylist)
         }
     }
 
     private fun showContent(playlist: Playlist, traksInPlaylist: List<Track>) {
-        if (traksInPlaylist.isEmpty()){
+        if (traksInPlaylist.isEmpty()) {
             val message = R.string.track_in_playlist_is_empty
             renderState(ShowPlaylistState.Empty(playlist, message))
-        }else{
-            renderState(ShowPlaylistState.Content(traksInPlaylist,playlist))
+        } else {
+            renderState(ShowPlaylistState.Content(traksInPlaylist, playlist))
         }
 
     }
@@ -64,11 +66,11 @@ class ShowPlaylistViewModel(
     }
 
     fun sharePlaylist(playlist: Playlist) {
-        val countTrack =playlist.trackIds?.size ?: 0
-        if (countTrack > 0){
+        val countTrack = playlist.trackIds?.size ?: 0
+        if (countTrack > 0) {
             viewModelScope.launch {
                 val traksInPlaylist = playlistInteractor.getTraksInPlaylist(playlist).first()
-                shareUseCase.sharePlaylist(playlist,traksInPlaylist)
+                shareUseCase.sharePlaylist(playlist, traksInPlaylist)
             }
         } else {
             val message = R.string.share_playlist_null
@@ -76,6 +78,22 @@ class ShowPlaylistViewModel(
         }
 
 
+    }
+
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(playlist)
+        }
+
+    }
+
+    fun updateView(playlistId: Int?) {
+        viewModelScope.launch {
+            val playlist = playlistInteractor.getPlaylistById(playlistId!!).first()
+            playlist?.let {
+                getTrackInPlaylist(it)
+            }
+        }
     }
 
 

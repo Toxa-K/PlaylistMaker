@@ -147,14 +147,17 @@ class PlayerFragment : Fragment() {
         }
 
         viewModel.getAddTrackLiveData().observe(viewLifecycleOwner) { state ->
-            var message= ""
+            var message = ""
             state?.let {
                 when (it) {
                     is addToPlaylistState.done -> {
                         message = "${getString(R.string.add_in_playlist__)} ${it.text}"
                         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
-                    is addToPlaylistState.alreadyHave -> message = "${getString(R.string.track_in_playlist__)} ${it.text}"
+
+                    is addToPlaylistState.alreadyHave -> message =
+                        "${getString(R.string.track_in_playlist__)} ${it.text}"
+
                     is addToPlaylistState.problem -> message = getString(R.string.kek_error_message)
                 }
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -183,7 +186,6 @@ class PlayerFragment : Fragment() {
         binding.newPlaylistButton.setOnClickListener {
             binding.Constraint.visibility = View.GONE
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
             findNavController().navigate(R.id.action_playerFragment_to_createPlayListFragment2)
         }
 
@@ -191,11 +193,10 @@ class PlayerFragment : Fragment() {
         viewModel.onCreate(track!!)
 
 
-
     }
 
 
-    private fun bind(track: Track)= with(binding) {
+    private fun bind(track: Track) = with(binding) {
 
         songTitle.text = track.trackName
         artistName.text = track.artistName
@@ -211,7 +212,7 @@ class PlayerFragment : Fragment() {
         yearInfo1.text = track.releaseDate?.substring(0, 4)
         countryInfo1.text = track.country
         genreInfo1.text = track.primaryGenreName
-       songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
+        songDuration1.text = track.trackTimeMillis.let { formatTrackTime(it.toLong()) }
 
         Glide.with(albumCover.context)
             .load(track.getCoverArtwork())

@@ -12,10 +12,10 @@ import java.util.Locale
 
 class SharePlaylistRepositoryImpl(
     private val context: Context
-): SharePlaylistRepository {
+) : SharePlaylistRepository {
 
     override fun sharePlaylist(playlist: Playlist, traksInPlaylist: List<Track>) {
-        val message = buildPlaylistMessage(playlist,traksInPlaylist)
+        val message = buildPlaylistMessage(playlist, traksInPlaylist)
         val intent = Intent().apply {
             Log.d("ExternalNavigator", "Creating intent for sharing")
             action = Intent.ACTION_SEND
@@ -30,9 +30,9 @@ class SharePlaylistRepositoryImpl(
     private fun buildPlaylistMessage(playlist: Playlist, tracks: List<Track>): String {
         val trackSize = tracks.size
         val trackCountText = when (trackSize) {
-            1 ->"трек"
-            in 2..4 ->"трека"
-            else ->"треков"
+            1 -> "трек"
+            in 2..4 -> "трека"
+            else -> "треков"
         }
         val trackList = tracks.joinToString(separator = "\n") { track ->
             val duration = track.trackTimeMillis?.let { formatTrackTime(it.toLong()) } ?: "00:00"
@@ -48,6 +48,7 @@ class SharePlaylistRepositoryImpl(
         $trackList
     """.trimIndent()
     }
+
     private fun formatTrackTime(trackTimeMillis: Long): String {
         return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
     }

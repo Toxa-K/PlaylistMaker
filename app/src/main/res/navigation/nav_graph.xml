@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/createPlayListFragment2"
-        android:name="com.example.playlistmaker.mediateca.ui.fragment.CreatePlayListFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.createPlaylist.CreatePlayListFragment"
         android:label="fragment_creatplaylist"
         tools:layout="@layout/fragment_creatplaylist" />
 
@@ -53,11 +53,14 @@
     </fragment>
     <fragment
         android:id="@+id/showPlaylistFragment"
-        android:name="com.example.playlistmaker.mediateca.ui.fragment.showPlaylist.ShowPlaylistFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.fragment.ShowPlaylistFragment"
         android:label="fragment_playlist"
         tools:layout="@layout/fragment_playlist" >
         <action
             android:id="@+id/action_showPlaylistFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_showPlaylistFragment_to_createPlayListFragment2"
+            app:destination="@id/createPlayListFragment2" />
     </fragment>
 </navigation>

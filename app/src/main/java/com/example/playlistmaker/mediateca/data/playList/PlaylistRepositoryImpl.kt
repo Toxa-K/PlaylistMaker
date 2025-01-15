@@ -25,9 +25,10 @@ class PlaylistRepositoryImpl(
 
     override suspend fun insertPlaylistTrack(track: Track): Boolean {
         val entity = playlistDbConvector.mapPlaylist(track)
-        return withContext(Dispatchers.IO){ appDatabase.trackPlaylistDao().insertTrack(entity) > 0}
+        return withContext(Dispatchers.IO) {
+            appDatabase.trackPlaylistDao().insertTrack(entity) > 0
+        }
     }
-
 
 
     override suspend fun deletePlaylist(playlist: Playlist) {
@@ -37,7 +38,9 @@ class PlaylistRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist): Boolean {
         val playlistEntity = playlistDbConvector.map(playlist)
-        return withContext(Dispatchers.IO){appDatabase.playlistDao().updatePlaylist(playlistEntity) > 0}
+        return withContext(Dispatchers.IO) {
+            appDatabase.playlistDao().updatePlaylist(playlistEntity) > 0
+        }
     }
 
     override fun getPlaylistById(id: Int): Flow<Playlist> {
@@ -60,13 +63,11 @@ class PlaylistRepositoryImpl(
     override suspend fun getDurationPlaylist(playlist: Playlist): String {
         val trackIds = playlist.trackIds?.map { it.toInt() } ?: return "00:00"
 
-        // Получаем треки одним запросом
         val totalDurationMillis = withContext(Dispatchers.IO) {
             appDatabase.trackPlaylistDao().getTracksByIds(trackIds)
                 .sumOf { it.trackTimeMillis.toLong() }
         }
 
-        // Форматируем продолжительность
         return formatTrackTime(totalDurationMillis)
     }
 

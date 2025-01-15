@@ -19,29 +19,57 @@ class CreatePlaylistViewModel(
     private val isPlaylistCreatedLiveData = MutableLiveData<String>()
     val getIsPlaylistCreatedLiveData: LiveData<String> = isPlaylistCreatedLiveData
 
-    private fun addPlaylistToData(title: String, description: String?, imagePath: String) {
-        viewModelScope.launch {
-            playlistInteractor.addPlaylist(
-                Playlist(
-                    playlistId = null,
-                    title = title,
-                    description = description,
-                    directory = imagePath,
-                    trackIds = emptyList(),
-                    count = 0
+    private fun addPlaylistToData(
+        playlist: Playlist?,
+        title: String,
+        description: String?,
+        imagePath: String
+    ) {
+        if (playlist == null) {
+            viewModelScope.launch {
+                playlistInteractor.addPlaylist(
+                    Playlist(
+                        playlistId = null,
+                        title = title,
+                        description = description,
+                        directory = imagePath,
+                        trackIds = emptyList(),
+                        count = 0
+                    )
                 )
-            )
+            }
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addPlaylist(
+                    Playlist(
+                        playlistId = playlist.playlistId,
+                        title = title,
+                        description = description,
+                        directory = imagePath,
+                        trackIds = playlist.trackIds,
+                        count = playlist.count
+                    )
+                )
+            }
         }
+
     }
 
 
-    fun savePlaylist(title: String, description: String?, imageUri: Uri?) {
-        addPlaylistToData(title, description, imageInteractor.saveImage(imageUri))
-        try {
+    fun savePlaylist(playlist: Playlist?, title: String, description: String?, imageUri: Uri?) {
+        if (playlist == null) {
+            addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
             isPlaylistCreatedLiveData.postValue("${title}")
-        } catch (e: Exception) {
-            isPlaylistCreatedLiveData.postValue("Произошла ошибка")
+        } else {
+            if (imageUri == null) {
+                addPlaylistToData(playlist, title, description, playlist.directory!!)
+                isPlaylistCreatedLiveData.postValue("${title}")
+            } else {
+                addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
+                isPlaylistCreatedLiveData.postValue("${title}")
+            }
         }
+
     }
 
 

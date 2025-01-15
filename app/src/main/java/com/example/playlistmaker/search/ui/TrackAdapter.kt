@@ -10,7 +10,7 @@ class TrackAdapter(
     var tracks: List<Track>,
     private val onItemClick: (Track) -> Unit,
     private val onTrackLongClick: (Track) -> Unit
-) : RecyclerView.Adapter<TrackViewHolder> () {
+) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
@@ -28,11 +28,7 @@ class TrackAdapter(
         }
     }
 
-
     override fun getItemCount(): Int = tracks.size
-
-
-
 
     // Метод для обновления треков
     fun updateTracks(newTracks: List<Track>) {

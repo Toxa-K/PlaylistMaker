@@ -5,8 +5,8 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.sharing.domain.repository.SharePlaylistRepository
 
 class SharePlaylistUseCase(private val repository: SharePlaylistRepository) {
-    fun sharePlaylist(playlist: Playlist, traksInPlaylist: List<Track>){
-        repository.sharePlaylist(playlist,traksInPlaylist)
+    fun sharePlaylist(playlist: Playlist, traksInPlaylist: List<Track>) {
+        repository.sharePlaylist(playlist, traksInPlaylist)
     }
 
 }

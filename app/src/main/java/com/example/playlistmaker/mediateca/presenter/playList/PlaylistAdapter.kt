@@ -14,7 +14,8 @@ class PlaylistAdapter(
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.playlist_card, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.playlist_card, parent, false)
         return PlaylistViewHolder(view)
     }
 

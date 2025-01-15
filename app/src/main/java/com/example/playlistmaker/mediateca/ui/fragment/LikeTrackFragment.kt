@@ -71,7 +71,7 @@ class LikeTrackFragment : Fragment() {
 
         adapterLike = TrackAdapter(
             listOf(),
-            onItemClick ={ track ->
+            onItemClick = { track ->
                 onTrackClickDebounce(track)
             },
             onTrackLongClick = { track ->
