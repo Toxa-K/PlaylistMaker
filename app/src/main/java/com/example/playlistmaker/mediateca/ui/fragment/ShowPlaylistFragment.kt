@@ -1,8 +1,10 @@
 package com.example.playlistmaker.mediateca.ui.fragment
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
@@ -237,9 +240,17 @@ class ShowPlaylistFragment : Fragment() {
         Glide.with(artParametrs)
             .load(playlist.directory)
             .placeholder(R.drawable.placeholder2)
+            .transform(RoundedCorners(dpToPx(2f, artParametrs.context)))
             .centerCrop()
             .into(artParametrs)
 
+    }
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
     }
 
     private fun resetToastFlag() {
