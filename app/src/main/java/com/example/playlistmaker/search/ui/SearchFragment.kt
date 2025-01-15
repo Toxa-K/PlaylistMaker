@@ -176,7 +176,11 @@ class SearchFragment : Fragment() {
 
 
         placeholderButton.setOnClickListener {
-            searchDebounce(changedText = searchInput.text.toString())
+            searchJob?.cancel()
+            searchJob = lifecycleScope.launch {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                viewModel.searchRequest(searchInput.text.toString())
+            }
         }
 
         //Сохранение значения в строке поиска после разрушение активити
