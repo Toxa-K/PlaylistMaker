@@ -1,6 +1,5 @@
 package com.example.playlistmaker.mediateca.presenter.createPlaylist
 
-
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,45 +15,30 @@ class CreatePlaylistViewModel(
     private val imageInteractor: ImageInteractor
 ) : ViewModel() {
 
-    private val isPlaylistCreatedLiveData = MutableLiveData<String>()
-    val getIsPlaylistCreatedLiveData: LiveData<String> = isPlaylistCreatedLiveData
+    private val _isPlaylistCreatedLiveData = MutableLiveData<String>()
+    val isPlaylistCreatedLiveData: LiveData<String> = _isPlaylistCreatedLiveData
 
-    private fun addPlaylistToData(
+    private fun createPlaylistObject(
         playlist: Playlist?,
         title: String,
         description: String?,
         imagePath: String
-    ) {
-        if (playlist == null) {
-            viewModelScope.launch {
-                playlistInteractor.addPlaylist(
-                    Playlist(
-                        playlistId = null,
-                        title = title,
-                        description = description,
-                        directory = imagePath,
-                        trackIds = emptyList(),
-                        count = 0
-                    )
-                )
-            }
-        } else {
-            viewModelScope.launch {
-                playlistInteractor.addPlaylist(
-                    Playlist(
-                        playlistId = playlist.playlistId,
-                        title = title,
-                        description = description,
-                        directory = imagePath,
-                        trackIds = playlist.trackIds,
-                        count = playlist.count
-                    )
-                )
-            }
-        }
-
+    ): Playlist {
+        return Playlist(
+            playlistId = playlist?.playlistId,
+            title = title,
+            description = description,
+            directory = imagePath,
+            trackIds = playlist?.trackIds ?: emptyList(),
+            count = playlist?.count ?: 0
+        )
     }
 
+    private fun addPlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.addPlaylist(playlist)
+        }
+    }
 
     fun savePlaylist(
         playlist: Playlist?,
@@ -62,23 +46,12 @@ class CreatePlaylistViewModel(
         description: String?,
         imageUri: Uri?
     ) {
-        if (playlist == null) {
-            viewModelScope.launch {
-                addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
-            }
-            isPlaylistCreatedLiveData.postValue("${title}")
-        } else {
-            if (imageUri == null) {
-                addPlaylistToData(playlist, title, description, playlist.directory!!)
-                isPlaylistCreatedLiveData.postValue("${title}")
-            } else {
-                viewModelScope.launch {addPlaylistToData(playlist,title,description,imageInteractor.saveImage(imageUri))
-                }
-                isPlaylistCreatedLiveData.postValue("${title}")
-            }
+        viewModelScope.launch {
+            val imagePath =
+                imageUri?.let { imageInteractor.saveImage(it) } ?: playlist?.directory.orEmpty()
+            val newPlaylist = createPlaylistObject(playlist, title, description, imagePath)
+            addPlaylist(newPlaylist)
+            _isPlaylistCreatedLiveData.postValue(title)
         }
-
     }
-
-
 }

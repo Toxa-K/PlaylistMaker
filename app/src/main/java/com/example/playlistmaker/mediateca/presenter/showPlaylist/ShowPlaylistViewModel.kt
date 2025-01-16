@@ -1,12 +1,11 @@
 package com.example.playlistmaker.mediateca.presenter.showPlaylist
 
-import android.util.Log
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.di.presentationModel.viewModelModule
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import com.example.playlistmaker.sharing.domain.impl.SharePlaylistUseCase
@@ -20,8 +19,8 @@ class ShowPlaylistViewModel(
     private val shareUseCase: SharePlaylistUseCase
 ) : ViewModel() {
 
-    private val timeLiveData = MutableLiveData<String>()
-    val getTimeLiveData: LiveData<String> = timeLiveData
+    private val _timeLiveData = MutableLiveData<String>()
+    val timeLiveData: LiveData<String> = _timeLiveData
 
     private val stateLiveData = MutableLiveData<ShowPlaylistState>()
     val getStateLiveData: LiveData<ShowPlaylistState> = stateLiveData
@@ -29,7 +28,7 @@ class ShowPlaylistViewModel(
     fun getSongTime(playlist: Playlist) {
         viewModelScope.launch {
             val time = playlistInteractor.getDurationPlaylist(playlist)
-            timeLiveData.postValue(time)
+            _timeLiveData.postValue(time)
         }
     }
 

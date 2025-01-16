@@ -24,11 +24,11 @@ class TrackSearchViewModel(
 
     private val tracksSearch = ArrayList<Track>()
 
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    private val _stateLiveData = MutableLiveData<SearchState>()
+    fun observeState(): LiveData<SearchState> = _stateLiveData
 
     private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 
     private val showToast = SingleLiveEvent<String>()

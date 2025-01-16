@@ -13,8 +13,8 @@ class PlaylistViewModel(
 ) : ViewModel() {
 
 
-    private val playlistLiveData = MutableLiveData<PlayliStstate>()
-    val getPlaylistLiveData: LiveData<PlayliStstate> = playlistLiveData
+    private val _playlistLiveData = MutableLiveData<PlayliStstate>()
+    val playlistLiveData: LiveData<PlayliStstate> = _playlistLiveData
 
     fun showPlaylist() {
         viewModelScope.launch {
@@ -35,7 +35,7 @@ class PlaylistViewModel(
     }
 
     private fun renderState(state: PlayliStstate) {
-        playlistLiveData.postValue(state)
+        _playlistLiveData.postValue(state)
     }
 
 

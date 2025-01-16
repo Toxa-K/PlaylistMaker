@@ -3,7 +3,6 @@ package com.example.playlistmaker.mediateca.ui.fragment
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -116,7 +114,7 @@ class ShowPlaylistFragment : Fragment() {
         })
 
 
-        viewModel.getTimeLiveData.observe(viewLifecycleOwner) { time ->
+        viewModel.timeLiveData.observe(viewLifecycleOwner) { time ->
             durationTime = time
             val minuts = when (time.toInt()) {
                 1 -> "минута"

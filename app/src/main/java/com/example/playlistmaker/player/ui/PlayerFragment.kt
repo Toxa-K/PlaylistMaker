@@ -3,12 +3,10 @@ package com.example.playlistmaker.player.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -21,14 +19,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import com.example.playlistmaker.mediateca.ui.fragment.PlayListFragment
 import com.example.playlistmaker.player.presenter.state.ListPlaylistState
 import com.example.playlistmaker.player.presenter.state.PlayerLikeState
 import com.example.playlistmaker.player.presenter.PlayerPlaylistAdapter
 import com.example.playlistmaker.player.presenter.state.PlayerScreenState
 import com.example.playlistmaker.player.presenter.PlayerViewModel
 import com.example.playlistmaker.player.presenter.state.addToPlaylistState
-import com.example.playlistmaker.search.presenter.TrackSearchViewModel
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
 import com.example.playlistmaker.util.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -101,7 +97,7 @@ class PlayerFragment : Fragment() {
         })
 
 
-        viewModel.getStateLikeLiveData().observe(viewLifecycleOwner) { likeState ->
+        viewModel.stateLikeLiveData().observe(viewLifecycleOwner) { likeState ->
             when (likeState) {
                 is PlayerLikeState.Liked -> {
                     binding.favoriteButton.setImageResource(R.drawable.button_islike)
@@ -114,7 +110,7 @@ class PlayerFragment : Fragment() {
         }
 
 
-        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
+        viewModel.screenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
                     changeContentVisibility(true)
@@ -136,7 +132,7 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        viewModel.getStatePlaylistLiveData().observe(viewLifecycleOwner) { state ->
+        viewModel.statePlaylistLiveData().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ListPlaylistState.notEmptyList -> adapter.updateTracks(state.playList)
                 is ListPlaylistState.emptyList -> {
@@ -145,7 +141,7 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        viewModel.getAddTrackLiveData().observe(viewLifecycleOwner) { state ->
+        viewModel.addTrackLiveData().observe(viewLifecycleOwner) { state ->
             var message = ""
             state?.let {
                 when (it) {
