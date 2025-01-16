@@ -4,9 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import com.example.playlistmaker.search.domain.model.Track
 
 class PlaylistAdapter(
     private var playlistItems: List<Playlist>,

@@ -56,16 +56,24 @@ class CreatePlaylistViewModel(
     }
 
 
-    fun savePlaylist(playlist: Playlist?, title: String, description: String?, imageUri: Uri?) {
+    fun savePlaylist(
+        playlist: Playlist?,
+        title: String,
+        description: String?,
+        imageUri: Uri?
+    ) {
         if (playlist == null) {
-            addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
+            viewModelScope.launch {
+                addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
+            }
             isPlaylistCreatedLiveData.postValue("${title}")
         } else {
             if (imageUri == null) {
                 addPlaylistToData(playlist, title, description, playlist.directory!!)
                 isPlaylistCreatedLiveData.postValue("${title}")
             } else {
-                addPlaylistToData(playlist, title, description, imageInteractor.saveImage(imageUri))
+                viewModelScope.launch {addPlaylistToData(playlist,title,description,imageInteractor.saveImage(imageUri))
+                }
                 isPlaylistCreatedLiveData.postValue("${title}")
             }
         }

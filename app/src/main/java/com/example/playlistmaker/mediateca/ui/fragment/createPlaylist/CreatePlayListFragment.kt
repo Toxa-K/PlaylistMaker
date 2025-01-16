@@ -12,6 +12,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
@@ -19,6 +20,7 @@ import com.example.playlistmaker.databinding.FragmentCreatplaylistBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.mediateca.presenter.createPlaylist.CreatePlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreatePlayListFragment : Fragment() {
@@ -115,12 +117,15 @@ class CreatePlayListFragment : Fragment() {
 
 
         binding.button.setOnClickListener {
-            viewModel.savePlaylist(
-                playlist,
-                binding.textView.editText?.text.toString(),
-                binding.textView2.editText?.text.toString(),
-                imageUri
-            )
+
+
+                viewModel.savePlaylist(
+                    playlist,
+                    binding.textView.editText?.text.toString(),
+                    binding.textView2.editText?.text.toString(),
+                    imageUri
+                )
+
         }
         if (playlist != null) {
             bind(playlist!!)

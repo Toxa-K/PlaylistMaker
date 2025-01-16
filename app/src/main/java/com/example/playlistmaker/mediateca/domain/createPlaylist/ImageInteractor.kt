@@ -5,8 +5,8 @@ import android.provider.ContactsContract.Directory
 
 interface ImageInteractor {
 
-    fun saveImage(uri: Uri?): String
+    suspend fun saveImage(uri: Uri?): String
 
-    fun getImage(directory: String?): Uri?
+    suspend fun getImage(directory: String?): Uri?
 
 }

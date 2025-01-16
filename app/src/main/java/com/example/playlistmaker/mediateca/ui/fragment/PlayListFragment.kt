@@ -12,14 +12,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.MediatecaPlaylistBinding
-import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.mediateca.presenter.playList.PlayliStstate
 import com.example.playlistmaker.mediateca.presenter.playList.PlaylistAdapter
 import com.example.playlistmaker.mediateca.presenter.playList.PlaylistViewModel
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.SearchFragment.Companion.CLICK_DEBOUNCE_DELAY
-import com.example.playlistmaker.search.ui.SearchFragment.Companion.KEY_TRACK
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
