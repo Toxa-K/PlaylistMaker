@@ -28,7 +28,7 @@ class CreatePlayListFragment : Fragment() {
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
     private var imageUri: Uri? = null
     private var title: String? = null
-    var playlist: Playlist? = null
+    private var playlist: Playlist? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -115,16 +115,14 @@ class CreatePlayListFragment : Fragment() {
 
 
         binding.button.setOnClickListener {
-
-
                 viewModel.savePlaylist(
                     playlist,
                     binding.textView.editText?.text.toString(),
                     binding.textView2.editText?.text.toString(),
                     imageUri
                 )
-
         }
+
         if (playlist != null) {
             bind(playlist!!)
             binding.button.isEnabled = true

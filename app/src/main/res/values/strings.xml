@@ -50,6 +50,16 @@
     <string name="delete" translatable="false">Удалить</string>
     <string name="no" translatable="false">Нет</string>
     <string name="yes" translatable="false">Да</string>
+
+
+    <plurals name="track_count" translatable="false">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
+
+
     <string name="delete_track" translatable="false">Удалить трек</string>
     <string name="delete_track_description" translatable="false">Вы уверены, что хотите удалить трек из пелйлиста?</string>
     <string name="share_playlist" translatable="false">Поделиться плейлистом</string>

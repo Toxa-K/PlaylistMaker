@@ -40,6 +40,12 @@ class CreatePlaylistViewModel(
         }
     }
 
+    private fun updatePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.updatePlaylist(playlist)
+        }
+    }
+
     fun savePlaylist(
         playlist: Playlist?,
         title: String,
@@ -50,7 +56,11 @@ class CreatePlaylistViewModel(
             val imagePath =
                 imageUri?.let { imageInteractor.saveImage(it) } ?: playlist?.directory.orEmpty()
             val newPlaylist = createPlaylistObject(playlist, title, description, imagePath)
-            addPlaylist(newPlaylist)
+            if (playlist == null) {
+                addPlaylist(newPlaylist)
+            }else{
+                updatePlaylist(newPlaylist)
+            }
             _isPlaylistCreatedLiveData.postValue(title)
         }
     }

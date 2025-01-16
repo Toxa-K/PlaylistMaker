@@ -2,6 +2,7 @@ package com.example.playlistmaker.sharing.data
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.util.Log
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.model.Playlist
@@ -29,24 +30,23 @@ class SharePlaylistRepositoryImpl(
 
     private fun buildPlaylistMessage(playlist: Playlist, tracks: List<Track>): String {
         val trackSize = tracks.size
-        val trackCountText = when (trackSize) {
-            1 -> "трек"
-            in 2..4 -> "трека"
-            else -> "треков"
-        }
-        val trackList = tracks.joinToString(separator = "\n") { track ->
-            val duration = track.trackTimeMillis?.let { formatTrackTime(it.toLong()) } ?: "00:00"
-            "${tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} ($duration)"
-        }
+        val trackCountText = context.resources.getQuantityString(R.plurals.track_count, trackSize, trackSize)
 
+        val trackList = StringBuilder().apply {
+            tracks.forEachIndexed { index, track ->
+                val duration = track.trackTimeMillis?.let { formatTrackTime(it.toLong()) } ?: "0"
+                appendLine("${index + 1}. ${track.artistName} - ${track.trackName} ($duration)")
+            }
+        }.toString()
 
-        return """
-        Плейлист: ${playlist.title}
-        ${playlist.description ?: "Без описания"}
-        Количество треков: $trackSize $trackCountText
-        Список треков:
-        $trackList
-    """.trimIndent()
+        val endMessage = StringBuilder().apply {
+            appendLine(playlist.title)
+            appendLine(playlist.description ?: "")
+            appendLine(trackCountText)
+            appendLine(trackList)
+        }.toString()
+
+        return endMessage
     }
 
     private fun formatTrackTime(trackTimeMillis: Long): String {
