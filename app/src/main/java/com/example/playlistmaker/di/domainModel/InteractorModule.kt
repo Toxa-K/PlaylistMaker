@@ -6,6 +6,7 @@ import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractor
 import com.example.playlistmaker.mediateca.domain.likeList.LikeHistoryInteractorImpl
 import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractor
 import com.example.playlistmaker.mediateca.domain.playList.PlaylistInteractorImpl
+import com.example.playlistmaker.sharing.domain.impl.SharePlaylistUseCase
 import com.example.playlistmaker.player.domain.api.LikeInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.LikeInteractorImpl
@@ -67,6 +68,9 @@ val interactorModule = module {
     }
     single <ImageInteractor>{
         ImageInteractorImpl(get())
+    }
+    single <SharePlaylistUseCase>{
+        SharePlaylistUseCase(get())
     }
 
 }

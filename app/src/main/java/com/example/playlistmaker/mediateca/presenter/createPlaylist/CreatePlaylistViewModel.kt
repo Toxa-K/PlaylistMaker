@@ -1,6 +1,5 @@
 package com.example.playlistmaker.mediateca.presenter.createPlaylist
 
-
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,33 +15,53 @@ class CreatePlaylistViewModel(
     private val imageInteractor: ImageInteractor
 ) : ViewModel() {
 
-    private val isPlaylistCreatedLiveData = MutableLiveData<String>()
-    val getIsPlaylistCreatedLiveData: LiveData<String> = isPlaylistCreatedLiveData
+    private val _isPlaylistCreatedLiveData = MutableLiveData<String>()
+    val isPlaylistCreatedLiveData: LiveData<String> = _isPlaylistCreatedLiveData
 
-    private fun addPlaylistToData(title: String, description: String?, imagePath: String) {
+    private fun createPlaylistObject(
+        playlist: Playlist?,
+        title: String,
+        description: String?,
+        imagePath: String
+    ): Playlist {
+        return Playlist(
+            playlistId = playlist?.playlistId,
+            title = title,
+            description = description,
+            directory = imagePath,
+            trackIds = playlist?.trackIds ?: emptyList(),
+            count = playlist?.count ?: 0
+        )
+    }
+
+    private fun addPlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            playlistInteractor.addPlaylist(
-                Playlist(
-                    playlistId = null,
-                    title = title,
-                    description = description,
-                    directory = imagePath,
-                    trackIds = emptyList(),
-                    count = 0
-                )
-            )
+            playlistInteractor.addPlaylist(playlist)
         }
     }
 
-
-    fun savePlaylist(title: String, description: String?, imageUri: Uri?) {
-        addPlaylistToData(title, description, imageInteractor.saveImage(imageUri))
-        try {
-            isPlaylistCreatedLiveData.postValue("${title}")
-        } catch (e: Exception) {
-            isPlaylistCreatedLiveData.postValue("Произошла ошибка")
+    private fun updatePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.updatePlaylist(playlist)
         }
     }
 
-
+    fun savePlaylist(
+        playlist: Playlist?,
+        title: String,
+        description: String?,
+        imageUri: Uri?
+    ) {
+        viewModelScope.launch {
+            val imagePath =
+                imageUri?.let { imageInteractor.saveImage(it) } ?: playlist?.directory.orEmpty()
+            val newPlaylist = createPlaylistObject(playlist, title, description, imagePath)
+            if (playlist == null) {
+                addPlaylist(newPlaylist)
+            }else{
+                updatePlaylist(newPlaylist)
+            }
+            _isPlaylistCreatedLiveData.postValue(title)
+        }
+    }
 }

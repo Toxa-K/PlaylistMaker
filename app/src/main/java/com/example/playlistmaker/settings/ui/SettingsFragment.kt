@@ -1,7 +1,6 @@
 package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +35,7 @@ class SettingsFragment:Fragment() {
         supportButton = binding.supportBtn
 
 
-        viewModel.getSettingsModelLiveData().observe(viewLifecycleOwner, Observer { settings ->
+        viewModel.settingsModelLiveData().observe(viewLifecycleOwner, Observer { settings ->
             themeSwitcher.isChecked = settings.isThemeEnabled
         })
 

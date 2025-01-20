@@ -17,7 +17,10 @@ interface PlaylistRepository {
 
     fun getPlaylistById(id: Int): Flow<Playlist>
 
-
     suspend fun insertPlaylistTrack(track: Track): Boolean
+
+    suspend fun getDurationPlaylist(playlist: Playlist): String
+
+    fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>>
 
 }

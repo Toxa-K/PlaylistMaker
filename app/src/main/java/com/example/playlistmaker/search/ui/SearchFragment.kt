@@ -72,7 +72,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -104,10 +104,6 @@ class SearchFragment : Fragment() {
             findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
         }
 
-
-
-
-
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
@@ -115,19 +111,28 @@ class SearchFragment : Fragment() {
             showToast(toast)
         }
 
-        adapterSearch = TrackAdapter(listOf()) { track ->
-            onTrackClickDebounce(track)
-            viewModel.onTrackSearchClicked(track)
-            progressBar.isVisible = false
+        adapterSearch = TrackAdapter(
+            listOf(),
+            onItemClick = { track ->
+                onTrackClickDebounce(track)
+                viewModel.onTrackSearchClicked(track)
+                progressBar.isVisible = false
+            },
+            onTrackLongClick = { track ->
+                true
+            }
+        )
 
-
-        }
-        adapterHistory = TrackAdapter(listOf()) { track ->
-            onTrackClickDebounce(track)
-            viewModel.onTrackHistoryClicked(track)
-            progressBar.isVisible = false
-
-        }
+        adapterHistory = TrackAdapter(
+            listOf(),
+            onItemClick = { track ->
+                onTrackClickDebounce(track)
+                viewModel.onTrackHistoryClicked(track)
+                progressBar.isVisible = false
+            },
+            onTrackLongClick = { track ->
+            }
+        )
 
         //Создание списка треков поиска
         recyclerView.layoutManager =
@@ -138,7 +143,6 @@ class SearchFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         storyView.adapter = adapterHistory
 
-        //условие для отображения Истории поиска
         searchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchInput.text.isEmpty()) {
                 viewModel.loadHistory()
@@ -148,7 +152,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        // логика по работе с введённым значением
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -173,7 +176,11 @@ class SearchFragment : Fragment() {
 
 
         placeholderButton.setOnClickListener {
-            searchDebounce(changedText = searchInput.text.toString())
+            searchJob?.cancel()
+            searchJob = lifecycleScope.launch {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                viewModel.searchRequest(searchInput.text.toString())
+            }
         }
 
         //Сохранение значения в строке поиска после разрушение активити
@@ -182,7 +189,7 @@ class SearchFragment : Fragment() {
             searchInput.setText(searchText)
         }
 
-        // Установка слушателя для кнопки очистки поля ввода
+
         clearButton.setOnClickListener {
             handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
             progressBar.isVisible = false
@@ -191,7 +198,7 @@ class SearchFragment : Fragment() {
             viewModel.loadHistory()
         }
 
-        // Установка слушателя для кнопки очистки истории
+
         clearHistoryButton.setOnClickListener {
             viewModel.removeHistory()
             hidePlaceholderMessageUi()
@@ -209,7 +216,8 @@ class SearchFragment : Fragment() {
             is SearchState.StartContent -> startContent()
         }
     }
-    private fun startContent(){
+
+    private fun startContent() {
         hidePlaceholderMessageUi()
         historyUiIs(false)
         progressBar.isVisible = false
@@ -317,13 +325,13 @@ class SearchFragment : Fragment() {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let { searchInput.removeTextChangedListener(it) }
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
     }
+
     override fun onResume() {
         super.onResume()
         (requireActivity().findViewById<View>(R.id.bottomNavigationView) as? View)?.visibility =

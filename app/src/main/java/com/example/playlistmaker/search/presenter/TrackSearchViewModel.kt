@@ -20,47 +20,45 @@ class TrackSearchViewModel(
     private val getHistory: GetHistoryUseCase,
     private val clearHistory: ClearTrackHistoryUseCase
 
-): ViewModel(){
+) : ViewModel() {
 
     private val tracksSearch = ArrayList<Track>()
-    init{
-    }
 
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    private val _stateLiveData = MutableLiveData<SearchState>()
+    fun observeState(): LiveData<SearchState> = _stateLiveData
 
     private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 
     private val showToast = SingleLiveEvent<String>()
     fun observeShowToast(): LiveData<String> = showToast
 
 
-
     fun loadHistory() {
         val historyTracks = getHistory.execute()
-        if (historyTracks.isEmpty()){
+        if (historyTracks.isEmpty()) {
             renderState(SearchState.StartContent)
-        }else{
+        } else {
             renderState(SearchState.History(trackHistory = historyTracks))
         }
 
     }
 
-    fun removeHistory(){
+    fun removeHistory() {
         clearHistory.execute()
     }
 
     fun onTrackSearchClicked(track: Track) {
         setHistory.execute(track)
     }
+
     fun onTrackHistoryClicked(track: Track) {
         setHistory.execute(track)
         loadHistory()
     }
 
-    fun searchRequest(newSearchText:String) {
+    fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
             renderState(SearchState.Loading)
         }
@@ -74,7 +72,8 @@ class TrackSearchViewModel(
 
         }
     }
-    private fun processResult(foundTrack: List<Track>?, errorMessage:String?){
+
+    private fun processResult(foundTrack: List<Track>?, errorMessage: String?) {
         if (!foundTrack.isNullOrEmpty()) {
             tracksSearch.clear()
             tracksSearch.addAll(foundTrack)

@@ -12,9 +12,9 @@ import kotlinx.coroutines.launch
 class LikeViewModel(
     private val likeHistoryInteractor: LikeHistoryInteractor
 ) : ViewModel() {
-    private val stateLiveData = MutableLiveData<LikeState>()
+    private val _stateLiveData = MutableLiveData<LikeState>()
 
-    fun observeState(): LiveData<LikeState> = stateLiveData
+    fun observeState(): LiveData<LikeState> = _stateLiveData
 
     fun fillData() {
         renderState(LikeState.Loading)
@@ -36,6 +36,6 @@ class LikeViewModel(
     }
 
     private fun renderState(state: LikeState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 }

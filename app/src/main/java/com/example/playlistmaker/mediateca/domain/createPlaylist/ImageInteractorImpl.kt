@@ -6,11 +6,11 @@ class ImageInteractorImpl(
     private val repository: ImageRepository
 ) : ImageInteractor {
 
-    override fun saveImage(uri: Uri?): String {
+    override suspend fun saveImage(uri: Uri?): String {
         return repository.saveImage(uri)
     }
 
-    override fun getImage(directory: String?): Uri? {
+    override suspend fun getImage(directory: String?): Uri? {
         return repository.getImage(directory)
     }
 

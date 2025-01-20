@@ -9,13 +9,13 @@ import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageRepository
 import java.io.File
 import java.io.FileOutputStream
 
-class ImageRepositoryImpl (
+class ImageRepositoryImpl(
     private val context: Context
-): ImageRepository {
+) : ImageRepository {
 
 
-    override fun saveImage(uri: Uri?): String {
-        if (uri  == null) return ""
+    override suspend fun saveImage(uri: Uri?): String {
+        if (uri == null) return ""
 
         //создаём экземпляр класса File, который указывает на нужный каталог
         val filePath =
@@ -40,7 +40,7 @@ class ImageRepositoryImpl (
         return file.absolutePath
     }
 
-    override fun getImage(directory: String?): Uri? {
+    override suspend fun getImage(directory: String?): Uri? {
         return if (!directory.isNullOrEmpty()) {
             val file = File(directory)
             if (file.exists()) {

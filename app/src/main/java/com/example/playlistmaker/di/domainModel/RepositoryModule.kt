@@ -8,9 +8,11 @@ import com.example.playlistmaker.player.domain.repository.PlayerRepository
 import com.example.playlistmaker.mediateca.data.likeList.db.TrackDbConvertor
 import com.example.playlistmaker.mediateca.data.playList.PlaylistDbConvector
 import com.example.playlistmaker.mediateca.data.playList.PlaylistRepositoryImpl
+import com.example.playlistmaker.sharing.data.SharePlaylistRepositoryImpl
 import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageRepository
 import com.example.playlistmaker.mediateca.domain.likeList.LikeRepository
 import com.example.playlistmaker.mediateca.domain.playList.PlaylistRepository
+import com.example.playlistmaker.sharing.domain.repository.SharePlaylistRepository
 import com.example.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.example.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.example.playlistmaker.search.domain.repository.HistoryRepository
@@ -54,6 +56,9 @@ val repositoryModule = module {
     }
     single <ImageRepository>{
         ImageRepositoryImpl(get())
+    }
+    single <SharePlaylistRepository>{
+        SharePlaylistRepositoryImpl(get())
     }
 
 }

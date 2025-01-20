@@ -6,60 +6,73 @@ import android.util.Log
 import com.example.playlistmaker.player.domain.repository.PlayerRepository
 
 class PlayerRepositoryImpl(
-    private val url:String,
+    private val url: String,
     private val mediaPlayer: MediaPlayer
-): PlayerRepository {
+) : PlayerRepository {
 
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayerState.DEFAULT
+
     override fun prepare(): Boolean {
         if (!url.isNullOrEmpty()) {
             mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
-                playerState = STATE_PREPARED
+                playerState = PlayerState.PREPARED
             }
             mediaPlayer.setOnCompletionListener {
-                playerState = STATE_PREPARED
+                playerState = PlayerState.PREPARED
             }
             return true
+        } else {
+            return false
         }
-        else {            return false        }
     }
+
     private fun play() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerState = PlayerState.PLAYING
     }
+
     override fun pause() {
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerState = PlayerState.PAUSED
     }
+
     override fun release() {
         mediaPlayer.release()
     }
+
     override fun playbackControl(): Boolean {
-        return when(playerState) {
-            STATE_PLAYING -> {
+        return when (playerState) {
+            PlayerState.PLAYING -> {
                 pause()
                 false
             }
-            STATE_PREPARED, STATE_PAUSED -> {
+
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
                 play()
                 true
             }
-            else -> {false}
+
+            else -> {
+                false
+            }
         }
     }
+
     override fun playerState(): Boolean {
-        return playerState == STATE_PREPARED
+        return playerState == PlayerState.PREPARED
     }
+
     override fun getPosition(): Int {
         return mediaPlayer.getCurrentPosition()
     }
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+
+    enum class PlayerState {
+        DEFAULT,
+        PREPARED,
+        PLAYING,
+        PAUSED
     }
 }

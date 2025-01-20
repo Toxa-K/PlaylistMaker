@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -23,8 +25,11 @@ class PlaylistRepositoryImpl(
 
     override suspend fun insertPlaylistTrack(track: Track): Boolean {
         val entity = playlistDbConvector.mapPlaylist(track)
-        return withContext(Dispatchers.IO){ appDatabase.trackPlaylistDao().insertTrack(entity) > 0}
+        return withContext(Dispatchers.IO) {
+            appDatabase.trackPlaylistDao().insertTrack(entity) > 0
+        }
     }
+
 
     override suspend fun deletePlaylist(playlist: Playlist) {
         val playlistEntity = playlistDbConvector.map(playlist)
@@ -33,7 +38,9 @@ class PlaylistRepositoryImpl(
 
     override suspend fun updatePlaylist(playlist: Playlist): Boolean {
         val playlistEntity = playlistDbConvector.map(playlist)
-        return withContext(Dispatchers.IO){appDatabase.playlistDao().updatePlaylist(playlistEntity) > 0}
+        return withContext(Dispatchers.IO) {
+            appDatabase.playlistDao().updatePlaylist(playlistEntity) > 0
+        }
     }
 
     override fun getPlaylistById(id: Int): Flow<Playlist> {
@@ -51,4 +58,30 @@ class PlaylistRepositoryImpl(
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvector.map(playlist) }
     }
+
+
+    override suspend fun getDurationPlaylist(playlist: Playlist): String {
+        val trackIds = playlist.trackIds?.map { it.toInt() } ?: return "00:00"
+
+        val totalDurationMillis = withContext(Dispatchers.IO) {
+            appDatabase.trackPlaylistDao().getTracksByIds(trackIds)
+                .sumOf { it.trackTimeMillis.toLong() }
+        }
+
+        return formatTrackTime(totalDurationMillis)
+    }
+
+    override fun getTraksInPlaylist(playlist: Playlist): Flow<List<Track>> {
+        val trackIds = playlist.trackIds?.map { it.toInt() } ?: return flow { emit(emptyList()) }
+        return flow {
+            val trackEntities = appDatabase.trackPlaylistDao().getTracksByIds(trackIds)
+            val tracks = trackEntities.map { playlistDbConvector.mapPlaylist(it) }
+            emit(tracks)
+        }.flowOn(Dispatchers.IO)
+    }
+
+    private fun formatTrackTime(trackTimeMillis: Long): String {
+        return SimpleDateFormat("m", Locale.getDefault()).format(trackTimeMillis)
+    }
+
 }

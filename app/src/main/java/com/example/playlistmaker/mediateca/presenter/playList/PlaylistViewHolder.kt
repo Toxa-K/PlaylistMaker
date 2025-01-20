@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.mediateca.domain.createPlaylist.ImageInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import java.io.File
 
@@ -45,14 +44,6 @@ class PlaylistViewHolder(
 
         trackCount.text = "${tracksize} ${trackcounttext}" // Количество треков
 
-        /*val imageUri = imageInteractor.getImage(item.directory)
-        if (imageUri != null) {
-            Glide.with(image.context)
-                .load(imageUri)
-                .placeholder(R.drawable.placeholder2)
-                .into(image)
-        } else {
-            image.setImageResource(R.drawable.placeholder2)
-        }*/
+
     }
 }

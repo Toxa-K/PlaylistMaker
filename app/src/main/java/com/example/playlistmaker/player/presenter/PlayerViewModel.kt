@@ -31,29 +31,29 @@ class PlayerViewModel(
     private var timerJob: Job? = null
     private var isTrackLiked = false
 
-    private val screenStateLiveData = MutableLiveData<PlayerScreenState>(PlayerScreenState.Loading)
-    fun getScreenStateLiveData(): LiveData<PlayerScreenState> = screenStateLiveData
+    private val _screenStateLiveData = MutableLiveData<PlayerScreenState>(PlayerScreenState.Loading)
+    fun screenStateLiveData(): LiveData<PlayerScreenState> = _screenStateLiveData
 
-    private val stateLikeLiveData = MutableLiveData<PlayerLikeState>()
-    fun getStateLikeLiveData(): LiveData<PlayerLikeState> = stateLikeLiveData
+    private val _stateLikeLiveData = MutableLiveData<PlayerLikeState>()
+    fun stateLikeLiveData(): LiveData<PlayerLikeState> = _stateLikeLiveData
 
-    private val statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
-    fun getStatePlaylistLiveData(): LiveData<ListPlaylistState> = statePlaylistLiveData
+    private val _statePlaylistLiveData = MutableLiveData<ListPlaylistState>()
+    fun statePlaylistLiveData(): LiveData<ListPlaylistState> = _statePlaylistLiveData
 
-    private val addTrackLiveData = MutableLiveData<addToPlaylistState?>()
-    fun getAddTrackLiveData(): LiveData<addToPlaylistState?> = addTrackLiveData
+    private val _addTrackLiveData = MutableLiveData<addToPlaylistState?>()
+    fun addTrackLiveData(): LiveData<addToPlaylistState?> = _addTrackLiveData
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (!trackPlayer.playerState()) {
                 delay(CHECK_LISTEN_TIME)
-                screenStateLiveData.postValue(
+                _screenStateLiveData.postValue(
                     PlayerScreenState.PlayStatus(
                         progress = getCurrentPlayerPosition(), isPlaying = true
                     )
                 )
             }
-            screenStateLiveData.postValue(
+            _screenStateLiveData.postValue(
                 PlayerScreenState.PlayStatus(
                     progress = "00:00", isPlaying = false
                 )
@@ -92,11 +92,11 @@ class PlayerViewModel(
 
         trackPlayer.prepare()
         updateLikeState()
-        screenStateLiveData.value =
+        _screenStateLiveData.value =
             PlayerScreenState.Content
     }
     fun clearAddTrackState() {
-        addTrackLiveData.value = null
+        _addTrackLiveData.value = null
     }
 
     private suspend fun checkLike(track: Track): Boolean {
@@ -104,7 +104,7 @@ class PlayerViewModel(
     }
 
     private fun updateLikeState() {
-        stateLikeLiveData.value = if (isTrackLiked) {
+        _stateLikeLiveData.value = if (isTrackLiked) {
             PlayerLikeState.Liked
         } else {
             PlayerLikeState.Disliked
@@ -114,7 +114,7 @@ class PlayerViewModel(
     private fun onPause() {
         trackPlayer.pause()
         timerJob?.cancel()
-        screenStateLiveData.postValue(
+        _screenStateLiveData.postValue(
             PlayerScreenState.PlayStatus(
                 progress = getCurrentPlayerPosition(), isPlaying = false
             )
@@ -153,7 +153,7 @@ class PlayerViewModel(
     }
 
     private fun renderState(state: ListPlaylistState) {
-        statePlaylistLiveData.postValue(state)
+        _statePlaylistLiveData.postValue(state)
     }
 
     fun addToPlaylist(playlist: Playlist, track: Track) {
@@ -192,7 +192,7 @@ class PlayerViewModel(
     }
 
     private fun renderState(state: addToPlaylistState) {
-        addTrackLiveData.postValue(state)
+        _addTrackLiveData.postValue(state)
     }
 
     companion object {

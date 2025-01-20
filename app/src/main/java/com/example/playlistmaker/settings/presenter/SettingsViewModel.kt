@@ -1,6 +1,5 @@
 package com.example.playlistmaker.settings.presenter
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,22 +16,18 @@ class SettingsViewModel(
     private val getThemeUseCase: GetThemeUseCase
 ) :ViewModel() {
 
-    private val settingsLiveData = MutableLiveData<SettingsModel>()
-    fun getSettingsModelLiveData(): LiveData<SettingsModel> = settingsLiveData
+    private val _settingsLiveData = MutableLiveData<SettingsModel>()
+    fun settingsModelLiveData(): LiveData<SettingsModel> = _settingsLiveData
 
     init {
         val isThemeEnabled = getThemeUseCase.execute()
-        settingsLiveData.value = SettingsModel(isThemeEnabled)
+        _settingsLiveData.value = SettingsModel(isThemeEnabled)
     }
 
     fun toggleTheme(isEnabled: Boolean) {
-
             switchTheme.execute(isEnabled)
-            settingsLiveData.value = SettingsModel(isEnabled)
-
+            _settingsLiveData.value = SettingsModel(isEnabled)
     }
-
-
 
     fun shareApp() {
         val message =R.string.share_message
